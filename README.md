@@ -29,13 +29,21 @@ Traditionally, in the absence of such technology, the way this has been done for
 The following is a summary of the utilities included in this package. For detailed information on their usage consult their man page.
 
 `helios-add-song`: Add a single song to a Helios server's catalogue.
+
 `helios-delete-song`: Delete a remote song or songs on a Helios server.
+
 `helios-download-song`: Download a song from a remote Helios server.
+
 `helios-find-servers`: List all helios servers detected on your LAN.
+
 `helios-get-song`: Query metadata for a song within a remote Helios server.
+
 `helios-import-songs`: Batch import songs into Helios.
-`helios-modify-song`: Tool to edit metadata of remote songs already analyzed on a Helios
+
+`helios-modify-song`: Tool to edit metadata of remote songs already analyzed on a Helios server.
+
 `helios-similar`: Search for similar songs on a remote Helios server.
+
 `helios-status`: Query the status of a remote Helios server.
 
 ## Licensing
