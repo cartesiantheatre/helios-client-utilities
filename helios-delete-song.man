@@ -1,0 +1,75 @@
+.TH helios-delete-song 1 "June 2019"
+.SH NAME
+helios-delete-song - Delete a remote song or songs on a Helios server.
+
+.SH SYNOPSIS
+.B helios-delete-song [--id="<song_id>" | --reference="<song_reference>" | --delete-all] [\fIOPTIONS\fR]
+
+.SH DESCRIPTION
+Use this utility to delete a remote database record of a song from a Helios
+server. The song's file will also be deleted from the server if it had its own
+copy.
+
+If you just want to delete the remote file but keep the database record, you
+probably want to use \fBhelios-modify-song\fR(1) instead.
+
+.SH OPTIONS
+
+.TP
+\fB\--delete-all\fR
+Delete on the remote server all song metadata and song files. Be careful. This
+is a dangerous option. You will be prompted with a warning prior to performing
+the operation.
+
+.TP
+\fB\--delete-file-only\fR
+Delete on the remote server the stored song file, but keep preserve the metadata
+of the analyzed. You may use this in tandem with \fB\--delete-all\fR.
+
+.TP
+\fB\--id\fR
+Unique numeric identifier of song to delete. You must provide either this or a
+\fB--reference\fR if you are not deleting all songs.
+
+.TP
+\fB\--reference="<song_reference>"\fR
+Unique reference of song to delete. You must provide either this or an \fB--id\fR if you are not deleting all songs.
+
+.TP
+\fB\-h\fR \fB\--help\fR
+Show this help.
+
+.so common.man.include
+
+.SH EXAMPLES
+.TP
+
+Delete all songs on the remote server:
+
+$ helios-delete-song --delete-all
+.TP
+
+Delete song with reference "some_song_reference":
+
+$ helios-delete-song --reference "some_song_reference"
+
+.SH EXIT STATUS
+\fBhelios-delete-song\fR exits with a status of zero if the server provided the expected response or 1 otherwise.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBhelios\fR(7)
+.br
+\fBhelios-add-song\fR(1)
+.br
+\fIhttps://www.heliosmusic.io\fR
+.br
+

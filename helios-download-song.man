@@ -1,0 +1,59 @@
+.TH helios-download-song 1 "June 2019"
+.SH NAME
+helios-download-song - Download a song from a remote Helios server.
+
+.SH SYNOPSIS
+.B helios-download-song [\fIOPTIONS\fR] [--id="<song_id>" | --reference="<song_reference>" ] --output="<file>"
+
+.SH DESCRIPTION
+Use this utility to download a song from a remote Helios server. This can be
+only be done if the \fRstore\fB policy was set to \fBtrue\fR when the song was
+initially submitted to the server for analysis. By default it is.
+
+If you only want to fetch the song's metadata instead of the file itself, you
+probably should be looking at \fBhelios-get-song\fR(1).
+
+.SH OPTIONS
+
+.TO
+\fB\--id="<song_id>"\fR
+Unique numeric identifier of song to modify. You must provide either this or a
+--reference.
+
+.TP
+\fB\--reference="<song_reference>"\fR
+Unique reference of song to modify. You must provide either this or an
+\fB--id\fR.
+
+.TP
+\fB\-o "<file>" --output="<file>"\fR
+Write out song to disk with the given file name.
+
+.so common.man.include
+
+.SH EXAMPLES
+.TP
+Download a song with reference "aaa":
+
+$ helios-download-song --reference "aaa" --output some_song.flac
+
+.SH EXIT STATUS
+\fBhelios-download-song\fR exits with a status of zero if the server provided the expected response or 1 otherwise.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBhelios\fR(7)
+.br
+\fBhelios-get-song\fR(1)
+.br
+\fIhttps://www.heliosmusic.io\fR
+.br
+

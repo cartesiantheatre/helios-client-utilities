@@ -1,0 +1,33 @@
+.TH helios-find-servers 1 "September 2019"
+.SH NAME
+helios-find-servers - List all helios servers detected on your LAN.
+
+.SH SYNOPSIS
+.B helios-find-servers
+
+.SH DESCRIPTION
+Use this utility to list all heliosd servers found on your local area network.
+This scans indefinitely unless either an error is detected or the user requests
+to abort via ctrl-c. When a server goes offline you will also be notified.
+
+.SH EXIT STATUS
+\fBhelios-find-servers\fR exits with a status of zero if no error was detected
+and the user requested to abort or 1 otherwise.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBhelios\fR(7)
+.br
+\fBhelios-status\fR(1)
+.br
+\fIhttps://www.heliosmusic.io\fR
+.br
+

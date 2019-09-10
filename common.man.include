@@ -1,0 +1,25 @@
+.TP
+\fB\--host="<host|ip>"\fR
+Specify the host name or IP address of the server. If not provided, the LAN will
+be probed until it finds the server.
+
+.TP
+\fB\--port="<port>"\fR
+Specify the port the server is listening on. Defaults to 6440.
+
+.TP
+\fB\--token="<token>"\fR
+Depending on the configuration of the server, any client requests may require a
+client API token to be submitted. Defaults to none.
+
+.TP
+\fB\--verbose\fR
+Be verbose by showing additional information.
+
+.TP
+\fB\--version\fR
+Show version of utility.
+
+.TP
+\fB\-h\fR \fB\--help\fR
+Show this help.

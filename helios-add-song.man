@@ -1,0 +1,70 @@
+.TH helios-add-song 1 "June 2019"
+.SH NAME
+helios-add-song - Add a single song to a Helios server's catalogue.
+
+.SH SYNOPSIS
+.B helios-add-song --reference="<song_reference>" [\fIOPTIONS\fR] file
+
+.SH DESCRIPTION
+Use this utility to add a single song to a Helios server's catalogue.
+
+If you are looking to batch import many songs at once you should probably take a
+look at \fBhelios-import-songs\fR(1) instead.
+
+.SH OPTIONS
+
+.TP
+\fB\--file="<path>"\fR
+Path to the local song file to upload.
+
+.TP
+\fB\--no-store\fR
+Delete the song on the server immediately after analysis. Defaults to store.
+
+.TO
+\fB\--id="<song_id>"\fR
+Unique numeric identifier of song to modify. You must provide either this or a
+--reference.
+
+.TP
+\fB\--reference="<song_reference>"\fR
+Unique reference of song to modify. You must provide either this or an
+\fB--id\fR.
+
+.TP
+\fB\--store\fR
+Store the song after analysis on the server. Defaults to store.
+
+.so common.man.include
+
+.SH EXAMPLES
+.TP
+
+Add a song to a Helios server running locally:
+
+$ helios-add-song --reference "some_song_reference" some_song.flac
+.TP
+Do the same, but with a remote host on a custom port and requiring an API token:
+
+$ helios-add-song --host=192.168.1.22 --port=3233 --token <token>  --reference "some_song_reference" some_song.flac
+
+.SH EXIT STATUS
+\fBhelios-add-song\fR exits with a status of zero if the server provided the expected response or 1 otherwise.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBhelios\fR(7)
+.br
+\fBhelios-import-songs\fR(1)
+.br
+\fIhttps://www.heliosmusic.io\fR
+.br
+

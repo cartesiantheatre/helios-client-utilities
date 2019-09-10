@@ -1,0 +1,12 @@
+#
+#   Helios.
+#   Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+#
+
+# Functional test to verify the server is able to receive and service local
+#  connections...
+Test-Command: helios-status
+Depends: helios-client-utilities
+Restrictions: isolation-container
+Features: test-name=test_status
+

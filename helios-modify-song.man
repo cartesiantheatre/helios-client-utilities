@@ -1,0 +1,73 @@
+.TH helios-modify-song 1 "June 2019"
+.SH NAME
+helios-modify-song - Tool to edit metadata of remote songs already analyzed on a Helios server.
+
+.SH SYNOPSIS
+.B helios-modify-song [--id="<song_id>" | --reference="<song_reference>"] [\fIOPTIONS\fR]
+
+.SH DESCRIPTION
+Use this utility to manipulate metadata of songs already analyzed by a Helios
+server. You can do things like change the artist name or delete the server's
+local copy of the song to save space as examples.
+
+.SH OPTIONS
+
+.TP
+\fB\--delete-file\fR
+Delete remote file if it was stored on server, but keep the database records.
+This is sometimes helpful if your server doesn't need to store a local copy of
+the song after analysis.
+
+.TP
+\fB\--edit-<field>="<new_value>"\fR
+Modify \fB<field>\fR of the song stored on the server to \fB<new_value>\fR. The
+former can be any of \fBalbum\fR, \fBartist\fR, \fBfile\fR, \fBgenre\fR,
+\fBisrc\fR, \fBreference\fR, \fBtitle\fR, or \fByear\fR.
+
+.TP
+\fB\--id\fR
+Unique numeric identifier of song to modify. You must provide either this or a
+\fB--reference\fR.
+
+.TP
+\fB\--no-store\fR
+Delete the song on the server immediately after analysis. Defaults to store.
+
+.TP
+\fB\--reference="<song_reference>"\fR
+Unique reference of song to modify. You must provide either this or an
+\fB--id\fR.
+
+.TP
+\fB\--store\fR
+Store the song after analysis on the server. Defaults to true.
+
+.so common.man.include
+
+.SH EXAMPLES
+.TP
+
+Change the artist and title of song with reference "some_song_reference":
+
+$ helios-modify-song --reference "some_song_reference" --edit-artist "some artist" --edit-title "some title"
+
+.SH EXIT STATUS
+\fBhelios-modify-song\fR exits with a status of zero if the server provided the expected response or 1 otherwise.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBhelios\fR(7)
+.br
+\fBhelios-add-song\fR(1)
+.br
+\fIhttps://www.heliosmusic.io\fR
+.br
+

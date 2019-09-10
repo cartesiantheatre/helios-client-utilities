@@ -1,0 +1,138 @@
+.TH helios-import-songs 1 "July 2019"
+.SH NAME
+helios-import-songs - Batch import songs into Helios.
+
+.SH SYNOPSIS
+.B helios-import-songs [\fIOPTIONS\fR] catalogue.csv[.gz]
+
+.SH DESCRIPTION
+Use this utility to batch import many songs into a Helios server. This is an
+appropriate tool to use if you need to import songs in the hundreds to tens of
+millions. If you are a record label and your Helios server has just been brought
+online for the first time, configured, but contains no music, this is likely the
+first tool you should use to populate its catalogue with analyzed music.
+
+The list of files proposed for import are listed in \fIcatalogue.csv[.gz]\fR.
+For precise details on its format see \fBINPUT FORMAT\fR below.
+
+By default each song submitted for analysis has a local copy stored on the
+server. If you want to disable this, use \fI--no-store\fR. Storing a server side
+copy is only necessary if you expect that clients may want to submit download
+requests from the server or if the server's algorithms are improved and a
+re-analysis of the original songs is necessary.
+
+If you only want to import a single song you should probably take a look at
+\fBhelios-add-song\fR(1) instead.
+
+Depending on your server's hardware capabilities, the time necessary to complete
+a batch import can vary. On an Intel(R) Core(TM) i7-4790 CPU with eight logical
+cores and a base frequency of 3.60GHz each, analysis of one hundred songs took a
+total of approximately 32.8 seconds, or about 0.33 seconds per song.
+
+.SH OPTIONS
+
+.TP
+\fB\--delimiter="<character>"\fR
+Delimiter character to use. Default is comma character.
+
+.TP
+\fB\--max-errors="<max>"\fR
+Maximum number of errors to tolerate before exiting. The default is ten. Note
+that any syntax errors in the input catalogue file itself are considered fatal
+and will cause the utility to bail as soon as any are detected.
+
+.TP
+\fB\--no-store\fR
+Delete the song on the server immediately after analysis. Defaults to store.
+
+.TP
+\fB\--offset="<offset>"\fR
+Row offset to begin processing on. Defaults to 1, or first line of file.
+
+.TP
+\fB\--threads="<count>"\fR
+Number of concurrent imports. Default is the number of logical cores on the
+server.
+
+.so common.man.include
+
+.SH INPUT FORMAT
+The list of files to import are stored in an import catalogue file. This file is
+just a plain text file that may be optionally gzip compressed. The advantage of
+compressing the file, besides the obvious, is it gives you automatic integrity
+verification during decompression.
+
+Each song must be on its own line. Each column is separated by a comma delimiter
+by default, but can be overridden with \fI--delimiter\fR. In the example below
+the '|' character denotes the delimiter.
+
+\fIreference\fR|\fIalbum\fR|\fIartist\fR|\fItitle\fR|\fIgenre\fR|\fIisrc\fR|\fIyear\fR|\fIpath\fR
+
+Blank lines are ignored. Each fields should be surrounded by double quotes with
+any double quote character within the field's value escaped as \\".
+
+The \fIreference\fR field is mandatory and must be a unique identifier you would
+like assigned to the song to be used in future queries. This field may contain
+any combination of alpha-numeric characters and underscores.
+
+The \fIalbum\fR, \fIartist\fR, \fIgenre\fR, \fIisrc\fR, and \fIyear\fR fields
+may be empty strings or set to \fB<AUTODETECT>\fR. The difference is that an
+empty string means that field should remain empty, whereas the latter instructs
+the server to try and autodetect the field out of the audio stream's embedded
+metadata during analysis.
+
+Although the \fItitle\fR field may be set to \fB<AUTODETECT>\fR as well, if the
+server cannot automatically detect a non-empty value from the embedded metadata
+it will raise an error. This ensures that every song in your database has a
+title.
+
+The \fIpath\fR field contain either an operating system path or a URL. If the
+former it can be either an absolute or relative path.
+
+If the file is an operating system path to a remote NFS mount or other network
+share (as is common in a data centre enviroment), you should ensure you have
+adequate bandwidth and fast file system traversal capability. The latter is
+especially important when dealing with directories containing millions of songs.
+An inefficient file system traversal can waste substantial amounts of time
+during if a read operation blocks excessively while walking the remote directory
+tree.
+
+.SH EXAMPLES
+
+Sample compressed \fIcatalogue.csv\fR with space delimiter:
+
+$ cat catalogue.csv.gz | gunzip
+    ...
+    "REFERENCE_123" "Some album" "Some artist" "Some \"title\"", "Some genre", "USA2P0502717", "2003", "/mnt/nfs/music/some_song.flac"
+    ...
+
+Batch import the above file:
+
+$ helios-import-songs --delimiter ' ' catalogue.csv.gz
+
+.SH EXIT STATUS
+\fBhelios-import-songs\fR exits with a status of zero if the server
+provided the expected response or 1 otherwise. If there were no problems
+importing all of the proposed files then a zero exit status should occur.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBgzip\fR(1)
+.br
+\fBhelios\fR(7)
+.br
+\fBhelios-add-song\fR(1)
+.br
+\fBhelios-get-status\fR(1)
+.br
+\fIhttps://www.heliosmusic.io\fR
+.br
+

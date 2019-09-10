@@ -1,0 +1,89 @@
+.TH helios-similar 1 "June 2019"
+.SH NAME
+helios-similar - Search for similar songs on a remote Helios server.
+
+.SH SYNOPSIS
+.B helios-similar [\fIOPTIONS\fR] [--file="<file>" | --url="<url>" | --id="<id>" | --reference="<reference>"]
+
+.SH DESCRIPTION
+Use this utility to have a remote Helios server perform a similarity match
+within its catalogue of analyzed music using a given song as a search key. The
+results will be output in JSON format.
+
+The search key is a song which can be either internal to the server's catalogue
+or external. If the former you must specify which song to select from the
+database with either an --id or a --reference.
+
+If the song is external you must supply either a --file or a --url. The former
+submits a song file. The latter submits a song at a given URL hosted on
+Bandcamp, Mixcloud, SoundCloud, Vimeo, YouTube, or any of the numerous other
+supported external services.
+
+All songs used as external search keys are not stored on the server after their
+analysis. They are streamed into the server's temporary storage and then
+immediately deleted after analysis.
+
+.SH OPTIONS
+
+.TP
+\fB\--file="<file>"\fR
+Path to a local song file to use as a search key on the server. This performs
+the query using an external search key. You must provide exactly one of --file,
+--id, --reference, or --url.
+
+.TP
+\fB\--id="<song_id>"\fR
+Unique numeric identifier of song already within the database to use as a search
+key. You must provide exactly one of --file, --id, --reference, or --url.
+
+.TP
+\fB\--results="<size>"\fR
+Maximum number of similarity results to return. Default is ten.
+
+.TP
+\fB\--reference="<song_reference>"\fR
+Unique reference of song already within the database to use as a search key.
+You must provide exactly one of --file, --id, --reference, or --url.
+
+.TP
+\fB\--short\fR
+Display results in short form without any JSON as simply "Artist - Title" format.
+
+.TP
+\fB\--url="<url>"\fR
+URL of a song hosted on any of a number of supported external services to use as
+a search key on the server. These include Bandcamp, Mixcloud, SoundCloud, Vimeo,
+and YouTube among many others. You must provide exactly one of --file, --id,
+--reference, or --url.
+
+.so common.man.include
+
+.SH EXAMPLES
+.TP
+$ helios-similar --url "https://emika-official.bandcamp.com/track/battles"
+
+.TP
+$ helios-similar --file "Emika - Battles.flac"
+
+.TP
+$ helios-similar --id 1773
+
+.SH EXIT STATUS
+\fBhelios-similar\fR exits with a status of zero if the server provided the expected response or 1 otherwise.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBhelios\fR(7)
+.br
+\fBhelios-get-song\fR(1)
+.br
+\fIhttps://www.heliosmusic.io\fR
+
