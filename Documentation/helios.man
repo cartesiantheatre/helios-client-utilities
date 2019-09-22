@@ -22,10 +22,19 @@ in the catalogue; similarity matching; and playlist generation. The server and
 its API can be used as the basis for powerful web based applications built on
 top of the Helios platform.
 
-The \fBhelios-extractor\fR, \fBhelios-extractor-cron\fR, and \fBhelios-similar\fR
-utilities are provided by the \fIhelios-utilities\fR package; the \fBheliosd\fR
-daemon by the \fIhelios-server\fR package; and the database setup by the
-\fIhelios-database\fR package.
+The \fBhelios-add-song\fR(1), \fBhelios-delete-song\fR(1),
+\fBhelios-download-song\fR(1), \fBhelios-find-servers\fR(1),
+\fBhelios-get-song\fR(1), \fBhelios-import-songs\fR(1),
+\fBhelios-modify-song\fR(1), \fBhelios-similar\fR(1), and \fBhelios-status\fR(1)
+utilities are all provided by the \fIhelios-client-utilities\fR package; the
+\fBheliosd\fR(1) daemon by the \fIhelios-server\fR package; the database
+backend by the \fIhelios-database-local\fR package; and the pure Python client
+API module by the \fIpython3-helios-client\fR package.
+
+All of the utilities that ship with the \fIhelios-client-utilities\fR package
+were written in Python using the \fIpython3-helios-client\fR module. They can
+serve as examples on how to use the Python client module to get Helios
+integrated into your platform as quickly as possible.
 
 .SH AUTHOR
 Cartesian Theatre <info@cartesiantheatre.com>
