@@ -1,3 +1,9 @@
+\O0
+.TH helios-client-utilities-common 7 "September 2019"
+.SH NAME
+helios-client-utilities-common - Common command line switches
+\O1
+
 .TP
 \fB\--host="<host|ip>"\fR
 Specify the host name or IP address of the server. If not provided, the LAN will

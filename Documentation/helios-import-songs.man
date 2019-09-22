@@ -54,7 +54,7 @@ Row offset to begin processing on. Defaults to 1, or first line of file.
 Number of concurrent imports. Default is the number of logical cores on the
 server.
 
-.so common.man.include
+.so man7/helios-client-utilities-common.7
 
 .SH INPUT FORMAT
 The list of files to import are stored in an import catalogue file. This file is

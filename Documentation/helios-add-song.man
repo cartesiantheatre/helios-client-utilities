@@ -21,7 +21,7 @@ Path to the local song file to upload.
 \fB\--no-store\fR
 Delete the song on the server immediately after analysis. Defaults to store.
 
-.TO
+.TP
 \fB\--id="<song_id>"\fR
 Unique numeric identifier of song to modify. You must provide either this or a
 --reference.
@@ -35,7 +35,7 @@ Unique reference of song to modify. You must provide either this or an
 \fB\--store\fR
 Store the song after analysis on the server. Defaults to store.
 
-.so common.man.include
+.so man7/helios-client-utilities-common.7
 
 .SH EXAMPLES
 .TP

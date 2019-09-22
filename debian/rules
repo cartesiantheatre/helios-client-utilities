@@ -1,0 +1,71 @@
+#!/usr/bin/make -f
+#
+#   Helios.
+#   Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+#
+
+# Output every command that modifies files on the build system...
+DH_VERBOSE = 1
+export DH_OPTIONS=-v
+
+# Tell pybuild the name of our package...
+export PYBUILD_NAME=helios_client_utilities
+
+# Standard rules and preset shell variables...
+include /usr/share/dpkg/default.mk
+
+# Directory containing package since may not be called from current working
+#  directory. MAKEFILE_LIST pre-defined by Make and appended each time another
+#  makefile is included, so first one should be debian/rules...
+PACKAGE_DIR = $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
+
+# Source directory...
+SOURCE_DIR  = $(abspath $(PACKAGE_DIR)/../)
+
+# Temporary directory where package is assembled...
+PACKAGE_BUILD = $(PACKAGE_DIR)/$(DEB_SOURCE)_$(DEB_VERSION_UPSTREAM)
+
+# Main packaging script based on debhelper 7 syntax. The % is an implicit
+#  pattern rule that acts as a universal target...
+%:
+	dh $@  --with python3,bash-completion --buildsystem=pybuild
+
+# We need to override debhelper's clean hook because setuptools leave egg-info
+#  stuff laying around which otherwise would have modified the source package...
+#  <https://blog-archive.copyninja.info/2011/02/tutorial-python-module-packaging-for-debian.html>
+override_dh_clean:
+	@python3 $(SOURCE_DIR)/setup.py clean --all
+	dh_clean
+	@$(RM) -rv $(SOURCE_DIR)/Source/helios/utilities/__pycache__/
+	$(RM) -rv $(SOURCE_DIR)/Source/$(PYBUILD_NAME).egg-info
+	$(RM) -rv $(SOURCE_DIR)/.eggs
+	$(RM) -rv $(SOURCE_DIR)/dist
+	@$(RM) -rv $(PACKAGE_BUILD)
+
+# Prepare an upstream vanilla distribution tarball as per DPM § 4.9...
+#  http://wiki.debian.org/onlyjob/get-orig-source
+get-orig-source: $(DEB_SOURCE)_$(DEB_VERSION_UPSTREAM).orig.tar.bz2 $(info I: $(DEB_SOURCE)_$(DEB_VERSION_UPSTREAM))
+	@mv -v $(PACKAGE_BUILD)/`python3 $(SOURCE_DIR)/setup.py --fullname`.tar.bz2 $(SOURCE_DIR)/../$<
+	@$(RM) -rv $(PACKAGE_BUILD)
+
+# PKG-INFO is a bullshit derived file defined by PEP 314 that forces us to
+#  violate the principal of keeping the source tree pristine and free of derived
+#  files. It needs to be in the source tree when the Debianized source package
+#  is built because setuptools adds it to orig tarball. The orig and patched
+#  trees need to be identical or dpkg-source will raise a warning...
+
+# Prepare an upstream vanilla distribution tarball...
+$(DEB_SOURCE)_$(DEB_VERSION_UPSTREAM).orig.tar.bz2:
+	@echo "# Preparing source for $(DEB_SOURCE) $(DEB_VERSION_UPSTREAM)..."
+	@python3 $(SOURCE_DIR)/setup.py check
+	@mkdir -v $(PACKAGE_BUILD)                                                  \
+	&& cd $(PACKAGE_BUILD)                                                      \
+	&& python3 $(SOURCE_DIR)/setup.py sdist                                     \
+	    --formats=bztar                                                         \
+	    --dist-dir=$(PACKAGE_BUILD)                                             \
+	    egg_info --egg-base=$(PACKAGE_BUILD)
+	@cp -v $(PACKAGE_BUILD)/*.egg-info/PKG-INFO .
+
+# Targets which aren't actually files...
+.PHONY: get-orig-source override_dh_clean
+

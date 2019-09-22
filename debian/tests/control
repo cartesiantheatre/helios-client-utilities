@@ -6,7 +6,14 @@
 # Functional test to verify the server is able to receive and service local
 #  connections...
 Test-Command: helios-status
-Depends: helios-client-utilities
+Depends: helios-client-utilities, helios-server
 Restrictions: isolation-container
-Features: test-name=test_status
+Features: test-name=test_helios_status
+
+# Functional test to verify we can add a song. The tqdm module outputs its
+#  progress bar to stderr, so we need to add that restriction...
+Test-Command: helios-add-song --reference "some_reference" "/usr/share/games/lincity-ng/music/default/02 - Robert van Herk - City Blues.ogg"
+Depends: helios-client-utilities, helios-server, lincity-ng-data
+Restrictions: isolation-container, allow-stderr
+Features: test-name=test_helios_add_song
 

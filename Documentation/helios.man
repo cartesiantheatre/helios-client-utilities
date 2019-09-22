@@ -1,0 +1,63 @@
+.TH helios 7 "September 2019"
+.SH NAME
+Helios - An intelligent music recommendation platform.
+
+.SH SYNOPSIS
+Helios is an intelligent music recommendation platform.
+
+.SH DESCRIPTION
+Helios consists of several pieces of software. The \fBhelios-extractor\fR
+utility performs the acoustic analysis of your music collection. It is generally
+operated from the system cron job \fBhelios-extractor-cron\fR, but can be used
+directly.
+
+The \fBhelios-similar\fR utility can be used to find similar music in your
+collection to a given one. Although the similar music must have been previously
+analyzed and stored within your database with \fBhelios-extractor\fR, the given
+song need not be.
+
+The \fBheliosd\fR system service provides an embedded HTTP server which exports
+a RESTful API. The API can be used for adding, removing, and analyzing new music
+in the catalogue; similarity matching; and playlist generation. The server and
+its API can be used as the basis for powerful web based applications built on
+top of the Helios platform.
+
+The \fBhelios-extractor\fR, \fBhelios-extractor-cron\fR, and \fBhelios-similar\fR
+utilities are provided by the \fIhelios-utilities\fR package; the \fBheliosd\fR
+daemon by the \fIhelios-server\fR package; and the database setup by the
+\fIhelios-database\fR package.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>.
+
+.SH COPYRIGHT
+Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBheliosd\fR(1)
+.br
+\fBhelios-add-song\fR(1)
+.br
+\fBhelios-delete-song\fR(1)
+.br
+\fBhelios-download-song\fR(1)
+.br
+\fBhelios-find-servers\fR(1)
+.br
+\fBhelios-get-song\fR(1)
+.br
+\fBhelios-import-songs\fR(1)
+.br
+\fBhelios-modify-song\fR(1)
+.br
+\fBhelios-similar\fR(1)
+.br
+\fBhelios-status\fR(1)
+.br
+
+\fIhttps://www.heliosmusic.io\fR
+.br
+

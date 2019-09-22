@@ -6,8 +6,7 @@
 
 # System imports...
 import helios
-from common import add_common_arguments, zeroconf_find_server
-from hfilesize import Format, FileSize
+from helios.utilities.common import add_common_arguments, zeroconf_find_server
 from pprint import pprint
 from termcolor import colored
 import argparse
@@ -54,8 +53,8 @@ def add_arguments(argument_parser):
         help=_('Write out song to disk with the given file name.'))
 
 
-# Entry point...
-if __name__ == '__main__':
+# Main function...
+def main():
 
     # Initialize the argument parser...
     argument_parser = argparse.ArgumentParser(
@@ -119,4 +118,8 @@ if __name__ == '__main__':
 
     # Done...
     sys.exit(0)
+
+# Entry point...
+if __name__ == '__main__':
+    main()
 

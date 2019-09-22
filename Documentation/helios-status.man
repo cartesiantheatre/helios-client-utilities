@@ -12,7 +12,7 @@ uptime, and so forth.
 
 .SH OPTIONS
 
-.so common.man.include
+.so man7/helios-client-utilities-common.7
 
 .SH EXAMPLES
 .TP

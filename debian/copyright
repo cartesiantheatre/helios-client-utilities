@@ -1,0 +1,12 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: helios-client-utilities
+Upstream-Contact: Cartesian Theatre <info@cartesiantheatre.com>
+Source: git@github.com:cartesiantheatre/helios-client-utilities.git
+Disclaimer: See Copying.
+Comment: See Copying.
+
+Files: *
+Copyright: 2015-2019, Cartesian Theatre
+License: GPL
+ /usr/share/common-licenses/GPL-3
+

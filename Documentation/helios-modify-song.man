@@ -42,7 +42,7 @@ Unique reference of song to modify. You must provide either this or an
 \fB\--store\fR
 Store the song after analysis on the server. Defaults to true.
 
-.so common.man.include
+.so man7/helios-client-utilities-common.7
 
 .SH EXAMPLES
 .TP

@@ -36,7 +36,7 @@ is no pause.
 Unique reference of song to query. You must provide exactly one of --id,
 --reference, or --all.
 
-.so common.man.include
+.so man7/helios-client-utilities-common.7
 
 .SH EXAMPLES
 .TP

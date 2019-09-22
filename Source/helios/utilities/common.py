@@ -4,9 +4,6 @@
 #   Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
 #
 
-# Our modules...
-from helios.client import get_version
-
 # System imports...
 import argparse
 import re
@@ -180,4 +177,7 @@ def get_preferred_local_ip_address():
     # Return the IP address...
     return local_ip_address
 
+# Get utilities package version...
+def get_version():
+    return '0.5.dev20190920'
 

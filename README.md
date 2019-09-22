@@ -28,23 +28,47 @@ Traditionally, in the absence of such technology, the way this has been done for
 
 The following is a summary of the utilities included in this package. For detailed information on their usage consult their man page.
 
-`helios-add-song`: Add a single song to a Helios server's catalogue.
+| Command | Description |
+|---------|-------------|
+| `helios-add-song` | Add a single song to a Helios server's catalogue. |
+| `helios-delete-song` | Delete a remote song or songs on a Helios server. |
+| `helios-download-song` | Download a song from a remote Helios server. |
+| `helios-find-servers` | List all helios servers detected on your LAN. |
+| `helios-get-song` | Query metadata for a song within a remote Helios server. |
+| `helios-import-songs` | Batch import songs into Helios. |
+| `helios-modify-song` | Tool to edit metadata of remote songs already analyzed on a Helios server. |
+| `helios-similar` | Search for similar songs on a remote Helios server. |
+| `helios-status` | Query the status of a remote Helios server. |
 
-`helios-delete-song`: Delete a remote song or songs on a Helios server.
+## Quick installation
 
-`helios-download-song`: Download a song from a remote Helios server.
+### Ubuntu
+Packages already prepared for Ubuntu 19.04 (disco) and later are available on our Personal Package Archive (PPA) [here](https://launchpad.net/%7Ekip/+archive/ubuntu/helios-public). To get the package installed and be up and running in seconds, just run the following two commands:
 
-`helios-find-servers`: List all helios servers detected on your LAN.
+```console
+$ sudo add-apt-repository ppa:kip/helios-public
+$ sudo apt install helios-client-utilities
+$ man helios
+```
 
-`helios-get-song`: Query metadata for a song within a remote Helios server.
+If you have one or more Helios servers running on your local area network (LAN), you can probe for it like so:
+```console
+$ helios-find-servers
+```
 
-`helios-import-songs`: Batch import songs into Helios.
+To verify your Helios server is operational, run the following:
+```console
+$ helios-status --host <some_host_name_or_ip>
+```
+If you remove the `--host` switch and its argument `helios-status(1)` will automatically query the first `heliosd(1)` server it finds on your network.
 
-`helios-modify-song`: Tool to edit metadata of remote songs already analyzed on a Helios server.
+## Documentation
 
-`helios-similar`: Search for similar songs on a remote Helios server.
+For more documentation see the `helios(7)` man page.
 
-`helios-status`: Query the status of a remote Helios server.
+```console
+$ man helios
+```
 
 ## Licensing
 

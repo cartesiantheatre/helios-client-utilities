@@ -6,8 +6,7 @@
 
 # System imports...
 import helios
-from common import add_common_arguments, zeroconf_find_server
-from hfilesize import Format, FileSize
+from helios.utilities.common import add_common_arguments, zeroconf_find_server
 from pprint import pprint
 from termcolor import colored
 import argparse

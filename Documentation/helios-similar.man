@@ -56,7 +56,7 @@ a search key on the server. These include Bandcamp, Mixcloud, SoundCloud, Vimeo,
 and YouTube among many others. You must provide exactly one of --file, --id,
 --reference, or --url.
 
-.so common.man.include
+.so man7/helios-client-utilities-common.7
 
 .SH EXAMPLES
 .TP

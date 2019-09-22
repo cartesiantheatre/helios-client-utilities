@@ -1,0 +1,154 @@
+# helios-add-song(1) completion
+_have helios-add-song &&
+_helios_add_song()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--file --no-store --id --reference --store --host --port --token --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# helios-delete-song(1) completion
+_have helios-delete-song &&
+_helios_delete_song()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--delete-all --delete-file-only --id --reference --host --port --token --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# helios-download-song(1) completion
+_have helios-download-song &&
+_helios_download_song()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--id --reference --output -o --host --port --token --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# helios-get-song(1) completion
+_have helios-get-song &&
+_helios_get_song()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--all --id --paginate --reference --host --port --token --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# helios-import-songs(1) completion
+_have helios-import-songs &&
+_helios_import_songs()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--delimiter --max-errors --no-store --offset --threads --host --port --token --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# helios-modify-song(1) completion
+_have helios-modify-song &&
+_helios_modify_song()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--delete-file --edit-album --edit-artist --edit-file --edit-genre --edit-isrc --edit-reference --edit-title --edit-year --id --no-store --store --reference --host --port --token --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# helios-similar(1) completion
+_have helios-similar &&
+_helios_similar()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--file --id --results --reference --short --url --host --port --token --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# helios-status(1) completion
+_have helios-status &&
+_helios_status()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--host --port --token --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# Register completion callbacks...
+complete -f -F _helios_add_song helios-add-song
+complete -f -F _helios_delete_song helios-delete-song
+complete -f -F _helios_download_song helios-download-song
+complete -f -F _helios_get_song helios-get-song
+complete -f -F _helios_import_songs helios-import-songs
+complete -f -F _helios_modify_song helios-modify-song
+complete -f -F _helios_similar helios-similar
+complete -f -F _helios_status helios-status
+

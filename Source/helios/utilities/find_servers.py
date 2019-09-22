@@ -6,10 +6,9 @@
 
 # Our imports...
 import helios
-from common import LocalNetworkServiceListener
+from helios.utilities.common import LocalNetworkServiceListener
 
 # System imports...
-from hfilesize import Format, FileSize
 from pprint import pprint
 import argparse
 import attr
@@ -54,7 +53,7 @@ def main():
 
         # Unless the user requests to abort...
         except KeyboardInterrupt:
-            print('Aborting, please wait...')
+            print('\rAborting, please wait...')
 
         # Cleanup Zeroconf...
         finally:

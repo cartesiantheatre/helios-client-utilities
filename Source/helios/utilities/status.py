@@ -6,8 +6,7 @@
 
 # System imports...
 import helios
-from common import add_common_arguments, zeroconf_find_server
-from hfilesize import Format, FileSize
+from helios.utilities.common import add_common_arguments, zeroconf_find_server
 from pprint import pprint
 from termcolor import colored
 import argparse
@@ -42,7 +41,8 @@ def main():
 
         # If no host provided, use Zeroconf auto detection...
         if not arguments.host:
-            arguments.host = zeroconf_find_server()[0]
+            arguments.host, arguments.port = zeroconf_find_server()
+
 
         # Create a client...
         client = helios.client(

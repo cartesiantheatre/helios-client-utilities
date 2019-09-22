@@ -1,0 +1,36 @@
+Source: helios-client-utilities
+Section: python
+Priority: optional
+Maintainer: Cartesian Theatre Packaging <packaging@cartesiantheatre.com>
+Standards-Version: 4.3.0.3
+Build-Depends:
+    bash-completion (>= 1:2.1),
+    debhelper-compat (= 11),
+    dh-exec,
+    dh-python,
+    lintian,
+    python3-all,
+    python3-attr,
+    python3-colorama,
+    python3-helios-client,
+    python3-setuptools,
+    python3-simplejson,
+    python3-termcolor,
+    python3-tqdm,
+    python3-zeroconf
+Homepage: https://www.heliosmusic.io
+Vcs-Git: https://www.github.com/cartesiantheatre/python-helios-client.git
+Vcs-Browser: https://github.com/cartesiantheatre/python-helios-client
+
+Package: helios-client-utilities
+Architecture: all
+Multi-Arch: foreign
+Depends:
+    bash-completion (>= 1:2.1),
+    ${misc:Depends},
+    ${python3:Depends}
+Description: utilities for interacting with a Helios server
+ Helios is an intelligent music recommendation platform.
+ .
+ This is a collection of utilities for managing a Helios server.
+

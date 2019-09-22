@@ -35,11 +35,7 @@ Unique numeric identifier of song to delete. You must provide either this or a
 \fB\--reference="<song_reference>"\fR
 Unique reference of song to delete. You must provide either this or an \fB--id\fR if you are not deleting all songs.
 
-.TP
-\fB\-h\fR \fB\--help\fR
-Show this help.
-
-.so common.man.include
+.so man7/helios-client-utilities-common.7
 
 .SH EXAMPLES
 .TP

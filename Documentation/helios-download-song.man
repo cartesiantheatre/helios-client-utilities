@@ -15,7 +15,7 @@ probably should be looking at \fBhelios-get-song\fR(1).
 
 .SH OPTIONS
 
-.TO
+.TP
 \fB\--id="<song_id>"\fR
 Unique numeric identifier of song to modify. You must provide either this or a
 --reference.
@@ -29,7 +29,7 @@ Unique reference of song to modify. You must provide either this or an
 \fB\-o "<file>" --output="<file>"\fR
 Write out song to disk with the given file name.
 
-.so common.man.include
+.so man7/helios-client-utilities-common.7
 
 .SH EXAMPLES
 .TP

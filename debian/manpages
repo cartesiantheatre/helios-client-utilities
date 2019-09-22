@@ -1,0 +1,12 @@
+Documentation/helios.man
+Documentation/helios-client-utilities-common.man
+Documentation/helios-add-song.man
+Documentation/helios-delete-song.man
+Documentation/helios-download-song.man
+Documentation/helios-find-servers.man
+Documentation/helios-get-song.man
+Documentation/helios-import-songs.man
+Documentation/helios-modify-song.man
+Documentation/helios-similar.man
+Documentation/helios-status.man
+
