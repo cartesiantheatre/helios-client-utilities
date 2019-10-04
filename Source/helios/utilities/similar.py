@@ -117,7 +117,7 @@ def main():
         # Prepare request parameters...
         similarity_search_dict = {}
         if arguments.similar_file:
-            similarity_search_dict['similar_file'] = base64.b64encode(open(arguments.similar_file, 'rb').read())
+            similarity_search_dict['similar_file'] = base64.b64encode(open(arguments.similar_file, 'rb').read()).decode('ascii')
         if arguments.similar_id:
             similarity_search_dict['similar_id'] = arguments.similar_id
         if arguments.similar_reference:

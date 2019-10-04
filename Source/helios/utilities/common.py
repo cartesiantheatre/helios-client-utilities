@@ -10,6 +10,9 @@ import re
 import socket
 import threading
 
+# Helios...
+from helios.utilities import __version__
+
 # Other imports...
 from termcolor import colored
 from zeroconf import ServiceBrowser, Zeroconf
@@ -179,5 +182,5 @@ def get_preferred_local_ip_address():
 
 # Get utilities package version...
 def get_version():
-    return '0.5.dev20190920'
+    return __version__.version
 
