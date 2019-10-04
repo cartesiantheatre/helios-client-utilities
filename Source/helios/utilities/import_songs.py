@@ -101,7 +101,7 @@ class BatchSongImporter(object):
 
         # Construct a Helios client...
         client = helios.client(
-            token=self._arguments.token,
+            key=self._arguments.key,
             host=self._arguments.host,
             port=self._arguments.port,
             verbose=self._arguments.verbose)
@@ -337,7 +337,7 @@ def main():
 
         # Create a client...
         client = helios.client(
-            token=arguments.token,
+            key=arguments.key,
             host=arguments.host,
             port=arguments.port,
             verbose=arguments.verbose)

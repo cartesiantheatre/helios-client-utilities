@@ -95,7 +95,7 @@ def main():
         client = helios.client(
             host=arguments.host,
             port=arguments.port,
-            token=arguments.token,
+            key=arguments.key,
             verbose=arguments.verbose)
 
         # Create a schema to serialize stored song objects into JSON...

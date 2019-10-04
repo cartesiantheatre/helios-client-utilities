@@ -7,7 +7,7 @@ _helios_add_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--file --no-store --id --reference --store --host --port --token --verbose --version --help -h"
+    opts="--file --no-store --id --reference --store --host --port --key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -25,7 +25,7 @@ _helios_delete_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--delete-all --delete-file-only --id --reference --host --port --token --verbose --version --help -h"
+    opts="--delete-all --delete-file-only --id --reference --host --port --key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -43,7 +43,7 @@ _helios_download_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--id --reference --output -o --host --port --token --verbose --version --help -h"
+    opts="--id --reference --output -o --host --port --key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -61,7 +61,7 @@ _helios_get_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--all --id --paginate --reference --host --port --token --verbose --version --help -h"
+    opts="--all --id --paginate --reference --host --port --key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -79,7 +79,7 @@ _helios_import_songs()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--delimiter --max-errors --no-store --offset --threads --host --port --token --verbose --version --help -h"
+    opts="--delimiter --max-errors --no-store --offset --threads --host --port --key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -97,7 +97,7 @@ _helios_modify_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--delete-file --edit-album --edit-artist --edit-file --edit-genre --edit-isrc --edit-reference --edit-title --edit-year --id --no-store --store --reference --host --port --token --verbose --version --help -h"
+    opts="--delete-file --edit-album --edit-artist --edit-file --edit-genre --edit-isrc --edit-reference --edit-title --edit-year --id --no-store --store --reference --host --port --key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -115,7 +115,7 @@ _helios_similar()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--file --id --results --reference --short --url --host --port --token --verbose --version --help -h"
+    opts="--file --id --results --reference --short --url --host --port --key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -133,7 +133,7 @@ _helios_status()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--host --port --token --verbose --version --help -h"
+    opts="--host --port --key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then

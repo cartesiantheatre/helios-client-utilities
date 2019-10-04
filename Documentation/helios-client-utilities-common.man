@@ -14,9 +14,9 @@ be probed until it finds the server.
 Specify the port the server is listening on. Defaults to 6440.
 
 .TP
-\fB\--token="<token>"\fR
+\fB\--key="<key>"\fR
 Depending on the configuration of the server, any client requests may require a
-client API token to be submitted. Defaults to none.
+client API key to be submitted. Defaults to none.
 
 .TP
 \fB\--verbose\fR

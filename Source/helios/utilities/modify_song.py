@@ -186,7 +186,7 @@ def main():
 
         # Create a client...
         client = helios.client(
-            token=arguments.token,
+            key=arguments.key,
             host=arguments.host,
             port=arguments.port,
             verbose=arguments.verbose)

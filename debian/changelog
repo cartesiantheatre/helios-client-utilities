@@ -1,3 +1,9 @@
+helios-client-utilities (0.5-git20191003-ct1) disco; urgency=medium
+
+  * Version 0.5-git20191003.
+
+ -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Thu, 03 Oct 2019 22:02:54 -0700
+
 helios-client-utilities (0.5-git20190922-ct2) disco; urgency=medium
 
   * First stable release.

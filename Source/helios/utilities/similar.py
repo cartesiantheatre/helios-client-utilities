@@ -11,6 +11,7 @@ from helios.utilities.common import add_common_arguments, zeroconf_find_server
 from pprint import pprint
 from termcolor import colored
 import argparse
+import base64
 import attr
 import colorama
 import datetime
@@ -110,7 +111,7 @@ def main():
         client = helios.client(
             host=arguments.host,
             port=arguments.port,
-            token=arguments.token,
+            key=arguments.key,
             verbose=arguments.verbose)
 
         # Prepare request parameters...

@@ -37,13 +37,13 @@ def add_common_arguments(argument_parser):
         dest='port',
         help=_('Port remote server is listening on. Defaults to 6440.'))
 
-    # Define behaviour for --token...
+    # Define behaviour for --key...
     argument_parser.add_argument(
-        '--token',
+        '--key',
         action='store',
         default=None,
-        dest='token',
-        help=_('Client API token to submit to remote server with each request. '
+        dest='key',
+        help=_('Client API key to submit to remote server with each request. '
                'This may or may not be required, depending on your server\'s configuration.'))
 
     # Define behaviour for --verbose...
