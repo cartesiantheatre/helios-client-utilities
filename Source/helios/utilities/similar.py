@@ -73,7 +73,7 @@ def add_arguments(argument_parser):
     argument_parser.add_argument(
         '--short',
         action='store_true',
-        default='False',
+        default=False,
         dest='short',
         help=_('Display results in short form without any JSON as simply \"Artist - Title\" format.'))
 

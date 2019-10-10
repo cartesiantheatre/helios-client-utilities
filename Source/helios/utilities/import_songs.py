@@ -47,7 +47,7 @@ def add_arguments(argument_parser):
     # Define behaviour for --max-errors...
     argument_parser.add_argument(
         '--max-errors',
-        default=2,
+        default=10,
         dest='maximum_errors',
         nargs='?',
         type=int,
@@ -173,7 +173,7 @@ class BatchSongImporter(object):
                 logging.info(F"thread {consumer_thread_index}: {reference} {str(someException)}")# (type {type(someException)})")
 
                 # Update error counter...
-                #self._errors_remaining -= 1
+                self._errors_remaining -= 1
 
                 # If maximum error count reached, abort...
                 if self._errors_remaining <= 0:
@@ -205,6 +205,10 @@ class BatchSongImporter(object):
             logging.info(F'thread {consumer_thread_index}: {reference} Awaiting song analysis.')
 
        # time.sleep(0.001)
+
+    # Get the number of errors remaining permitted...
+    def get_errors_remaining(self):
+        return self._errors_remaining
 
     # Start batch import...
     def start(self, csv_reader):
@@ -331,6 +335,9 @@ def main():
     # Try to process the catalogue file...
     try:
 
+        # Input file...
+        catalogue_file = None
+
         # If no host provided, use Zeroconf auto detection...
         if not arguments.host:
             arguments.host = zeroconf_find_server()[0]
@@ -378,7 +385,7 @@ def main():
         batch_importer.start(reader)
 
         # Determine how we will exit...
-        success = True #(errors_remaining == arguments.maximum_errors)
+        success = (batch_importer.get_errors_remaining() == arguments.maximum_errors)
 
     # User trying to abort...
     except KeyboardInterrupt:
@@ -402,7 +409,8 @@ def main():
             del batch_importer
 
         # Close input catalogue file...
-        catalogue_file.close()
+        if catalogue_file:
+            catalogue_file.close()
 
     # Exit with status code based on whether we were successful or not...
     if success:

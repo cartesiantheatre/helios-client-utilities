@@ -111,9 +111,9 @@ Batch import the above file:
 $ helios-import-songs --delimiter ' ' catalogue.csv.gz
 
 .SH EXIT STATUS
-\fBhelios-import-songs\fR exits with a status of zero if the server
-provided the expected response or 1 otherwise. If there were no problems
-importing all of the proposed files then a zero exit status should occur.
+\fBhelios-import-songs\fR exits with a status of zero if the maximum number of
+errors was not exhausted or there were no other problems. Otherwise it will
+complete with an exit status of one.
 
 .SH AUTHOR
 Cartesian Theatre <info@cartesiantheatre.com>

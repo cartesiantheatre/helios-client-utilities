@@ -15,5 +15,4 @@ Features: test-name=test_helios_status
 Tests: test-utilities-usage.sh
 Depends: helios-client-utilities, helios-server, lincity-ng-data
 Restrictions: isolation-container, allow-stderr
-Features: test-name=test_helios_transactions
 
