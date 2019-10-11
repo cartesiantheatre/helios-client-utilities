@@ -20,7 +20,7 @@ fi
 cd $AUTOPKGTEST_TMP
 
 echo "*** Verifying server status..."
-helios-status
+helios-status --verbose
 
 echo "*** Adding a song..."
 helios-add-song --reference "$SONG_REFERENCE" "$SAMPLE_SONG_B"
