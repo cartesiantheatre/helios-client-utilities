@@ -80,7 +80,7 @@ setup(
     # Options...
     include_package_data=True,
     install_requires=[
-        'attrs',
+        'attrs >= 18.2.0',
         'colorama',
         'helios-client',
         'simplejson',

@@ -10,7 +10,7 @@ Build-Depends:
     dh-python,
     lintian,
     python3-all,
-    python3-attr,
+    python3-attr (>= 18.2.0),
     python3-colorama,
     python3-helios-client,
     python3-setuptools,
