@@ -5,18 +5,39 @@ helios-client-utilities-common - Common command line switches
 \O1
 
 .TP
+\fB\--api-key="<key>"\fR
+Depending on the configuration of the server, any client requests may require a
+client API key to be submitted. Defaults to none.
+
+.TP
 \fB\--host="<host|ip>"\fR
-Specify the host name or IP address of the server. If not provided, the LAN will
-be probed until it finds the server.
+Specify the host name or IP address of the server. If not provided, your local
+area network will be probed via zeroconf until it a Helios server is found. In
+that event the host, port, and encryption support will be automatically detected
+and override any command line settings.
 
 .TP
 \fB\--port="<port>"\fR
 Specify the port the server is listening on. Defaults to 6440.
 
 .TP
-\fB\--key="<key>"\fR
-Depending on the configuration of the server, any client requests may require a
-client API key to be submitted. Defaults to none.
+\fB\--tls-disabled\fR
+Disable encryption. By default encryption is enabled.
+
+.TP
+\fB\--tls-ca-file="<file>"\fR
+When encryption is enabled, verify Helios server's certificate is signed by the
+given certificate authority.
+
+.TP
+\fB\--tls-certificate="<file>"\fR
+When encryption is enabled, use this public key. Use with the corresponding
+\fB\--tls-key\fR switch.
+
+.TP
+\fB\--tls-key="<file>"\fR
+When encryption is enabled, use this private key. Use with the corresponding
+\fB\--tls-certificate\fR switch.
 
 .TP
 \fB\--verbose\fR

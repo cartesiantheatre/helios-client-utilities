@@ -99,11 +99,15 @@ class BatchSongImporter(object):
 
         logging.debug(F'thread {consumer_thread_index}: spawned')
 
-        # Construct a Helios client...
+        # Create a client...
         client = helios.client(
-            key=self._arguments.key,
+            api_key=self._arguments.api_key,
             host=self._arguments.host,
             port=self._arguments.port,
+            tls=self._arguments.tls,
+            tls_ca_file=self._arguments.tls_ca_file,
+            tls_certificate=self._arguments.tls_certificate,
+            tls_key=self._arguments.tls_key,
             verbose=self._arguments.verbose)
 
         # Keep adding songs as long as we haven't been instructed to stop...
@@ -340,13 +344,17 @@ def main():
 
         # If no host provided, use Zeroconf auto detection...
         if not arguments.host:
-            arguments.host = zeroconf_find_server()[0]
+            arguments.host, arguments.port, arguments.tls = zeroconf_find_server()
 
         # Create a client...
         client = helios.client(
-            key=arguments.key,
             host=arguments.host,
             port=arguments.port,
+            api_key=arguments.api_key,
+            tls=arguments.tls,
+            tls_ca_file=arguments.tls_ca_file,
+            tls_certificate=arguments.tls_certificate,
+            tls_key=arguments.tls_key,
             verbose=arguments.verbose)
 
         # Count the number of songs in the input catalogue...

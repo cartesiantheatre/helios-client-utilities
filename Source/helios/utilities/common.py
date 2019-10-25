@@ -24,6 +24,15 @@ _ = gettext.gettext
 # Add common arguments to argument parser...
 def add_common_arguments(argument_parser):
 
+    # Define behaviour for --api-key...
+    argument_parser.add_argument(
+        '--api-key',
+        action='store',
+        default=None,
+        dest='api_key',
+        help=_('Client API key to submit to remote server with each request. '
+               'This may or may not be required, depending on your server\'s configuration.'))
+
     # Define behaviour for --host...
     argument_parser.add_argument(
         '--host',
@@ -40,14 +49,37 @@ def add_common_arguments(argument_parser):
         dest='port',
         help=_('Port remote server is listening on. Defaults to 6440.'))
 
-    # Define behaviour for --key...
+    # Define behaviour for --tls-disabled...
     argument_parser.add_argument(
-        '--key',
+        '--tls-disabled',
+        action='store_false',
+        default=True,
+        dest='tls',
+        help=_('Disable encryption. By default encryption is enabled.'))
+
+    # Define behaviour for --tls-ca-file...
+    argument_parser.add_argument(
+        '--tls-ca-file',
         action='store',
         default=None,
-        dest='key',
-        help=_('Client API key to submit to remote server with each request. '
-               'This may or may not be required, depending on your server\'s configuration.'))
+        dest='tls_ca_file',
+        help=_('Verify server\'s certificate is signed by the given certificate authority.'))
+
+    # Define behaviour for --tls-certificate...
+    argument_parser.add_argument(
+        '--tls-certificate',
+        action='store',
+        default=None,
+        dest='tls_certificate',
+        help=_('When encryption is enabled, use this public key.'))
+
+    # Define behaviour for --tls-key...
+    argument_parser.add_argument(
+        '--tls-key',
+        action='store',
+        default=None,
+        dest='tls_key',
+        help=_('When encryption is enabled, use this private key.'))
 
     # Define behaviour for --verbose...
     argument_parser.add_argument(
@@ -69,9 +101,10 @@ class LocalNetworkServiceListener:
 
     # Constructor...
     def __init__(self):
-        self.found_event    = threading.Event()
-        self._servers       = []
-        self._name_regex    = r'^Helios(\s\#\d*)?\._http\._tcp\.local\.$'
+        self.found_event        = threading.Event()
+        self._servers           = []
+        self._name_regex        = r'^Helios(\s\#\d*)?\._http(s)?\._tcp\.local\.$'
+        self._service_tls_regex = r'^Helios(\s\#\d*)?\._https\._tcp\.local\.$'
 
     # Service online callback...
     def add_service(self, zeroconf, type, name):
@@ -90,13 +123,17 @@ class LocalNetworkServiceListener:
             # Extract host and port...
             host = F'{info.address[0]}.{info.address[1]}.{info.address[2]}.{info.address[3]}'
             port = info.port
+            tls  = True if re.match(self._service_tls_regex, name) is not None else False
 
             # Add to available list, if not already...
-            if not self._servers.count((host,port)):
-                self._servers.append((host,port))
+            if not self._servers.count((host,port,tls)):
+                self._servers.append((host,port,tls))
 
             # Notify user...
-            print(F"Helios server {colored(_('online'), 'green')} at {host}:{port}")
+            if re.match(self._service_tls_regex, name) is not None:
+                print(F"Helios server {colored(_('online'), 'green')} at {host}:{port} ({colored(_('TLS'), 'green')})")
+            else:
+                print(F"Helios server {colored(_('online'), 'green')} at {host}:{port} ({colored(_('TLS disabled'), 'red')})")
 
             # Alert any waiting threads at least one server is found...
             self.found_event.set()
@@ -121,14 +158,15 @@ class LocalNetworkServiceListener:
         port = info.port
 
         # Remove from available list if it was already there...
-        while self._servers.count((host,port)):
-            self._servers.remove((host,port))
+        for server in self._servers:
+            if (server[0] is host) and (server[1] is port):
+                self._servers.remove(server)
 
         # If nothing is available, clear event flag...
         if not len(self._servers):
             self.found_event.clear()
 
-    # Get host and port list of all servers found...
+    # Get server list of all servers found...
     def get_found(self):
         return self._servers
 
@@ -147,15 +185,18 @@ def zeroconf_find_server():
     listener = LocalNetworkServiceListener()
 
     # Begin listening...
-    browser = ServiceBrowser(zeroconf, "_http._tcp.local.", listener)
+    browser = ServiceBrowser(zc=zeroconf, type_="_http._tcp.local.", listener=listener)
+    browser_tls = ServiceBrowser(zc=zeroconf, type_="_https._tcp.local.", listener=listener)
 
     # Wait until it finds server...
     listener.found_event.wait()
 
     # Cleanup...
+    browser.cancel()
+    browser_tls.cancel()
     zeroconf.close()
 
-    # Return host and port of first found...
+    # Return host, port, and TLS flag of first found...
     return listener.get_found()[0]
 
 # Return the preferred local IP address...

@@ -85,13 +85,17 @@ def main():
 
         # If no host provided, use Zeroconf auto detection...
         if not arguments.host:
-            arguments.host = zeroconf_find_server()[0]
+            arguments.host, arguments.port, arguments.tls = zeroconf_find_server()
 
         # Create a client...
         client = helios.client(
-            key=arguments.key,
             host=arguments.host,
             port=arguments.port,
+            api_key=arguments.api_key,
+            tls=arguments.tls,
+            tls_ca_file=arguments.tls_ca_file,
+            tls_certificate=arguments.tls_certificate,
+            tls_key=arguments.tls_key,
             verbose=arguments.verbose)
 
         # Prepare new song data...

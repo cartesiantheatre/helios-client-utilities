@@ -44,7 +44,8 @@ def main():
         listener = LocalNetworkServiceListener()
 
         # Begin listening...
-        browser = ServiceBrowser(zeroconf, "_http._tcp.local.", listener)
+        browser = ServiceBrowser(zc=zeroconf, type_="_http._tcp.local.", listener=listener)
+        browser_tls = ServiceBrowser(zc=zeroconf, type_="_https._tcp.local.", listener=listener)
 
         # Keep blocking while scanning...
         try:
@@ -57,6 +58,8 @@ def main():
 
         # Cleanup Zeroconf...
         finally:
+            browser.cancel()
+            browser_tls.cancel()
             zeroconf.close()
 
         # Remember that we were successful...
