@@ -66,7 +66,7 @@ Each song must be on its own line. Each column is separated by a comma delimiter
 by default, but can be overridden with \fI--delimiter\fR. In the example below
 the '|' character denotes the delimiter.
 
-\fIreference\fR|\fIalbum\fR|\fIartist\fR|\fItitle\fR|\fIgenre\fR|\fIisrc\fR|\fIyear\fR|\fIpath\fR
+\fIreference\fR|\fIalbum\fR|\fIartist\fR|\fItitle\fR|\fIgenre\fR|\fIisrc\fR|\fIbeats_per_minute\fR|\fIyear\fR|\fIpath\fR
 
 Blank lines are ignored. Each fields should be surrounded by double quotes with
 any double quote character within the field's value escaped as \\".
@@ -75,11 +75,11 @@ The \fIreference\fR field is mandatory and must be a unique identifier you would
 like assigned to the song to be used in future queries. This field may contain
 any combination of alpha-numeric characters and underscores.
 
-The \fIalbum\fR, \fIartist\fR, \fIgenre\fR, \fIisrc\fR, and \fIyear\fR fields
-may be empty strings or set to \fB<AUTODETECT>\fR. The difference is that an
-empty string means that field should remain empty, whereas the latter instructs
-the server to try and autodetect the field out of the audio stream's embedded
-metadata during analysis.
+The \fIalbum\fR, \fIartist\fR, \fIgenre\fR, \fIisrc\fR, \fIbeats_per_minute\fR,
+and \fIyear\fR fields may be empty strings or set to \fB<AUTODETECT>\fR. The
+difference is that an empty string means that field should remain empty, whereas
+the latter instructs the server to try and autodetect the field out of the audio
+stream's embedded metadata during analysis.
 
 Although the \fItitle\fR field may be set to \fB<AUTODETECT>\fR as well, if the
 server cannot automatically detect a non-empty value from the embedded metadata
@@ -103,7 +103,7 @@ Sample compressed \fIcatalogue.csv\fR with space delimiter:
 
 $ cat catalogue.csv.gz | gunzip
     ...
-    "REFERENCE_123" "Some album" "Some artist" "Some \"title\"", "Some genre", "USA2P0502717", "2003", "/mnt/nfs/music/some_song.flac"
+    "REFERENCE_123" "Some album" "Some artist" "Some \"title\"" "Some genre" "USA2P0502717" "135.72" "2003" "/mnt/nfs/music/some_song.flac"
     ...
 
 Batch import the above file:

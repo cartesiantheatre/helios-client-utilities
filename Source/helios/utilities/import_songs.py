@@ -153,6 +153,7 @@ class BatchSongImporter(object):
                     'title' : (csv_row['title'], None)[csv_row['title'] == autodetect],
                     'genre' : (csv_row['genre'], None)[csv_row['genre'] == autodetect],
                     'isrc' : (csv_row['isrc'], None)[csv_row['isrc'] == autodetect],
+                    'beats_per_minute' : (csv_row['beats_per_minute'], None)[csv_row['beats_per_minute'] == autodetect],
                     'year' : (csv_row['year'], None)[csv_row['year'] == autodetect],
                     'file' : base64.b64encode(open(csv_row['path'], 'rb').read()).decode('ascii'),
                     'reference' : csv_row['reference']
@@ -329,6 +330,7 @@ def main():
         'title',
         'genre',
         'isrc',
+        'beats_per_minute',
         'year',
         'path'
     ]

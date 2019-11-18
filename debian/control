@@ -1,5 +1,5 @@
 Source: helios-client-utilities
-Section: python
+Section: sound
 Priority: optional
 Maintainer: Cartesian Theatre Packaging <packaging@cartesiantheatre.com>
 Standards-Version: 4.3.0.3
