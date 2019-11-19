@@ -87,6 +87,14 @@ def add_arguments(argument_parser):
         nargs='?',
         help=_('Artist to replace existing field.'))
 
+    # Song beats per minute to replace existing field...
+    argument_parser.add_argument(
+        '--edit-beats-per-minute',
+        dest='song_edit_beats_per_minute',
+        required=False,
+        nargs='?',
+        help=_('Beats per minute to replace existing field.'))
+
     # Song file to replace existing field...
     argument_parser.add_argument(
         '--edit-file',
@@ -170,6 +178,7 @@ def main():
     # Initialize all the other patchable song fields...
     if arguments.song_edit_album is not None: patch_song_dict['album'] = arguments.song_edit_album
     if arguments.song_edit_artist is not None: patch_song_dict['artist'] = arguments.song_edit_artist
+    if arguments.song_edit_beats_per_minute is not None: patch_song_dict['beats_per_minute'] = arguments.song_edit_beats_per_minute
     if arguments.song_edit_genre is not None: patch_song_dict['genre'] = arguments.song_edit_genre
     if arguments.song_edit_isrc is not None: patch_song_dict['isrc'] = arguments.song_edit_isrc
     if arguments.song_edit_reference is not None: patch_song_dict['reference'] = arguments.song_edit_reference

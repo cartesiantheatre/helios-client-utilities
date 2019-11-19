@@ -42,6 +42,10 @@ override_dh_clean:
 	$(RM) -rv $(SOURCE_DIR)/dist
 	@$(RM) -rv $(PACKAGE_BUILD)
 
+# Add a CSV import example that we use with autopkgtest...
+override_dh_installexamples:
+	dh_installexamples -A $(SOURCE_DIR)/debian/tests/sample_import_lincity.csv
+
 # Prepare an upstream vanilla distribution tarball as per DPM § 4.9...
 #  http://wiki.debian.org/onlyjob/get-orig-source
 get-orig-source: $(DEB_SOURCE)_$(DEB_VERSION_UPSTREAM).orig.tar.bz2 $(info I: $(DEB_SOURCE)_$(DEB_VERSION_UPSTREAM))
@@ -67,5 +71,5 @@ $(DEB_SOURCE)_$(DEB_VERSION_UPSTREAM).orig.tar.bz2:
 	@cp -v $(PACKAGE_BUILD)/*.egg-info/PKG-INFO .
 
 # Targets which aren't actually files...
-.PHONY: get-orig-source override_dh_clean
+.PHONY: get-orig-source override_dh_clean override_dh_installexamples
 

@@ -1,4 +1,4 @@
-.TH helios-import-songs 1 "July 2019"
+.TH helios-import-songs 1 "November 2019"
 .SH NAME
 helios-import-songs - Batch import songs into Helios.
 
@@ -62,31 +62,49 @@ just a plain text file that may be optionally gzip compressed. The advantage of
 compressing the file, besides the obvious, is it gives you automatic integrity
 verification during decompression.
 
-Each song must be on its own line. Each column is separated by a comma delimiter
-by default, but can be overridden with \fI--delimiter\fR. In the example below
-the '|' character denotes the delimiter.
+Each song must be on its own line. Blank lines are ignored. Each column is
+separated by a comma delimiter by default, but can be optionally overridden with
+\fI--delimiter\fR. In the example below the '|' character denotes the delimiter.
 
 \fIreference\fR|\fIalbum\fR|\fIartist\fR|\fItitle\fR|\fIgenre\fR|\fIisrc\fR|\fIbeats_per_minute\fR|\fIyear\fR|\fIpath\fR
 
-Blank lines are ignored. Each fields should be surrounded by double quotes with
-any double quote character within the field's value escaped as \\".
+All string fields should be surrounded by double quotes. Any double quote
+character within a string field's value should be escaped as \\".
+
+All fields are string fields, with the exception of the \fIbeats_per_minute\fR
+and \fIyear\fR columns. The former should contain a floating point value and the
+latter a positive integer. Neither should ever be surrounded by quotation marks.
 
 The \fIreference\fR field is mandatory and must be a unique identifier you would
 like assigned to the song to be used in future queries. This field may contain
 any combination of alpha-numeric characters and underscores.
 
-The \fIalbum\fR, \fIartist\fR, \fIgenre\fR, \fIisrc\fR, \fIbeats_per_minute\fR,
-and \fIyear\fR fields may be empty strings or set to \fB<AUTODETECT>\fR. The
-difference is that an empty string means that field should remain empty, whereas
-the latter instructs the server to try and autodetect the field out of the audio
-stream's embedded metadata during analysis.
+Other than \fIreference\fR and \fIpath\fR, all other fields may be optionally
+set to \fB<AUTODETECT>\fR. \fB<AUTODETECT>\fR is a special value that should not
+be surrounded by quotation marks. It asks the server to try and automatically
+detect what that field's value ought to be.
 
-Although the \fItitle\fR field may be set to \fB<AUTODETECT>\fR as well, if the
-server cannot automatically detect a non-empty value from the embedded metadata
-it will raise an error. This ensures that every song in your database has a
-title.
+If \fIalbum\fR, \fIartist\fR, \fIgenre\fR, or \fIisrc\fR fields are set to ""
+empty strings, this tells the server to ensure those fields remain empty in its
+database when the song is added to the catalogue. If any of those fields are
+instead set to \fB<AUTODETECT>\fR, including \fIbeats_per_minute\fR, the server
+will try to automatically determine the field's value from the available
+metadata already embedded within the audio stream.
 
-The \fIpath\fR field contain either an operating system path or a URL. If the
+Whether relying on auto detection or explicitly providing a value for the
+\fItitle\fR field, a value must be present one way or the other. If auto
+detection is requested and the server cannot extract a value from the embedded
+metadata, it will raise an error. This ensures that every song in your database
+will at least have a title - which need not to be unique.
+
+If \fB<AUTODETECT>\fR is requested for \fIbeats_per_minute\fR, as with the other
+fields discussed, the server will first try to obtain this information from the
+available embedded metadata. Not all audio containers will support this
+information, and even if the one you are using does support it, it may still not
+be present. If that happens the server will try to automatically calculate it
+through signal analysis of the audio stream.
+
+The \fIpath\fR field contains either an operating system path or a URL. If the
 former it can be either an absolute or relative path.
 
 If the file is an operating system path to a remote NFS mount or other network
@@ -94,8 +112,7 @@ share (as is common in a data centre enviroment), you should ensure you have
 adequate bandwidth and fast file system traversal capability. The latter is
 especially important when dealing with directories containing millions of songs.
 An inefficient file system traversal can waste substantial amounts of time
-during if a read operation blocks excessively while walking the remote directory
-tree.
+if a read operation blocks excessively while walking the remote directory tree.
 
 .SH EXAMPLES
 
@@ -103,7 +120,7 @@ Sample compressed \fIcatalogue.csv\fR with space delimiter:
 
 $ cat catalogue.csv.gz | gunzip
     ...
-    "REFERENCE_123" "Some album" "Some artist" "Some \"title\"" "Some genre" "USA2P0502717" "135.72" "2003" "/mnt/nfs/music/some_song.flac"
+    "REFERENCE_123" "Some album" "Some artist" "Some \"title\"" "Some genre" "USA2P0502717" 135.72 2003 "/mnt/nfs/music/some_song.flac"
     ...
 
 Batch import the above file:

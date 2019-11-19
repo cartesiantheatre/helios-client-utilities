@@ -95,6 +95,7 @@ class BatchSongImporter(object):
         self._stop_event            = threading.Event()
         self._thread_lock           = threading.Lock()
 
+    # Consumer thread which submits music to server...
     def _add_song_consumer_thread(self, consumer_thread_index):
 
         logging.debug(F'thread {consumer_thread_index}: spawned')
@@ -127,6 +128,7 @@ class BatchSongImporter(object):
                         self._songs_processed += 1
                         logging.info(F'thread {consumer_thread_index}: {reference} Processing song {self._songs_processed} of {self._songs_total}.')
 
+                # Queue is empty. Try again...
                 except queue.Empty:
                     logging.debug(F'thread {consumer_thread_index}: Job queue empty, will try again.')
                     continue

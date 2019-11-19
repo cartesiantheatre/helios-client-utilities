@@ -1,4 +1,4 @@
-.TH helios-modify-song 1 "June 2019"
+.TH helios-modify-song 1 "November 2019"
 .SH NAME
 helios-modify-song - Tool to edit metadata of remote songs already analyzed on a Helios server.
 
@@ -21,8 +21,9 @@ the song after analysis.
 .TP
 \fB\--edit-<field>="<new_value>"\fR
 Modify \fB<field>\fR of the song stored on the server to \fB<new_value>\fR. The
-former can be any of \fBalbum\fR, \fBartist\fR, \fBfile\fR, \fBgenre\fR,
-\fBisrc\fR, \fBreference\fR, \fBtitle\fR, or \fByear\fR.
+former can be any of \fBalbum\fR, \fBartist\fR, \fBbeats-per-minute\fR,
+\fBfile\fR, \fBgenre\fR, \fBisrc\fR, \fBreference\fR, \fBtitle\fR, or
+\fByear\fR.
 
 .TP
 \fB\--id\fR
