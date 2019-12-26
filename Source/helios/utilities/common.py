@@ -194,7 +194,7 @@ def zeroconf_find_server():
     # Cleanup...
     browser.cancel()
     browser_tls.cancel()
-    zeroconf.close()
+    zeroconf.close() # TODO: Slow: <https://github.com/jstasiak/python-zeroconf/issues/143>
 
     # Return host, port, and TLS flag of first found...
     return listener.get_found()[0]

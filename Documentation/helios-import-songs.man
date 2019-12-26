@@ -3,26 +3,29 @@
 helios-import-songs - Batch import songs into Helios.
 
 .SH SYNOPSIS
-.B helios-import-songs [\fIOPTIONS\fR] catalogue.csv[.gz]
+.B helios-import-songs [\fIOPTIONS\fR] catalogue.csv[.gz|.bz2|.zip|.xz]
 
 .SH DESCRIPTION
-Use this utility to batch import many songs into a Helios server. This is an
-appropriate tool to use if you need to import songs in the hundreds to tens of
-millions. If you are a record label and your Helios server has just been brought
-online for the first time, configured, but contains no music, this is likely the
-first tool you should use to populate its catalogue with analyzed music.
+Use this utility to batch import your catalogue into a Helios server, as opposed
+to one at a time with \fBhelios-add-song\fR(1). If you are a record label and
+your server has just been brought online for the first time and configured, but
+contains no music, this is likely the tool you should be looking at.
+
+If you only want to import a single song you should probably take a look at
+\fBhelios-add-song\fR(1) instead.
 
 The list of files proposed for import are listed in \fIcatalogue.csv[.gz]\fR.
 For precise details on its format see \fBINPUT FORMAT\fR below.
+
+You are recommended to perform your first batch import with \fI--dry-run\fR
+before making changes to your database. This ensures that your inport catalogue
+CSV file is formatted correctly.
 
 By default each song submitted for analysis has a local copy stored on the
 server. If you want to disable this, use \fI--no-store\fR. Storing a server side
 copy is only necessary if you expect that clients may want to submit download
 requests from the server or if the server's algorithms are improved and a
-re-analysis of the original songs is necessary.
-
-If you only want to import a single song you should probably take a look at
-\fBhelios-add-song\fR(1) instead.
+re-analysis of the original songs are necessary.
 
 Depending on your server's hardware capabilities, the time necessary to complete
 a batch import can vary. On an Intel(R) Core(TM) i7-4790 CPU with eight logical
@@ -36,10 +39,13 @@ total of approximately 32.8 seconds, or about 0.33 seconds per song.
 Delimiter character to use. Default is comma character.
 
 .TP
+\fB\--dry-run\fR
+Perform a dry run only. Do not actually make any modifications to the server.
+
+.TP
 \fB\--max-errors="<max>"\fR
-Maximum number of errors to tolerate before exiting. The default is ten. Note
-that any syntax errors in the input catalogue file itself are considered fatal
-and will cause the utility to bail as soon as any are detected.
+Maximum number of errors to tolerate before exiting. The default is zero. Note
+that any syntax errors in the input catalogue file itself are considered fatal.
 
 .TP
 \fB\--no-store\fR
@@ -51,45 +57,69 @@ Row offset to begin processing on. Defaults to 1, or first line of file.
 
 .TP
 \fB\--threads="<count>"\fR
-Number of concurrent imports. Default is the number of logical cores on the
-server.
+Number of concurrent import threads. Default is zero, or match to the
+autodetected number of logical cores on the server. Be careful when doing the
+latter because you may be surprised to learn that your server has hundreds of
+them.
+
+.TP
+\fB\--threads-maximum="<count>"\fR
+Spawn no more than at most this many concurrent import threads. Use this when
+the number of concurrent import threads is automatically detected and your
+server. Use this as a safety valve to ensure the client doesn't spawn hundreds
+of blocking threads it cannot service fast enough. Defaults to 32.
 
 .so man7/helios-client-utilities-common.7
 
 .SH INPUT FORMAT
 The list of files to import are stored in an import catalogue file. This file is
-just a plain text file that may be optionally gzip compressed. The advantage of
-compressing the file, besides the obvious, is it gives you automatic integrity
-verification during decompression.
+a UTF-8 encoded CSV file. The format is mostly as described in RFC 4180 with a
+required header line. The MIME type would therefore be "\fItext/csv;
+charset=utf-8; header=present\fR".
 
-Each song must be on its own line. Blank lines are ignored. Each column is
-separated by a comma delimiter by default, but can be optionally overridden with
-\fI--delimiter\fR. In the example below the '|' character denotes the delimiter.
+The file may be optionally compressed. The advantage of doing so is reduced file
+size, automatic integrity verification during decompression, and reduced disk
+i/o. Any catalogue ending in .gz, .bz2, .zip, or .xz will be assumed to be
+compressed and will be automatically decompressed as it is read.
 
-\fIreference\fR|\fIalbum\fR|\fIartist\fR|\fItitle\fR|\fIgenre\fR|\fIisrc\fR|\fIbeats_per_minute\fR|\fIyear\fR|\fIpath\fR
+The first line begins with a list of the column fields used. As an example, this
+might be:
 
-All string fields should be surrounded by double quotes. Any double quote
-character within a string field's value should be escaped as \\".
+\fIreference\fR,\fIalbum\fR,\fIartist\fR,\fItitle\fR,\fIgenre\fR,\fIisrc\fR,\fIbeats_per_minute\fR,\fIyear\fR,\fIpath\fR
 
-All fields are string fields, with the exception of the \fIbeats_per_minute\fR
-and \fIyear\fR columns. The former should contain a floating point value and the
-latter a positive integer. Neither should ever be surrounded by quotation marks.
+The "#" character can be used to denote a comment. The parser will ignore
+any characters including and following after that character.
+
+At a bare minimum \fIreference\fR and \fIpath\fR must be present or an error
+will be raised. Any extraneous column fields that are not recognized will also
+raise an error.
+
+After the initial column header line, each non-empty line thereafter is expected
+to be a song. Each column field is separated by a comma delimiter by default,
+but may be optionally overridden with \fI--delimiter\fR.
+
+All fields should be surrounded by double quotes. Any double quote character
+within a field's value should be escaped with a forward slash. As an example,
+"like this string containing pairs of double quotes \\"here\\" and \\"here\\"".
 
 The \fIreference\fR field is mandatory and must be a unique identifier you would
 like assigned to the song to be used in future queries. This field may contain
 any combination of alpha-numeric characters and underscores.
 
 Other than \fIreference\fR and \fIpath\fR, all other fields may be optionally
-set to \fB<AUTODETECT>\fR. \fB<AUTODETECT>\fR is a special value that should not
-be surrounded by quotation marks. It asks the server to try and automatically
-detect what that field's value ought to be.
+omitted.
+
+An ommitted field and one that contains an explicit empty "" string have
+different semantics. If it is possible for a field to be automatically detected
+and that is what you actually desire, omit the field. But if you really do want
+an empty string for, say, the song title, provide an empty "" string.
 
 If \fIalbum\fR, \fIartist\fR, \fIgenre\fR, or \fIisrc\fR fields are set to ""
 empty strings, this tells the server to ensure those fields remain empty in its
 database when the song is added to the catalogue. If any of those fields are
-instead set to \fB<AUTODETECT>\fR, including \fIbeats_per_minute\fR, the server
-will try to automatically determine the field's value from the available
-metadata already embedded within the audio stream.
+instead omitted, including \fIbeats_per_minute\fR, the server will try to
+automatically determine the field's value from the available metadata already
+embedded within the audio stream.
 
 Whether relying on auto detection or explicitly providing a value for the
 \fItitle\fR field, a value must be present one way or the other. If auto
@@ -97,11 +127,11 @@ detection is requested and the server cannot extract a value from the embedded
 metadata, it will raise an error. This ensures that every song in your database
 will at least have a title - which need not to be unique.
 
-If \fB<AUTODETECT>\fR is requested for \fIbeats_per_minute\fR, as with the other
-fields discussed, the server will first try to obtain this information from the
-available embedded metadata. Not all audio containers will support this
-information, and even if the one you are using does support it, it may still not
-be present. If that happens the server will try to automatically calculate it
+If \fIbeats_per_minute\fR is omitted, as with the other fields discussed, the
+server will first try to obtain this information from the available embedded
+metadata. Not all audio containers will support this information, and even if
+the one you are using does support it, this information may still not be
+embedded. If that happens the server will try to automatically calculate it
 through signal analysis of the audio stream.
 
 The \fIpath\fR field contains either an operating system path or a URL. If the
@@ -116,21 +146,25 @@ if a read operation blocks excessively while walking the remote directory tree.
 
 .SH EXAMPLES
 
-Sample compressed \fIcatalogue.csv\fR with space delimiter:
+Sample compressed \fIcatalogue.csv\fR with default comma delimiter:
 
 $ cat catalogue.csv.gz | gunzip
     ...
-    "REFERENCE_123" "Some album" "Some artist" "Some \"title\"" "Some genre" "USA2P0502717" 135.72 2003 "/mnt/nfs/music/some_song.flac"
+    "REFERENCE_123", "Some album", "Some artist", "Some \"title\"", "Some genre", "USA2P0502717", "135.72", "2003", "/mnt/nfs/music/some_song.flac"
+    "REFERENCE_124", , , , "Some genre", , , , "/mnt/nfs/music/some_other_song.flac"
     ...
 
 Batch import the above file:
 
-$ helios-import-songs --delimiter ' ' catalogue.csv.gz
+$ helios-import-songs catalogue.csv.gz
 
 .SH EXIT STATUS
 \fBhelios-import-songs\fR exits with a status of zero if the maximum number of
-errors was not exhausted or there were no other problems. Otherwise it will
-complete with an exit status of one.
+errors was not exhausted or there were no other problems.
+
+In the event an unrecoverable error occurs, the process will exit with a status
+of one. Any songs that failed to import will have their references written out
+to \fIhelios_import_errors.log\fR in the current working directory.
 
 .SH AUTHOR
 Cartesian Theatre <info@cartesiantheatre.com>
