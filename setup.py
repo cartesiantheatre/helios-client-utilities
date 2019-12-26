@@ -83,7 +83,7 @@ setup(
         'attrs >= 18.2.0',
         'colorama',
         'helios-client',
-        'pandas >= 0.25.3',
+        'pandas >= 0.23.3',
         'simplejson',
         'termcolor',
         'tqdm',
