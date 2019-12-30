@@ -1,8 +1,8 @@
-helios-client-utilities (0.5-git20191225-ct1) eoan; urgency=medium
+helios-client-utilities (0.5-git20191229-ct1) eoan; urgency=medium
 
-  * Version 0.5-git20191225.
+  * Version 0.5-git20191229.
 
- -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Wed, 25 Dec 2019 18:56:40 -0800
+ -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Sun, 29 Dec 2019 20:42:00 -0800
 
 helios-client-utilities (0.5-git20191118-ct1) eoan; urgency=medium
 

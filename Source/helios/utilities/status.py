@@ -62,9 +62,13 @@ def main():
     except helios.exceptions.ExceptionBase as someException:
         print(someException.what())
 
+    # User trying to abort...
+    except KeyboardInterrupt:
+        print(_('\rAborting, please wait a moment...'))
+
     # Some other kind of exception...
     except Exception as someException:
-        print(_(f"An unknown exception occurred: {print(someException)}"))
+        print(_(f"An unknown exception occurred: {type(someException)}"))
 
     # Show server information if received and verbosity enabled...
     if success and arguments.verbose:

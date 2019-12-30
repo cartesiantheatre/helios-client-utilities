@@ -176,7 +176,7 @@ class LocalNetworkServiceListener:
 def zeroconf_find_server():
 
     # Alert user...
-    print(F'Probing LAN for a Helios server, please wait...')
+    print(F'Probing LAN for a Helios server, please wait... (ctrl-c to cancel)')
 
     # Initialize Zeroconf...
     zeroconf = Zeroconf()
