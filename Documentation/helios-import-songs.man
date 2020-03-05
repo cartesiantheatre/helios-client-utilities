@@ -44,8 +44,9 @@ Perform a dry run only. Do not actually make any modifications to the server.
 
 .TP
 \fB\--max-errors="<max>"\fR
-Maximum number of errors to tolerate before exiting. The default is zero. Note
-that any syntax errors in the input catalogue file itself are considered fatal.
+Maximum number of errors to tolerate before exiting. The default is one. Set to
+zero for unlimited non-fatal errors. Note that syntax errors in the input
+catalogue are always considered fatal.
 
 .TP
 \fB\--no-store\fR
@@ -63,11 +64,11 @@ latter because you may be surprised to learn that your server has hundreds of
 them.
 
 .TP
-\fB\--threads-maximum="<count>"\fR
+\fB\--threads-max="<count>"\fR
 Spawn no more than at most this many concurrent import threads. Use this when
 the number of concurrent import threads is automatically detected and your
 server. Use this as a safety valve to ensure the client doesn't spawn hundreds
-of blocking threads it cannot service fast enough. Defaults to 32.
+of blocking threads it cannot service fast enough. Defaults to 8.
 
 .so man7/helios-client-utilities-common.7
 

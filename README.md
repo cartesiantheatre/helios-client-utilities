@@ -10,6 +10,8 @@ Helios is a powerful B2B technology to allow searching of large commercial music
 
 - You have a commercial music library of any size. Perhaps you are a major record label, perhaps independent, or maybe you've amalgamated music from multiple labels, independent artists, or publishers. You need to assist your clients with obtaining synchronization licenses quickly for appropriate pieces of music for their film, TV, documentary, commercial, video game, or some other context.
 
+- Your business receives a new supply of music each month from artists. You need to be able to predict which new music is more likely to generate revenue based on how existing music in your catalogue already performed.
+
 - You have a digital jukebox in bars, restaurants, and pubs. You want venue patrons to be able to play more music like the music they just paid to hear.
 
 - You have a music catalogue management platform that publishers and labels use to track their digital assets. Your customers want to be able to search within their own catalogue using your slick platform.

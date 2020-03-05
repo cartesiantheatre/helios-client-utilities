@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 #
 #   Helios, intelligent music.
-#   Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+#   Copyright (C) 2015-2020 Cartesian Theatre. All rights reserved.
 #
 
 # Utilities version...
-version = '0.5.dev20191229'
+version = '0.5.dev20200304'
 

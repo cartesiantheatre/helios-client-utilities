@@ -1,18 +1,11 @@
 #
 #   Helios.
-#   Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+#   Copyright (C) 2015-2020 Cartesian Theatre. All rights reserved.
 #
-
-# Functional test to verify the server is able to receive and service local
-#  connections...
-Test-Command: helios-status
-Depends: helios-client-utilities, helios-server
-Restrictions: isolation-container
-Features: test-name=test_helios_status
 
 # Functional test to verify utilities work. The tqdm module outputs its progress
 #  bar to stderr, so we need to add that restriction...
 Tests: test-utilities-usage.sh
-Depends: helios-client-utilities, helios-server, lincity-ng-data
+Depends: helios-autopkgtest, avahi-utils, diffutils, lincity-ng-data
 Restrictions: isolation-container, allow-stderr
 
