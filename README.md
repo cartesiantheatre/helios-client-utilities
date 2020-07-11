@@ -18,7 +18,9 @@ Helios is a powerful B2B technology to allow searching of large commercial music
 
 - You have an online digital music store and you'd like to be able to make intelligent product recommendations to your customers based on what songs they already have in their shopping cart before they check out.
 
-- You have a streaming music service whose DJs need inspiration for coming up with either channel based or custom curated playlists faster.
+- You have a streaming music service for different venues or channels. You have in-house DJs that custom curate the playlists. You want to reduce their work as they create new ones.
+
+- You have a streaming music service. The listener asked to skip the current track, but they also never want to hear anything similar again.
 
 - You market software for DJs, such as plugins to manage their library. While they're performing live, a plugin in their favourite software suggests new tracks to mix or play next.
 
