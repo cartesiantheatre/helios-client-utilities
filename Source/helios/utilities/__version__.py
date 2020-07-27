@@ -5,5 +5,5 @@
 #
 
 # Utilities version...
-version = '0.5.dev20200304'
+version = '0.5.dev20200726'
 

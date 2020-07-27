@@ -1,3 +1,9 @@
+helios-client-utilities (0.5-git20200726-ct2) focal; urgency=medium
+
+  * Build for focal.
+
+ -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Sun, 26 Jul 2020 19:57:07 -0700
+
 helios-client-utilities (0.5-git20200304-ct1) eoan; urgency=medium
 
   * Version 0.5-git20200304.
