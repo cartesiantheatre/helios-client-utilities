@@ -1,5 +1,5 @@
 \O0
-.TH helios-client-utilities-common 7 "September 2019"
+.TH helios-client-utilities-common 7 "May 2021"
 .SH NAME
 helios-client-utilities-common - Common command line switches
 \O1

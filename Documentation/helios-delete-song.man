@@ -1,4 +1,4 @@
-.TH helios-delete-song 1 "June 2019"
+.TH helios-delete-song 1 "May 2021"
 .SH NAME
 helios-delete-song - Delete a remote song or songs on a Helios server.
 
@@ -59,7 +59,7 @@ Cartesian Theatre <info@cartesiantheatre.com>
 Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
 
 .SH COPYRIGHT
-Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
 
 .SH SEE ALSO
 \fBhelios\fR(7)

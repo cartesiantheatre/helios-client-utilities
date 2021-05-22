@@ -70,7 +70,6 @@ def add_arguments(argument_parser):
         help=_('Number of results to buffer and show before pausing for user. By default there is no pause.'),
         type=int)
 
-
 # Main function...
 def main():
 
@@ -132,13 +131,15 @@ def main():
         elif arguments.random_size is not None:
 
             # Query...
-            stored_song = client.get_random_songs(size=arguments.random_size)
+            random_stored_songs = client.get_random_songs(size=arguments.random_size)
 
             # Note success...
             success = True
 
-            # Show stored song model...
-            pprint(stored_song_schema.dump(stored_song))
+            # Dump each song and end with a new line...
+            for random_song in random_stored_songs:
+                pprint(stored_song_schema.dump(random_song))
+                print('')
 
         # For all songs...
         else:
