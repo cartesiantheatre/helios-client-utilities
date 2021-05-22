@@ -1,4 +1,4 @@
-![Helios Logo](https://heliosmusic.io/application/files/4615/2807/9653/Helios-Logo.png "Helios Logo")
+![Helios Logo](https://heliosmusic.io/application/files/thumbnails/large/4615/2807/9653/Helios-Logo.png "Helios Logo")
 
 # Helios Client Utilities
 
