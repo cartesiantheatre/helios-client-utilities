@@ -68,6 +68,7 @@ setup(
     keywords=['music', 'similarity', 'match', 'catalogue', 'digital', 'signal', 'processing'],
     license='GPL',
     long_description=get_long_description(),
+    long_description_content_type='text/markdown',
     name='helios-client-utilities',
     project_urls={
         'Bug Tracker': 'https://github.com/cartesiantheatre/helios-client-utilities/issues',
