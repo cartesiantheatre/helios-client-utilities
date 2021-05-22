@@ -1,6 +1,6 @@
 Metadata-Version: 1.2
 Name: helios-client-utilities
-Version: 0.5.dev20200726
+Version: 0.5.dev20210521
 Summary: Utilities for interacting with a Helios server.
 Home-page: https://www.heliosmusic.io
 Author: Cartesian Theatre
@@ -9,7 +9,7 @@ License: GPL
 Project-URL: Bug Tracker, https://github.com/cartesiantheatre/helios-client-utilities/issues
 Project-URL: Documentation, https://heliosmusic.io/
 Project-URL: Source Code, https://github.com/cartesiantheatre/helios-client-utilities
-Description: ![Helios Logo](https://heliosmusic.io/application/files/4615/2807/9653/Helios-Logo.png "Helios Logo")
+Description: ![Helios Logo](https://heliosmusic.io/application/files/thumbnails/large/4615/2807/9653/Helios-Logo.png "Helios Logo")
         
         # Helios Client Utilities
         

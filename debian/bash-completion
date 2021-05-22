@@ -61,7 +61,7 @@ _helios_get_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --all --id --paginate --reference --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --all --id --paginate --random --reference --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
