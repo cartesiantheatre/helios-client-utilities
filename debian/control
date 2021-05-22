@@ -2,7 +2,7 @@ Source: helios-client-utilities
 Section: sound
 Priority: optional
 Maintainer: Cartesian Theatre Packaging <packaging@cartesiantheatre.com>
-Standards-Version: 4.3.0.3
+Standards-Version: 4.5.0.3
 Build-Depends:
     bash-completion (>= 1:2.1),
     debhelper-compat (= 11),
@@ -18,7 +18,7 @@ Build-Depends:
     python3-simplejson,
     python3-termcolor,
     python3-tqdm,
-    python3-zeroconf
+    python3-zeroconf (>= 0.25.1)
 Homepage: https://www.heliosmusic.io
 Vcs-Git: https://www.github.com/cartesiantheatre/python-helios-client.git
 Vcs-Browser: https://github.com/cartesiantheatre/python-helios-client

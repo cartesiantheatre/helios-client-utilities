@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 #   Helios, intelligent music.
-#   Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+#   Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
 #
 
 # System imports...
@@ -41,7 +41,16 @@ def add_arguments(argument_parser):
         dest='song_id',
         required=False,
         nargs='?',
-        help=_('Unique numeric identifier of song to query. You must provide exactly one of an --id, --reference, or --all.'),
+        help=_('Unique numeric identifier of song to query. You must provide exactly one of an --id, --reference, --all, or --random.'),
+        type=int)
+
+    # Define behaviour for --random in song selection exclusion group...
+    song_selection_group.add_argument(
+        '--random',
+        dest='random_size',
+        required=False,
+        nargs='?',
+        help=_('Randomly select <size> songs to retrieve from the catalogue. The <size> must be greater than or equal to 1 and no greater than the total number of songs in the catalogue. You must provide exactly one of --id, --reference, --all, or --random.'),
         type=int)
 
     # Define behaviour for --reference in song selection exclusion group...
@@ -50,7 +59,7 @@ def add_arguments(argument_parser):
         dest='song_reference',
         required=False,
         nargs='?',
-        help=_('Unique reference of song to query. You must provide exactly one of an --id, --reference, or --all.'))
+        help=_('Unique reference of song to query. You must provide exactly one of an --id, --reference, --all, or --random.'))
 
     # Define behaviour for --paginate...
     argument_parser.add_argument(
@@ -105,8 +114,8 @@ def main():
         # Create a schema to serialize stored song objects into JSON...
         stored_song_schema = StoredSongSchema()
 
-        # For a single song...
-        if not arguments.all:
+        # For a specified single song...
+        if arguments.song_id is not None or arguments.song_reference is not None:
 
             # Query...
             stored_song = client.get_song(
@@ -119,11 +128,23 @@ def main():
             # Show stored song model...
             pprint(stored_song_schema.dump(stored_song))
 
+        # For a randomly selected song or songs...
+        elif arguments.random_size is not None:
+
+            # Query...
+            stored_song = client.get_random_songs(size=arguments.random_size)
+
+            # Note success...
+            success = True
+
+            # Show stored song model...
+            pprint(stored_song_schema.dump(stored_song))
+
         # For all songs...
         else:
 
             # Current results page index...
-            current_page    = 1
+            current_page = 1
 
             # Number of results to retrieve per query if overridden by user,
             #  otherwise use default...
@@ -140,7 +161,7 @@ def main():
                     page=current_page, page_size=page_size)
 
                 # None left...
-                if len(page_songs_list) is 0:
+                if len(page_songs_list) == 0:
                     break
 
                 # Dump each song and end with a new line...
@@ -154,7 +175,7 @@ def main():
                 # If user asked that we pause after each batch, then wait for
                 #  user...
                 if arguments.paginate:
-                    arguments.paginate = (input(_('Press enter to continue, or C to continue without pagination...')) is not 'C')
+                    arguments.paginate = (input(_('Press enter to continue, or C to continue without pagination...')) != 'C')
                     print('')
 
             # Done...

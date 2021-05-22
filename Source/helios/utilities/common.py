@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 #   Helios, intelligent music.
-#   Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+#   Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
 #
 
 # System imports...
@@ -192,9 +192,7 @@ def zeroconf_find_server():
     listener.found_event.wait()
 
     # Cleanup...
-    browser.cancel()
-    browser_tls.cancel()
-    zeroconf.close() # TODO: Slow: <https://github.com/jstasiak/python-zeroconf/issues/143>
+    zeroconf.close()
 
     # Return host, port, and TLS flag of first found...
     return listener.get_found()[0]

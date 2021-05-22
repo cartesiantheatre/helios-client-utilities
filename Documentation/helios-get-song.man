@@ -1,4 +1,4 @@
-.TH helios-get-song 1 "June 2019"
+.TH helios-get-song 1 "May 2021"
 .SH NAME
 helios-get-song - Query metadata for a song within a remote Helios server.
 
@@ -19,12 +19,12 @@ manipulate the database's metadata, see \fBhelios-modify-song\fR(1).
 .TP
 \fB\--all\fR
 Retrieve metadata for all songs. You must provide exactly one of --id,
---reference, or --all.
+--reference, --all, or --random.
 
 .TP
 \fB\--id="<song_id>"\fR
 Unique numeric identifier of song to query. You must provide exactly one of
---id, --reference, or --all.
+--id, --reference, --all, or --random.
 
 .TP
 \fB\--paginate="<size>"\fR
@@ -32,9 +32,16 @@ Number of results to buffer and show before pausing for user. By default there
 is no pause.
 
 .TP
+\fB\--random="<size>"\fR
+Randomly select <size> songs to retrieve from the catalogue. The <size> must be
+greater than or equal to 1 and no greater than the total number of songs in the
+catalogue. You must provide exactly one of --id, --reference, --all, or
+--random.
+
+.TP
 \fB\--reference="<song_reference>"\fR
 Unique reference of song to query. You must provide exactly one of --id,
---reference, or --all.
+--reference, --all, or --random.
 
 .so man7/helios-client-utilities-common.7
 
