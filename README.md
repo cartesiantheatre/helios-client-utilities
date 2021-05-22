@@ -76,5 +76,5 @@ $ man helios
 
 ## Licensing
 
-This package is released under the terms of the [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html) or greater. Copyright (C) 2015-2019 Cartesian Theatre. See [Copying](./Copying) for more information.
+This package is released under the terms of the [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html) or greater. Copyright (C) 2015-2021 Cartesian Theatre. See [Copying](./Copying) for more information.
 
