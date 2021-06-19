@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #   Helios, intelligent music.
-#   Copyright (C) 2015-2020 Cartesian Theatre. All rights reserved.
+#   Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
 #
 
 # Bail on any errors...
@@ -70,6 +70,10 @@ helios-import-songs --max-errors 0 $(dirname $0)/sample_import_lincity.csv
 # Perform a similarity match against local song external to catalogue...
 echo "*** Trying similarity match against local song external to catalogue..."
 helios-similar --file "$SAMPLE_SONG_C"
+
+# Retrieve a random song....
+echo "*** Querying for a single randomly selected song in catalogue..."
+helios-get-song --random=1
 
 #echo "*** Trying similarity match against external remote search key..."
 #helios-similar --url "https://soundcloud.com/afterlifeofc/tone-depth-ibn-sina-2"

@@ -1,6 +1,6 @@
-Metadata-Version: 1.2
+Metadata-Version: 2.1
 Name: helios-client-utilities
-Version: 0.5.dev20210521
+Version: 0.5.dev20210618
 Summary: Utilities for interacting with a Helios server.
 Home-page: https://www.heliosmusic.io
 Author: Cartesian Theatre
@@ -87,7 +87,7 @@ Description: ![Helios Logo](https://heliosmusic.io/application/files/thumbnails/
         
         ## Licensing
         
-        This package is released under the terms of the [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html) or greater. Copyright (C) 2015-2019 Cartesian Theatre. See [Copying](./Copying) for more information.
+        This package is released under the terms of the [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html) or greater. Copyright (C) 2015-2021 Cartesian Theatre. See [Copying](./Copying) for more information.
         
         
 Keywords: music,similarity,match,catalogue,digital,signal,processing
@@ -112,3 +112,4 @@ Classifier: Topic :: Scientific/Engineering :: Physics
 Classifier: Topic :: Software Development :: Libraries :: Python Modules
 Classifier: Topic :: Utilities
 Requires-Python: >= 3.7
+Description-Content-Type: text/markdown
