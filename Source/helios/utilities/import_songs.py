@@ -16,6 +16,7 @@ import colorama
 import concurrent.futures
 import datetime
 import logging
+import numpy
 import os
 import pandas
 import queue
@@ -334,7 +335,7 @@ class BatchSongImporter(object):
                         #  from fields that were intentionally ommitted versus
                         #  ones that the user explicitly wanted a value of an
                         #  empty string...
-                        if type(csv_row[key]) is float and pandas.np.isnan(csv_row[key]):
+                        if type(csv_row[key]) is float and numpy.isnan(csv_row[key]):
                             csv_row[key] = None
 
                         # Nullable integers weren't added until Panda 0.24.0.

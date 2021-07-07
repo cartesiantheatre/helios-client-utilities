@@ -84,11 +84,13 @@ setup(
         'attrs >= 18.2.0',
         'colorama',
         'helios-client',
+        'numpy',
         'pandas >= 0.23.3',
         'simplejson',
         'termcolor',
         'tqdm',
-        'zeroconf'
+        'wheel',
+        'zeroconf >= 0.25.1'
     ],
     package_dir={'': 'Source'},
     packages=find_namespace_packages(where='Source'),

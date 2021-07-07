@@ -23,6 +23,9 @@ SAMPLE_SONG_A="/usr/share/games/lincity-ng/music/default/01 - pronobozo - lincit
 SAMPLE_SONG_B="/usr/share/games/lincity-ng/music/default/02 - Robert van Herk - City Blues.ogg"
 SAMPLE_SONG_C="/usr/share/games/lincity-ng/music/default/03 - Robert van Herk - Architectural Contemplations.ogg"
 
+# Treat all Python warnings as fatal errors...
+export PYTHONWARNINGS="error,ignore::ResourceWarning"
+
 # Verify we can find the server via avahi-browse(1)...
 echo "*** Verifying server status via avahi-browse(1)..."
 avahi-browse --all --terminate | grep Helios
@@ -65,7 +68,7 @@ helios-modify-song                  \
 
 # Batch import a list of songs from a CSV file...
 echo "*** Batch import songs from CSV..."
-helios-import-songs --max-errors 0 $(dirname $0)/sample_import_lincity.csv
+helios-import-songs $(dirname $0)/sample_import_lincity.csv
 
 # Perform a similarity match against local song external to catalogue...
 echo "*** Trying similarity match against local song external to catalogue..."

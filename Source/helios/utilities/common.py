@@ -121,7 +121,7 @@ class LocalNetworkServiceListener:
                 return
 
             # Extract host and port...
-            host = F'{info.address[0]}.{info.address[1]}.{info.address[2]}.{info.address[3]}'
+            host = info.parsed_addresses()[0]
             port = info.port
             tls  = True if re.match(self._service_tls_regex, name) is not None else False
 
@@ -154,7 +154,7 @@ class LocalNetworkServiceListener:
             return
 
         # Extract host and port...
-        host = F'{info.address[0]}.{info.address[1]}.{info.address[2]}.{info.address[3]}'
+        host = info.parsed_addresses()[0]
         port = info.port
 
         # Remove from available list if it was already there...

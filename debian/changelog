@@ -1,5 +1,6 @@
-helios-client-utilities (0.5-git20210618-ct1) groovy; urgency=medium
+helios-client-utilities (0.5-git20210706-1-ct1) hirsute; urgency=medium
 
-  * Build for groovy.
+  * Build for hirsute.
 
- -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Fri, 18 Jun 2021 19:30:44 -0700
+ -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Tue, 06 Jul 2021 20:24:00 -0700
+
