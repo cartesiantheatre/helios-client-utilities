@@ -1,4 +1,4 @@
-.TH helios-import-songs 1 "May 2021"
+.TH helios-import-songs 1 "July 2021"
 .SH NAME
 helios-import-songs - Batch import songs into Helios.
 
@@ -160,8 +160,7 @@ Batch import the above file:
 $ helios-import-songs catalogue.csv.gz
 
 .SH EXIT STATUS
-\fBhelios-import-songs\fR exits with a status of zero if the maximum number of
-errors was not exhausted or there were no other problems.
+\fBhelios-import-songs\fR exits with a status of zero if no errors occurred.
 
 In the event an unrecoverable error occurs, the process will exit with a status
 of one. Any songs that failed to import will have their references written out

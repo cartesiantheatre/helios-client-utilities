@@ -62,6 +62,8 @@ Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
 .br
 \fBhelios-modify-song\fR(1)
 .br
+\fBhelios-provision-magnatune\fR(1)
+.br
 \fBhelios-similar\fR(1)
 .br
 \fBhelios-status\fR(1)

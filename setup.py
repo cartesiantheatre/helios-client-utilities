@@ -103,6 +103,7 @@ setup(
             'helios-get-song = helios.utilities.get_song:main',
             'helios-import-songs = helios.utilities.import_songs:main',
             'helios-modify-song = helios.utilities.modify_song:main',
+            'helios-provision-magnatune = helios.utilities.provision_magnatune:main',
             'helios-similar = helios.utilities.similar:main',
             'helios-status = helios.utilities.status:main'
         ],

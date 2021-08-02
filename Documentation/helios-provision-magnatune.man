@@ -1,0 +1,102 @@
+.TH helios-import-songs 1 "July 2021"
+.SH NAME
+helios-provision-magnatune - Download Magnatune catalogue and generate CSV for \fBhelios-import-songs\fR(1)
+
+.SH SYNOPSIS
+.B helios-provision-magnatune\fR --user=\fI<user>\fR [\fIOPTIONS\fR] [\fIoutput_directory\fR]
+
+.SH DESCRIPTION
+This utility is useful for rapid deployment of a \fBheliosd\fR(1) server with a sample catalogue, perhaps for demonstration purposes. It will download songs from the Magnatune's remote service into the requested \fIoutput_directory\fR. This is the current working directory by default.
+
+A comma delimited CSV file named \fImagnatune.csv\fR, unless overridden, will be generated within  the \fIoutput_directory\fR upon completion. This CSV file is suitable for use with the \fBhelios-import-songs\fR(1) utility for a subsequent batch import. The format of this file is described in greater detail in \fBhelios-import-songs\fR(1).
+
+The total time necessary to download the requested songs from the remote Magnatune service depends on the current size of the available catalogue, the number of songs requested, and the available bandwidth.
+
+Note that you must have prior authorization from Magnatune in order to use any of its music for commercial purposes.
+
+.SH OPTIONS
+
+.TP
+\fB\--absolute-path\fR
+Write absolute path to every song instead of just the file name within the generated CSV. By default only the file name is written out. Note that if you use this switch and you plan on moving the location of the downloaded songs later, the paths in the CSV will become invalidated.
+
+.TP
+\fB\--cached-sqlite\fR \fI<sqlite_database.db>\fR
+Don't attempt to retrieve the SQLite database from the remote Magnatune service. Instead use a local cached copy, \fIdatabase.db\fR.
+
+.TP
+\fB\--format\fR \fIwav|mp3|alac|vorbis\fR
+Format to download requested songs in. The wave format is raw uncompressed. The MP3 format is high quality VBR encoded, but does not refer to the lower quality 128k that is also available from Magnatune. The ALAC format is lossless compressed within an M4A container. The high quality Vorbis encoded audio is stored within an Ogg container. The default is vorbis.
+
+.TP
+\fB\--max-errors\fR \fI<max>\fR
+Maximum number of errors to tolerate before exiting. The default is one. Set to zero for unlimited non-fatal errors.
+
+.TP
+\fB\--output-csv\fR \fI<catalogue_csv>\fR
+A comma delimited CSV file will be generated upon completion and suitable for use with \fBhelios-import-songs\fR(1). The default is \fIoutput_directory/magnatune.csv\fR, unless overridden with this switch.
+
+.TP
+\fB\--overwrite-songs\fR
+By default songs that are already present in the \fIoutput_directory\fR are not downloaded again. Use this switch to force an overwrite with a fresh download. Note that if the local copy is in a different format than the requested format, the songs will not be considered the same.
+
+.TP
+\fB\--password\fR \fI<user>\fR
+Password to use when authenticating as \fI<user>\fR with the remote Magnatune service. If this is not explicitly provided the user will automatically be prompted at runtime.
+
+.TP
+\fB\--random\fR
+If \fB\--song-count \fI<count>\fR is greater than zero, but less than the total size of the available Magnatune catalogue, randomly select \fB<count>\fR songs to download.
+
+.TP
+\fB\--song-count\fR \fI<count>\fR
+Number of songs to attempt to download. The default is zero, or all of them.
+
+.TP
+\fB\--user\fR \fI<user>\fR
+User name to use when authenticating with the remote Magnatune service. This is a required argument.
+
+.TP
+\fB\--verbose\fR
+Be verbose by showing additional information.
+
+.TP
+\fB\--version\fR
+Show version of utility.
+
+.SH EXAMPLES
+
+Download 25 random songs from the Magnatune catalogue in MP3 format authenticated as user \fIme\fR:
+
+.BR
+$ helios-provision-magnatune --user me --random --song-count=25 --format=mp3 catalogue/
+
+.BR
+$ cat catalogue/magnatune.csv
+    ...
+    "REFERENCE_123", "Some album", "Some artist", "Some \"title\"", "Some genre", "USA2P0502717", "135.72", "2003", "some_song.flac"
+    ...
+
+.SH EXIT STATUS
+\fBhelios-provision-magnatune\fR exits with a status of zero if no errors occurred.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+
+\fBhelios\fR(7)
+.BR
+
+\fBhelios-import-songs\fR(1)
+.BR
+
+\fIhttps://www.heliosmusic.io\fR
+.BR
+
