@@ -5,15 +5,15 @@
 #
 
 # System imports...
+import argparse
+from pprint import pprint
+import sys
+
+# Other imports....
+import attr
 import helios
 from helios.utilities.common import add_common_arguments, zeroconf_find_server
-from pprint import pprint
 from termcolor import colored
-import argparse
-import attr
-import colorama
-import datetime
-import sys
 
 # i18n...
 import gettext
@@ -31,9 +31,6 @@ def main():
 
     # Parse the command line...
     arguments = argument_parser.parse_args()
-
-    # Initialize terminal colour...
-    colorama.init()
 
     # Try to query server status...
     success = False
@@ -59,16 +56,16 @@ def main():
         success = True
 
     # Helios exception...
-    except helios.exceptions.ExceptionBase as someException:
-        print(someException.what())
+    except helios.exceptions.ExceptionBase as some_exception:
+        print(some_exception.what())
 
     # User trying to abort...
     except KeyboardInterrupt:
         print(_('\rAborting, please wait a moment...'))
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An unknown exception occurred: {type(someException)}"))
+    except Exception as some_exception:
+        print(_(f"An unknown exception occurred: {type(some_exception)}"))
 
     # Show server information if received and verbosity enabled...
     if success and arguments.verbose:

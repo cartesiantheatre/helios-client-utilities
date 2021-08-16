@@ -11,10 +11,13 @@ Build-Depends:
     lintian,
     python3-all,
     python3-attr (>= 18.2.0),
-    python3-colorama,
     python3-helios-client,
+    python3-keyring,
     python3-pandas (>= 0.23.3),
+    python3-magic,
+    python3-mutagen (>= 1.3),
     python3-numpy,
+    python3-pil,
     python3-setuptools,
     python3-simplejson,
     python3-termcolor,
@@ -31,10 +34,12 @@ Architecture: all
 Multi-Arch: foreign
 Depends:
     bash-completion (>= 1:2.1),
+    gnome-keyring | libkf5wallet-bin | python3-keyrings.alt,
     ${misc:Depends},
     ${python3:Depends}
 Description: utilities for interacting with a Helios server
  Helios is an intelligent music recommendation platform.
  .
- This is a collection of utilities for managing a Helios server.
+ This is a collection of command line utilities for managing a Helios server and
+ related.
 

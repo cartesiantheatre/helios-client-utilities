@@ -4,20 +4,12 @@
 #   Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
 #
 
-# Our imports...
-import helios
-from helios.utilities.common import LocalNetworkServiceListener
-
 # System imports...
-from pprint import pprint
-import argparse
-import attr
-import colorama
-import datetime
 import sys
 from time import sleep
 
-# Zeroconf...
+# Other imports...
+from helios.utilities.common import LocalNetworkServiceListener
 from zeroconf import ServiceBrowser, Zeroconf
 
 # i18n...
@@ -27,15 +19,12 @@ _ = gettext.gettext
 # Main function...
 def main():
 
-    # Initialize terminal colour...
-    colorama.init()
-
     # Try to query server status...
     success = False
     try:
 
         # Alert user...
-        print(F'Probing LAN for all Helios servers... (ctrl-c to abort)')
+        print("Probing LAN for all Helios servers... (ctrl-c to abort)")
 
         # Initialize Zeroconf...
         zeroconf = Zeroconf()
@@ -66,8 +55,8 @@ def main():
         success = True
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An unknown exception occurred: {print(someException)}"))
+    except Exception as some_exception:
+        print(_(f"An unknown exception occurred: {print(some_exception)}"))
 
     # If unsuccessful, bail...
     if not success:
@@ -79,4 +68,3 @@ def main():
 # Entry point...
 if __name__ == '__main__':
     main()
-

@@ -5,7 +5,6 @@
 #
 
 # System imports...
-import argparse
 import re
 import socket
 import threading
@@ -123,7 +122,7 @@ class LocalNetworkServiceListener:
             # Extract host and port...
             host = info.parsed_addresses()[0]
             port = info.port
-            tls  = True if re.match(self._service_tls_regex, name) is not None else False
+            tls  = bool(re.match(self._service_tls_regex, name) is not None)
 
             # Add to available list, if not already...
             if not self._servers.count((host,port,tls)):
@@ -163,7 +162,7 @@ class LocalNetworkServiceListener:
                 self._servers.remove(server)
 
         # If nothing is available, clear event flag...
-        if not len(self._servers):
+        if len(self._servers) == 0:
             self.found_event.clear()
 
     # Get server list of all servers found...
@@ -176,7 +175,7 @@ class LocalNetworkServiceListener:
 def zeroconf_find_server():
 
     # Alert user...
-    print(F'Probing LAN for a Helios server, please wait... (ctrl-c to cancel)')
+    print("Probing LAN for a Helios server, please wait... (ctrl-c to cancel)")
 
     # Initialize Zeroconf...
     zeroconf = Zeroconf()
@@ -185,8 +184,8 @@ def zeroconf_find_server():
     listener = LocalNetworkServiceListener()
 
     # Begin listening...
-    browser = ServiceBrowser(zc=zeroconf, type_="_http._tcp.local.", listener=listener)
-    browser_tls = ServiceBrowser(zc=zeroconf, type_="_https._tcp.local.", listener=listener)
+    ServiceBrowser(zc=zeroconf, type_="_http._tcp.local.", listener=listener)
+    ServiceBrowser(zc=zeroconf, type_="_https._tcp.local.", listener=listener)
 
     # Wait until it finds server...
     listener.found_event.wait()
@@ -222,4 +221,3 @@ def get_preferred_local_ip_address():
 # Get utilities package version...
 def get_version():
     return __version__.version
-

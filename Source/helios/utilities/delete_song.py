@@ -5,15 +5,12 @@
 #
 
 # System imports...
+import argparse
+import sys
+
+# Other imports...
 import helios
 from helios.utilities.common import add_common_arguments, zeroconf_find_server
-from pprint import pprint
-from termcolor import colored
-import argparse
-import attr
-import colorama
-import datetime
-import sys
 from tqdm import tqdm
 
 # i18n...
@@ -41,7 +38,8 @@ def add_arguments(argument_parser):
         dest='song_id',
         required=False,
         nargs='?',
-        help=_('Unique numeric identifier of song to modify. You must provide either this or a --reference.'),
+        help=_('Unique numeric identifier of song to modify. You must provide '
+               'either this or a --reference.'),
         type=int)
 
     # Define behaviour for --reference in song selection exclusion group...
@@ -50,7 +48,8 @@ def add_arguments(argument_parser):
         dest='song_reference',
         required=False,
         nargs='?',
-        help=_('Unique reference of song to modify. You must provide either this or an --id.'))
+        help=_('Unique reference of song to modify. You must provide either '
+               'this or an --id.'))
 
     # Define behaviour for --delete-file-only in song selection exclusion group...
     argument_parser.add_argument(
@@ -58,7 +57,8 @@ def add_arguments(argument_parser):
         action='store_true',
         default=False,
         dest='delete_file_only',
-        help=_('Delete on the remote server the stored song file, but keep preserve the metadata of the analyzed.'))
+        help=_('Delete on the remote server the stored song file, but keep '
+               'preserve the metadata of the analyzed.'))
 
 # Delete a song by ID or reference. If delete_file_only is True, then only the
 #  song file is deleted off the server, if it had one, but the metadata is
@@ -98,7 +98,6 @@ def delete_song(client, song_id, song_reference, delete_file_only=False):
         # Update statistics...
         return True
 
-
 # Main function...
 def main():
 
@@ -114,9 +113,6 @@ def main():
 
     # Parse the command line...
     arguments = argument_parser.parse_args()
-
-    # Initialize terminal colour...
-    colorama.init()
 
     # Status on whether there were any errors...
     success = False
@@ -269,12 +265,12 @@ def main():
         sys.exit(1)
 
     # Helios exception...
-    except helios.exceptions.ExceptionBase as someException:
-        print(someException.what())
+    except helios.exceptions.ExceptionBase as some_exception:
+        print(some_exception.what())
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An unknown exception occurred: {print(someException)}"))
+    except Exception as some_exception:
+        print(_(f"An unknown exception occurred: {print(some_exception)}"))
 
     # Cleanup any resources...
     finally:
@@ -299,4 +295,3 @@ def main():
 # Entry point...
 if __name__ == '__main__':
     main()
-

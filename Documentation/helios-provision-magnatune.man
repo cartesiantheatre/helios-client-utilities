@@ -1,4 +1,4 @@
-.TH helios-import-songs 1 "July 2021"
+.TH helios-provision-magnatune 1 "August 2021"
 .SH NAME
 helios-provision-magnatune - Download Magnatune catalogue and generate CSV for \fBhelios-import-songs\fR(1)
 
@@ -25,24 +25,36 @@ Write absolute path to every song instead of just the file name within the gener
 Don't attempt to retrieve the SQLite database from the remote Magnatune service. Instead use a local cached copy, \fIdatabase.db\fR.
 
 .TP
+\fB\--cover-artwork\fR
+If a song does not contain embedded cover art, ask Magnatune for it and then embed it in the file if supported.
+
+.TP
+\fB\--force-overwrite\fR
+By default songs that are already present in the \fIoutput_directory\fR are not downloaded again. Use this switch to force an overwrite with a fresh download. Note that if the local copy is in a different format than the requested format, the songs will not be considered the same.
+
+.TP
 \fB\--format\fR \fIwav|mp3|alac|vorbis\fR
 Format to download requested songs in. The wave format is raw uncompressed. The MP3 format is high quality VBR encoded, but does not refer to the lower quality 128k that is also available from Magnatune. The ALAC format is lossless compressed within an M4A container. The high quality Vorbis encoded audio is stored within an Ogg container. The default is vorbis.
 
 .TP
-\fB\--max-errors\fR \fI<max>\fR
+\fB\--genre\fR \fIclassical|new-age|electronica|world|ambient|jazz|hip-hop|alt-rock|electro-rock|hard-rock\fR
+By default music of any genre will be downloaded. Use this switch to limit downloads to only the selected genre as defined by Magnatune.
+
+.TP
+\fB\--maximum-errors\fR \fI<max>\fR
 Maximum number of errors to tolerate before exiting. The default is one. Set to zero for unlimited non-fatal errors.
+
+.TP
+\fB\--minimum-length\fR \fI<seconds>\fR
+Only consider songs at least \fI<seconds>\fR in length. The default is zero, or any length.
 
 .TP
 \fB\--output-csv\fR \fI<catalogue_csv>\fR
 A comma delimited CSV file will be generated upon completion and suitable for use with \fBhelios-import-songs\fR(1). The default is \fIoutput_directory/magnatune.csv\fR, unless overridden with this switch.
 
 .TP
-\fB\--overwrite-songs\fR
-By default songs that are already present in the \fIoutput_directory\fR are not downloaded again. Use this switch to force an overwrite with a fresh download. Note that if the local copy is in a different format than the requested format, the songs will not be considered the same.
-
-.TP
 \fB\--password\fR \fI<user>\fR
-Password to use when authenticating as \fI<user>\fR with the remote Magnatune service. If this is not explicitly provided the user will automatically be prompted at runtime.
+Password to use when authenticating as \fI<user>\fR with the remote Magnatune service. If the password cannot be retrieved from the system keyring and is not explicitly provided, the user will automatically be prompted at runtime.
 
 .TP
 \fB\--random\fR
@@ -66,10 +78,10 @@ Show version of utility.
 
 .SH EXAMPLES
 
-Download 25 random songs from the Magnatune catalogue in MP3 format authenticated as user \fIme\fR:
+Authenticate as user \fIme\fR with the remote Magnatune service. Download 25 random Alt Rock songs into the \fIcatalogue\fR directory. Each song must be at least two minutes in length and encoded in the Ogg/Vorbis format. Verify that album artwork is present in every song, automatically retrieving and embedding the correct artwork if it was not already present in the song.
 
 .BR
-$ helios-provision-magnatune --user me --random --song-count=25 --format=mp3 catalogue/
+$ helios-provision-magnatune --user me --format vorbis --song-count=25 --random --genre alt-rock --cover-artwork --minimum-length=120 catalogue/
 
 .BR
 $ cat catalogue/magnatune.csv

@@ -5,17 +5,15 @@
 #
 
 # System imports...
+import argparse
+import base64
+from pprint import pprint
+import sys
+
+# Other imports...
 import helios
 from helios.responses import StoredSongSchema
 from helios.utilities.common import add_common_arguments, zeroconf_find_server
-from pprint import pprint
-from termcolor import colored
-import argparse
-import base64
-import attr
-import colorama
-import datetime
-import sys
 
 # i18n...
 import gettext
@@ -94,9 +92,6 @@ def main():
     # Parse the command line...
     arguments = argument_parser.parse_args()
 
-    # Initialize terminal colour...
-    colorama.init()
-
     # Status on whether there were any errors...
     success = False
 
@@ -157,12 +152,12 @@ def main():
         sys.exit(1)
 
     # Helios exception...
-    except helios.exceptions.ExceptionBase as someException:
-        print(someException.what())
+    except helios.exceptions.ExceptionBase as some_exception:
+        print(some_exception.what())
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An unknown exception occurred: {print(someException)}"))
+    except Exception as some_exception:
+        print(_(f"An unknown exception occurred: {print(some_exception)}"))
 
     # If unsuccessful, bail...
     if not success:
@@ -174,4 +169,3 @@ def main():
 # Entry point...
 if __name__ == '__main__':
     main()
-

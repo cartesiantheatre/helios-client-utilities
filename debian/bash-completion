@@ -106,6 +106,24 @@ _helios_modify_song()
     fi
 }
 
+# helios-provision-magnatune(1) completion
+[ -x /usr/bin/helios-provision-magnatune ] &&
+_helios_provision_magnatune()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--absolute-path --cached-sqlite --cover-artwork --force-overwrite --format --genre --help --maximum-errors --minimum-length --output-csv --password --random --song-count --user --verbose --version"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
 # helios-similar(1) completion
 [ -x /usr/bin/helios-similar ] &&
 _helios_similar()
@@ -149,6 +167,7 @@ complete -f -F _helios_download_song helios-download-song
 complete -f -F _helios_get_song helios-get-song
 complete -f -F _helios_import_songs helios-import-songs
 complete -f -F _helios_modify_song helios-modify-song
+complete -f -F _helios_provision_magnatune helios-provision-magnatune
 complete -f -F _helios_similar helios-similar
 complete -f -F _helios_status helios-status
 

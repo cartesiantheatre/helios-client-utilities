@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 #
 #   Helios.
-#   Copyright (C) 2015-2019 Cartesian Theatre. All rights reserved.
+#   Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
 #
 
 # Output every command that modifies files on the build system...
@@ -34,13 +34,12 @@ PACKAGE_BUILD = $(PACKAGE_DIR)/$(DEB_SOURCE)_$(DEB_VERSION_UPSTREAM)
 #  stuff laying around which otherwise would have modified the source package...
 #  <https://blog-archive.copyninja.info/2011/02/tutorial-python-module-packaging-for-debian.html>
 override_dh_clean:
-	@python3 $(SOURCE_DIR)/setup.py clean --all
-	dh_clean
 	@$(RM) -rv $(SOURCE_DIR)/Source/helios/utilities/__pycache__/
 	$(RM) -rv $(SOURCE_DIR)/Source/$(PYBUILD_NAME).egg-info
 	$(RM) -rv $(SOURCE_DIR)/.eggs
 	$(RM) -rv $(SOURCE_DIR)/dist
 	@$(RM) -rv $(PACKAGE_BUILD)
+	dh_clean
 
 # Add a CSV import example that we use with autopkgtest...
 override_dh_installexamples:

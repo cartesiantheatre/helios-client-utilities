@@ -40,6 +40,7 @@ The following is a summary of the utilities included in this package. For detail
 | `helios-find-servers` | List all helios servers detected on your LAN. |
 | `helios-get-song` | Query metadata for a song within a remote Helios server. |
 | `helios-import-songs` | Batch import songs into Helios. |
+| `helios-provision-magnatune` | Download Magnatune catalogue and generate CSV for helios-import-songs(1). |
 | `helios-modify-song` | Tool to edit metadata of remote songs already analyzed on a Helios server. |
 | `helios-similar` | Search for similar songs on a remote Helios server. |
 | `helios-status` | Query the status of a remote Helios server. |

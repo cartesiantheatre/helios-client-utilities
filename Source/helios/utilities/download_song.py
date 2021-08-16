@@ -5,15 +5,13 @@
 #
 
 # System imports...
+import argparse
+import os
+import sys
+
+# Other imports...
 import helios
 from helios.utilities.common import add_common_arguments, zeroconf_find_server
-from pprint import pprint
-from termcolor import colored
-import argparse
-import attr
-import colorama
-import datetime
-import sys
 
 # i18n...
 import gettext
@@ -69,9 +67,6 @@ def main():
     # Parse the command line...
     arguments = argument_parser.parse_args()
 
-    # Initialize terminal colour...
-    colorama.init()
-
     # Flag to signal download was successful...
     success = False
 
@@ -105,16 +100,16 @@ def main():
 
     # User trying to abort. Remove partial download...
     except KeyboardInterrupt:
-        os.remove(output)
+        os.remove(arguments.output)
         sys.exit(1)
 
     # Helios exception...
-    except helios.exceptions.ExceptionBase as someException:
-        print(someException.what())
+    except helios.exceptions.ExceptionBase as some_exception:
+        print(some_exception.what())
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An unknown exception occurred: {print(someException)}"))
+    except Exception as some_exception:
+        print(_(f"An unknown exception occurred: {print(some_exception)}"))
 
     # If unsuccessful, bail...
     if not success:

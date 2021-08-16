@@ -5,5 +5,5 @@
 #
 
 # Utilities version...
-version = '0.5+dev20210706.1'
-
+#  <https://www.python.org/dev/peps/pep-0440/>
+version = '0.5.20210815.post1'

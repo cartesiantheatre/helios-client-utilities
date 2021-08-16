@@ -5,16 +5,14 @@
 #
 
 # System imports...
+import argparse
+from pprint import pprint
+import sys
+
+# Other imports
 import helios
 from helios.responses import StoredSongSchema
 from helios.utilities.common import add_common_arguments, zeroconf_find_server
-from pprint import pprint
-from termcolor import colored
-import argparse
-import attr
-import colorama
-import datetime
-import sys
 
 # i18n...
 import gettext
@@ -41,7 +39,8 @@ def add_arguments(argument_parser):
         dest='song_id',
         required=False,
         nargs='?',
-        help=_('Unique numeric identifier of song to query. You must provide exactly one of an --id, --reference, --all, or --random.'),
+        help=_('Unique numeric identifier of song to query. You must provide '
+               'exactly one of an --id, --reference, --all, or --random.'),
         type=int)
 
     # Define behaviour for --random in song selection exclusion group...
@@ -50,7 +49,10 @@ def add_arguments(argument_parser):
         dest='random_size',
         required=False,
         nargs='?',
-        help=_('Randomly select <size> songs to retrieve from the catalogue. The <size> must be greater than or equal to 1 and no greater than the total number of songs in the catalogue. You must provide exactly one of --id, --reference, --all, or --random.'),
+        help=_('Randomly select <size> songs to retrieve from the catalogue. '
+               'The <size> must be greater than or equal to 1 and no greater '
+               'than the total number of songs in the catalogue. You must '
+               'provide exactly one of --id, --reference, --all, or --random.'),
         type=int)
 
     # Define behaviour for --reference in song selection exclusion group...
@@ -59,7 +61,8 @@ def add_arguments(argument_parser):
         dest='song_reference',
         required=False,
         nargs='?',
-        help=_('Unique reference of song to query. You must provide exactly one of an --id, --reference, --all, or --random.'))
+        help=_('Unique reference of song to query. You must provide exactly '
+               'one of an --id, --reference, --all, or --random.'))
 
     # Define behaviour for --paginate...
     argument_parser.add_argument(
@@ -67,7 +70,8 @@ def add_arguments(argument_parser):
         dest='paginate',
         required=False,
         nargs='?',
-        help=_('Number of results to buffer and show before pausing for user. By default there is no pause.'),
+        help=_('Number of results to buffer and show before pausing for user. '
+               'By default there is no pause.'),
         type=int)
 
 # Main function...
@@ -85,9 +89,6 @@ def main():
 
     # Parse the command line...
     arguments = argument_parser.parse_args()
-
-    # Initialize terminal colour...
-    colorama.init()
 
     # Status on whether there were any errors...
     success = False
@@ -187,12 +188,12 @@ def main():
         sys.exit(1)
 
     # Helios exception...
-    except helios.exceptions.ExceptionBase as someException:
-        print(someException.what())
+    except helios.exceptions.ExceptionBase as some_exception:
+        print(some_exception.what())
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An unknown exception occurred: {print(someException)}"))
+    except Exception as some_exception:
+        print(_(f"An unknown exception occurred: {print(some_exception)}"))
 
     # If unsuccessful, bail...
     if not success:
@@ -204,4 +205,3 @@ def main():
 # Entry point...
 if __name__ == '__main__':
     main()
-

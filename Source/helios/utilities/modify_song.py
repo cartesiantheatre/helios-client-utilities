@@ -5,16 +5,15 @@
 #
 
 # System imports...
+import argparse
+import base64
+from pprint import pprint
+import sys
+
+# Other imports...
+import attr
 import helios
 from helios.utilities.common import add_common_arguments, zeroconf_find_server
-from pprint import pprint
-from termcolor import colored
-import argparse
-import attr
-import base64
-import colorama
-import datetime
-import sys
 
 # i18n...
 import gettext
@@ -32,7 +31,8 @@ def add_arguments(argument_parser):
         action='store_false',
         default=True,
         dest='store',
-        help=_('Delete the song on the server immediately after analysis. Defaults to store.'))
+        help=_('Delete the song on the server immediately after analysis. '
+               'Defaults to store.'))
 
     # Define behaviour for --store, defaults store to true...
     storage_policy_group.add_argument(
@@ -52,7 +52,8 @@ def add_arguments(argument_parser):
         dest='song_id',
         required=False,
         nargs='?',
-        help=_('Unique numeric identifier of song to modify. You must provide either this or a --reference.'),
+        help=_('Unique numeric identifier of song to modify. You must provide '
+               'either this or a --reference.'),
         type=int)
 
     # Define behaviour for --reference in song selection exclusion group...
@@ -61,7 +62,8 @@ def add_arguments(argument_parser):
         dest='song_reference',
         required=False,
         nargs='?',
-        help=_('Unique reference of song to modify. You must provide either this or an --id.'))
+        help=_('Unique reference of song to modify. You must provide either '
+               'this or an --id.'))
 
     # Delete remote file...
     argument_parser.add_argument(
@@ -69,7 +71,8 @@ def add_arguments(argument_parser):
         action='store_const',
         const='',
         dest='song_edit_file',
-        help=_('Delete remote file if it was stored on server, but keep the database records.'))
+        help=_('Delete remote file if it was stored on server, but keep the '
+               'database records.'))
 
     # Song album to replace existing field...
     argument_parser.add_argument(
@@ -101,7 +104,8 @@ def add_arguments(argument_parser):
         dest='song_edit_file',
         required=False,
         nargs='?',
-        help=_('Path to file to replace song with. Empty string means delete whatever was stored on the server.'))
+        help=_('Path to file to replace song with. Empty string means delete '
+               'whatever was stored on the server.'))
 
     # Song genre to replace existing field...
     argument_parser.add_argument(
@@ -160,9 +164,6 @@ def main():
     # Parse the command line...
     arguments = argument_parser.parse_args()
 
-    # Initialize terminal colour...
-    colorama.init()
-
     # Prepare to modify a song...
     patch_song_dict = {}
 
@@ -176,14 +177,22 @@ def main():
         patch_song_dict['file'] = base64.b64encode(open(arguments.song_edit_file, 'rb').read()).decode('ascii')
 
     # Initialize all the other patchable song fields...
-    if arguments.song_edit_album is not None: patch_song_dict['album'] = arguments.song_edit_album
-    if arguments.song_edit_artist is not None: patch_song_dict['artist'] = arguments.song_edit_artist
-    if arguments.song_edit_beats_per_minute is not None: patch_song_dict['beats_per_minute'] = arguments.song_edit_beats_per_minute
-    if arguments.song_edit_genre is not None: patch_song_dict['genre'] = arguments.song_edit_genre
-    if arguments.song_edit_isrc is not None: patch_song_dict['isrc'] = arguments.song_edit_isrc
-    if arguments.song_edit_reference is not None: patch_song_dict['reference'] = arguments.song_edit_reference
-    if arguments.song_edit_title is not None: patch_song_dict['title'] = arguments.song_edit_title
-    if arguments.song_edit_year is not None: patch_song_dict['year'] = arguments.song_edit_year
+    if arguments.song_edit_album is not None:
+        patch_song_dict['album'] = arguments.song_edit_album
+    if arguments.song_edit_artist is not None:
+        patch_song_dict['artist'] = arguments.song_edit_artist
+    if arguments.song_edit_beats_per_minute is not None:
+        patch_song_dict['beats_per_minute'] = arguments.song_edit_beats_per_minute
+    if arguments.song_edit_genre is not None:
+        patch_song_dict['genre'] = arguments.song_edit_genre
+    if arguments.song_edit_isrc is not None:
+        patch_song_dict['isrc'] = arguments.song_edit_isrc
+    if arguments.song_edit_reference is not None:
+        patch_song_dict['reference'] = arguments.song_edit_reference
+    if arguments.song_edit_title is not None:
+        patch_song_dict['title'] = arguments.song_edit_title
+    if arguments.song_edit_year is not None:
+        patch_song_dict['year'] = arguments.song_edit_year
 
     # Try to modify the song...
     success = False
@@ -215,12 +224,12 @@ def main():
         success = True
 
     # Helios exception...
-    except helios.exceptions.ExceptionBase as someException:
-        print(someException.what())
+    except helios.exceptions.ExceptionBase as some_exception:
+        print(some_exception.what())
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An unknown exception occurred: {print(someException)}"))
+    except Exception as some_exception:
+        print(_(f"An unknown exception occurred: {print(some_exception)}"))
 
     # Show stored song model produced by server if successful...
     if success:
@@ -236,4 +245,3 @@ def main():
 # Entry point...
 if __name__ == '__main__':
     main()
-

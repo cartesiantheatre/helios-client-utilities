@@ -5,26 +5,23 @@
 #
 
 # System imports...
-import helios
-from helios.utilities.common import add_common_arguments, zeroconf_find_server
-from pprint import pprint
-from termcolor import colored
 import argparse
-import attr
 import base64
-import colorama
 import concurrent.futures
-import datetime
-import logging
-import numpy
-import os
-import pandas
-import queue
-import simplejson
-import sys
 from functools import partial
+import logging
+import queue
+import sys
 import threading
 import time
+import traceback
+
+# Other imports
+import helios
+from helios.utilities.common import add_common_arguments, zeroconf_find_server
+import numpy
+import pandas
+import simplejson
 
 # i18n...
 import gettext
@@ -52,16 +49,18 @@ def add_arguments(argument_parser):
         action='store_true',
         default=False,
         dest='dry_run',
-        help=_('Perform a dry run only. Do not actually make any modifications to the server.'))
+        help=_('Perform a dry run only. Do not actually make any modifications '
+               'to the server.'))
 
-    # Define behaviour for --max-errors...
+    # Define behaviour for --maximum-errors...
     argument_parser.add_argument(
-        '--max-errors',
+        '--maximum-errors',
         default=1,
         dest='maximum_errors',
         nargs='?',
         type=int,
-        help=_('Maximum number of errors to tolerate before exiting. Defaults to one. Set to zero for unlimited non-fatal.'))
+        help=_('Maximum number of errors to tolerate before exiting. Defaults '
+               'to one. Set to zero for unlimited non-fatal.'))
 
     # Define behaviour for --no-store, defaults store to true...
     argument_parser.add_argument(
@@ -69,7 +68,8 @@ def add_arguments(argument_parser):
         action='store_false',
         default=True,
         dest='store',
-        help=_('Delete the song on the server immediately after analysis. Defaults to store.'))
+        help=_('Delete the song on the server immediately after analysis. '
+               'Defaults to store.'))
 
     # Define behaviour for --offset...
     argument_parser.add_argument(
@@ -78,7 +78,8 @@ def add_arguments(argument_parser):
         dest='offset',
         nargs='?',
         type=int,
-        help=_('Row offset to begin processing on with 1 being first after column header line.'))
+        help=_('Row offset to begin processing on with 1 being first after '
+               'column header line.'))
 
     # Define behaviour for --threads...
     argument_parser.add_argument(
@@ -87,7 +88,8 @@ def add_arguments(argument_parser):
         dest='threads',
         nargs='?',
         type=int,
-        help=_('Number of concurrent import threads. Defaults to number of logical cores on server.'))
+        help=_('Number of concurrent import threads. Defaults to number of '
+               'logical cores on server.'))
 
     # Define behaviour for --threads-max...
     argument_parser.add_argument(
@@ -96,11 +98,12 @@ def add_arguments(argument_parser):
         dest='threads_maximum',
         nargs='?',
         type=int,
-        help=_('Spawn no more than at most this many concurrent import threads. Defaults to 8.'))
+        help=_('Spawn no more than at most this many concurrent import '
+               'threads. Defaults to 8.'))
 
 # Class to batch import a bunch of songs at once. Uses multiple synchronized
 #  processes...
-class BatchSongImporter(object):
+class BatchSongImporter:
 
     # Constructor...
     def __init__(self, arguments, songs_total):
@@ -118,7 +121,7 @@ class BatchSongImporter(object):
     # Consumer thread which submits music to server...
     def _add_song_consumer_thread(self, consumer_thread_index):
 
-        logging.debug(F"consumer {consumer_thread_index}: Spawned.")
+        logging.debug(_(F"consumer {consumer_thread_index}: Spawned."))
 
         # Create a client...
         client = helios.client(
@@ -148,26 +151,26 @@ class BatchSongImporter(object):
                     # Retrieve a csv_row, or block for at most one second before
                     #  checking to see if bail requested...
                     try:
-                        logging.debug(F"consumer {consumer_thread_index}: Waiting for a job.")
+                        logging.debug(_(F"consumer {consumer_thread_index}: Waiting for a job."))
                         csv_row = None
                         csv_row = self._queue.get(timeout=1)
                         reference = csv_row['reference']
-                        logging.debug(F"consumer {consumer_thread_index}: {reference} Got a job.")
+                        logging.debug(_(F"consumer {consumer_thread_index}: {reference} Got a job."))
                         with self._thread_lock:
                             self._songs_processed += 1
-                            logging.info(F"consumer {consumer_thread_index}: {reference} Processing song {self._songs_processed} of {self._songs_total}.")
+                            logging.info(_(F"consumer {consumer_thread_index}: {reference} Processing song {self._songs_processed} of {self._songs_total}."))
 
                     # Queue is empty. Try again...
                     except queue.Empty:
-                        logging.debug(F"consumer {consumer_thread_index}: Job queue empty, will try again.")
+                        logging.debug(_(F"consumer {consumer_thread_index}: Job queue empty, will try again."))
                         continue
 
                     # Check if the song already has been added, and if so, skip it...
                     try:
                         # Probe server to see if song already exists...
-                        logging.debug(F"consumer {consumer_thread_index}: {reference} Checking if song already exists.")
-                        existing_song = client.get_song(song_reference=csv_row['reference'])
-                        logging.info(F"consumer {consumer_thread_index}: {reference} Song already known to server, skipping.")
+                        logging.debug(_(F"consumer {consumer_thread_index}: {reference} Checking if song already exists."))
+                        client.get_song(song_reference=csv_row['reference'])
+                        logging.info(_(F"consumer {consumer_thread_index}: {reference} Song already known to server, skipping."))
 
                         # It already exists. Treat this as a success and go to
                         #  next song...
@@ -181,20 +184,20 @@ class BatchSongImporter(object):
                     # Construct new song...
                     new_song_dict = {
 
-                        'album' : csv_row['album'] if csv_row['album'] else None,
-                        'artist' : csv_row['artist'] if csv_row['artist'] else None,
-                        'title' : csv_row['title'] if csv_row['title'] else None,
-                        'genre' : csv_row['genre'] if csv_row['genre'] else None,
-                        'isrc' : csv_row['isrc'] if csv_row['isrc'] else None,
-                        'beats_per_minute' : csv_row['beats_per_minute'] if csv_row['beats_per_minute'] else None,
-                        'year' : csv_row['year'] if csv_row['year'] else None,
+                        'album' : csv_row.get('album'),
+                        'artist' : csv_row.get('artist'),
+                        'title' : csv_row.get('title'),
+                        'genre' : csv_row.get('genre'),
+                        'isrc' : csv_row.get('isrc'),
+                        'beats_per_minute' : csv_row.get('beats_per_minute'),
+                        'year' : csv_row.get('year'),
                         'file' : base64.b64encode(open(csv_row['path'], 'rb').read()).decode('ascii'),
-                        'reference' : csv_row['reference']
+                        'reference' : csv_row.get('reference')
                     }
 
                     # Upload if not a dry run...
                     if not self._arguments.dry_run:
-                        stored_song = client.add_song(
+                        client.add_song(
                             new_song_dict=new_song_dict,
                             store=self._arguments.store,
                             progress_callback=partial(
@@ -202,32 +205,43 @@ class BatchSongImporter(object):
 
                     # Otherwise log the pretend upload dry run...
                     else:
-                        logging.info(F"consumer {consumer_thread_index}: {reference} Dry run uploading.")
+                        logging.info(_(F"consumer {consumer_thread_index}: {reference} Dry run uploading."))
 
                 # JSON decoder error...
-                except simplejson.errors.JSONDecodeError as someException:
-                    failure_message = F"{str(someException)}"
-                    logging.info(F"consumer {consumer_thread_index}: {reference} JSON decode error: {str(someException)}.")
+                except simplejson.errors.JSONDecodeError as some_exception:
+                    failure_message = _(F"{str(some_exception)}")
+                    logging.info(_(F"consumer {consumer_thread_index}: {reference} JSON decode error: {str(some_exception)}."))
+
+                # Conflict...
+                except helios.exceptions.Conflict as some_exception:
+                    failure_message = _(F"{str(some_exception)}")
+                    logging.info(_(F"consumer {consumer_thread_index}: {reference} Conflict error: {str(some_exception)}."))
 
                 # Bad input...
-                except helios.exceptions.Validation as someException:
-                    failure_message = F"{str(someException)}"
-                    logging.info(F"consumer {consumer_thread_index}: {reference} Validation failed: {str(someException)}.")
+                except helios.exceptions.Validation as some_exception:
+                    failure_message = _(F"{str(some_exception)}")
+                    logging.info(_(F"consumer {consumer_thread_index}: {reference} Validation failed: {str(some_exception)}."))
 
                 # Connection failed...
-                except helios.exceptions.Connection as someException:
-                    failure_message = F"{str(someException)}"
-                    logging.info(F"consumer {consumer_thread_index}: {reference} Connection problem ({str(someException)}).")
+                except helios.exceptions.Connection as some_exception:
+                    failure_message = _(F"{str(some_exception)}")
+                    logging.info(_(F"consumer {consumer_thread_index}: {reference} Connection problem ({str(some_exception)})."))
 
                 # Server complained about request...
-                except helios.exceptions.BadRequest as someException:
-                    failure_message = F"Server said: {str(someException)}"
-                    logging.info(F"consumer {consumer_thread_index}: {reference} Server said: {str(someException)}")
+                except helios.exceptions.BadRequest as some_exception:
+                    failure_message = _(F"Server said: {str(some_exception)}")
+                    logging.info(_(F"consumer {consumer_thread_index}: {reference} Server said: {str(some_exception)}"))
 
                 # Some other exception occured...
-                except Exception as someException:
-                    failure_message = F"{str(someException)} ({type(someException)})"
-                    logging.info(F"consumer {consumer_thread_index}: {reference} {str(someException)} ({type(someException)}).")
+                except Exception as some_exception:
+
+                    # Notify user...
+                    failure_message = _(F"{str(some_exception)} ({type(some_exception)})")
+                    logging.info(_(F"consumer {consumer_thread_index}: {reference} {str(some_exception)} ({type(some_exception)})."))
+
+                    # Dump stack trace...
+                    (exception_type, exception_value, exception_traceback) = sys.exc_info()
+                    traceback.print_tb(exception_traceback)
 
                 # Song added successfully without any issues...
                 else:
@@ -238,7 +252,7 @@ class BatchSongImporter(object):
 
                     # Notify thread formerly enqueued task is complete...
                     if csv_row is not None:
-                        logging.debug(F"consumer {consumer_thread_index}: {reference} Moving to next song.")
+                        logging.debug(_(F"consumer {consumer_thread_index}: {reference} Moving to next song."))
                         self._queue.task_done()
 
                     # If we were not successful processing an actual song,
@@ -256,19 +270,18 @@ class BatchSongImporter(object):
                         if (self._errors_remaining == -1) and (self._arguments.maximum_errors != 0):
 
                             # Alert user...
-                            logging.info(_(F'consumer {consumer_thread_index}: Maximum errors reached (set to {self._arguments.maximum_errors}). Aborting.'))
+                            logging.info(_(F'consumer {consumer_thread_index}: Maximum errors reached (set to {self._arguments.maximum_errors}). Aborting...'))
 
                             # Signal to all threads to stop...
                             self._stop_event.set()
 
         # Some exception occurred that we weren't able to handle during the
         #  upload loop...
-        except Exception as someException:
-            logging.info(F'consumer {consumer_thread_index}: An exception occurred ({str(someException)}).')
+        except Exception as some_exception:
+            logging.info(_(F'consumer {consumer_thread_index}: An exception occurred ({str(some_exception)}).'))
 
         # Log when we are exiting a consumer thread...
-        logging.debug(F'consumer {consumer_thread_index}: Thread exited.')
-
+        logging.debug(_(F'consumer {consumer_thread_index}: Thread exited.'))
 
     # Progress bar callback...
     def _current_song_progress_callback(
@@ -276,7 +289,7 @@ class BatchSongImporter(object):
 
         # If we're done uploading, update description to analysis stage...
         if bytes_read == bytes_total:
-            logging.info(F'consumer {consumer_thread_index}: {reference} Upload complete. Awaiting server analysis...')
+            logging.info(_(F'consumer {consumer_thread_index}: {reference} Upload complete. Awaiting server analysis...'))
 
        # time.sleep(0.001)
 
@@ -292,7 +305,7 @@ class BatchSongImporter(object):
     # Start batch import. This generates work for consumer threads...
     def start(self, csv_reader):
 
-        logging.info(F"producer: Creating thread pool of {self._arguments.threads} threads.")
+        logging.info(_(F"producer: Creating thread pool of {self._arguments.threads} threads."))
 
         # Construct consumer thread pool and run it...
         with concurrent.futures.ThreadPoolExecutor(
@@ -302,7 +315,8 @@ class BatchSongImporter(object):
                 # Spawn consumer threads and hand them a consumer thread index...
                 for consumer_thread_index in range(0, self._arguments.threads):
                     self._executor.submit(
-                        self._add_song_consumer_thread, consumer_thread_index)
+                        self._add_song_consumer_thread,
+                        consumer_thread_index)
 
                 # Create a job, while there is still work to be done...
                 current_song_offset = 1
@@ -327,24 +341,24 @@ class BatchSongImporter(object):
                         #  ommitted from an empty "" string field, we need to
                         #  clean up what it generated. Replace quoted strings
                         #  with their quoted contents...
-                        if type(csv_row[key]) is str and len(csv_row[key]) >= 2:
-                          if csv_row[key][0] == '"' and csv_row[key][-1] == '"':
-                            csv_row[key] = csv_row[key][1:-1]
+                        if isinstance(csv_row[key], str) and len(csv_row[key]) >= 2:
+                            if csv_row[key][0] == '"' and csv_row[key][-1] == '"':
+                                csv_row[key] = csv_row[key][1:-1]
 
                         # Replace NaNs and NAs with None's so we can distinguish
                         #  from fields that were intentionally ommitted versus
                         #  ones that the user explicitly wanted a value of an
                         #  empty string...
-                        if type(csv_row[key]) is float and numpy.isnan(csv_row[key]):
+                        if isinstance(csv_row[key], float) and numpy.isnan(csv_row[key]):
                             csv_row[key] = None
 
                         # Nullable integers weren't added until Panda 0.24.0.
                         #  Type cast the fields that were really suppose to be
                         #  integers from floats to integers...
-                        if type(csv_row[key]) is float and (key == "beats_per_minute" or key == "year"):
+                        if isinstance(csv_row[key], float) and (key in ("beats_per_minute", "year")):
                             csv_row[key] = int(csv_row[key])
 
-                    logging.debug(F"producer: Loaded {csv_row['reference']} record.")
+                    logging.debug(_(F"producer: Loaded {csv_row['reference']} record."))
 
                     # Keep trying to add the job to the work queue until
                     #  successful or we are told to abort...
@@ -352,13 +366,13 @@ class BatchSongImporter(object):
 
                         # Try to add job...
                         try:
-                            logging.debug("producer: Waiting to add new work to work queue.")
+                            logging.debug(_("producer: Waiting to add new work to work queue."))
                             self._queue.put(csv_row, timeout=1)
-                            logging.debug(F"producer: Added {csv_row['reference']} record to work queue.")
+                            logging.debug(_(F"producer: Added {csv_row['reference']} record to work queue."))
 
                         # Queue is full, try again...
                         except queue.Full:
-                            logging.debug("producer: Queue full, trying again.")
+                            logging.debug(_("producer: Queue full, trying again."))
                             continue
 
                         # Done adding job. Go prepare next job...
@@ -367,29 +381,35 @@ class BatchSongImporter(object):
                     if self._stop_event.is_set():
                         break
 
+                # Drain work queue, while there is still work waiting to
+                #  complete in consumer threads, and we have not been asked to
+                #  abort...
+                while not self._queue.empty() and not self._stop_event.is_set():
+                    time.sleep(0.5)
+
                 # Wait for all current work on the queue to be retrieved from
                 #  consumer threads...
-                logging.debug(F'producer: Completed submitting all work to work queue.')
+                logging.debug(_("producer: Completed submitting all work to work queue."))
                 self.stop()
-                logging.debug('producer: All work in work queue completed.')
+                logging.debug(_("producer: All work in work queue completed."))
 
             # Parser error, treated as fatal...
-            except ValueError as someException:
-                logging.error(F"producer: Song {current_song_offset}, parser error: {someException}.")
+            except ValueError as some_exception:
+                logging.error(_(F"producer: Song {current_song_offset}, parser error: {some_exception}."))
 
             # User trying to abort...
             except KeyboardInterrupt:
                 print(_(F'\rAborting. Draining work queue of {self._queue.qsize()} items. Please wait a moment...'))
                 self.stop()
 
-            except Exception as someException:
-                logging.error(F"producer: Exception: {str(someException)}.")
+            except Exception as some_exception:
+                logging.error(_(F"producer: Exception: {str(some_exception)}."))
 
             except:
-                logging.error("producer: Unhandled exception.")
+                logging.error(_("producer: Unhandled exception."))
 
             finally:
-                logging.debug("producer: Done reading rows.")
+                logging.debug(_("producer: Done reading rows."))
                 self.stop()
 
     # Gracefully stop all importation processes. Called from producer thread...
@@ -401,14 +421,14 @@ class BatchSongImporter(object):
             return
 
         # Signal to all consumer threads to stop...
-        logging.debug('Signally to all pending transactions to complete.')
+        logging.debug(_('Signally to all pending transactions to complete.'))
         self._stop_event.set()
 
         # Wait for all consumer threads to stop and work queue to drain...
         if self._executor:
-            logging.debug(F'Waiting on work queue to drain {self._queue.qsize()} items.')
+            logging.debug(_(F'Waiting on work queue to drain {self._queue.qsize()} items.'))
             self._executor.shutdown(wait=True)
-            logging.debug('Executor shutdown successfully.')
+            logging.debug(_('Executor shutdown successfully.'))
 
     # Destructor...
     def __del__(self):
@@ -434,14 +454,11 @@ def main():
     arguments.offset = max(arguments.offset, 1)
 
     # Setup logging...
-    format = "%(asctime)s: %(message)s"
+    logging_format = "%(asctime)s: %(message)s"
     if arguments.verbose:
-        logging.basicConfig(format=format, level=logging.DEBUG, datefmt="%H:%M:%S")
+        logging.basicConfig(format=logging_format, level=logging.DEBUG, datefmt="%H:%M:%S")
     else:
-        logging.basicConfig(format=format, level=logging.INFO, datefmt="%H:%M:%S")
-
-    # Initialize terminal colour...
-    colorama.init()
+        logging.basicConfig(format=logging_format, level=logging.INFO, datefmt="%H:%M:%S")
 
     # Success flag to determine exit code...
     success = False
@@ -566,12 +583,12 @@ def main():
 
             # Every thousand songs give some feedback...
             if songs_total % 10 == 0:
-                print(F"\rFound {songs_total:,} songs...", end='', flush=True)
+                print(_(F"\rFound {songs_total:,} songs..."), end='', flush=True)
 
         # Provide summary and reset seek pointer for parser to next line after
         #  headers...
         print("\r", end='')
-        logging.info(F"Counted a total of {songs_total:,} songs.")
+        logging.info(_(F"Counted a total of {songs_total:,} songs..."))
 
         # Now initialize the reader we will actually use to parse the records
         #  and supply the consumer threads...
@@ -609,12 +626,12 @@ def main():
         success = False
 
     # Helios exception...
-    except helios.exceptions.ExceptionBase as someException:
-        print(someException.what())
+    except helios.exceptions.ExceptionBase as some_exception:
+        print(some_exception.what())
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An exception occurred: {str(someException)}"))
+    except Exception as some_exception:
+        print(_(F"An exception occurred: {str(some_exception)}"))
 
     # Cleanup...
     finally:
@@ -636,18 +653,18 @@ def main():
                     log_file = open("helios_import_errors.log", "w")
 
                 # Failed. Let user know...
-                except OSError as error:
-                    print(_(F"Could not save failed import list to current working directory."))
+                except OSError:
+                    print(_("Could not save failed import list to current working directory."))
 
                 # Show the reference for each failed song...
                 for reference, failure_message in batch_importer.get_failures():
 
                     # Save to log file if opened...
                     if log_file:
-                        log_file.write(F"{reference}\t{failure_message}\n")
+                        log_file.write(_(F"{reference}\t{failure_message}\n"))
 
                     # Show on stderr as well...
-                    print(F"  {reference}: {failure_message}")
+                    print(_(F"  {reference}: {failure_message}"))
 
                 # Close log file if open...
                 if log_file:
@@ -675,4 +692,3 @@ if __name__ == '__main__':
 
     # Run main function...
     main()
-

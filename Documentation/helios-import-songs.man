@@ -1,4 +1,4 @@
-.TH helios-import-songs 1 "July 2021"
+.TH helios-import-songs 1 "August 2021"
 .SH NAME
 helios-import-songs - Batch import songs into Helios.
 
@@ -43,7 +43,7 @@ Delimiter character to use. Default is comma character.
 Perform a dry run only. Do not actually make any modifications to the server.
 
 .TP
-\fB\--max-errors="<max>"\fR
+\fB\--maximum-errors="<max>"\fR
 Maximum number of errors to tolerate before exiting. The default is one. Set to
 zero for unlimited non-fatal errors. Note that syntax errors in the input
 catalogue are always considered fatal.
@@ -183,6 +183,8 @@ Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
 \fBhelios-add-song\fR(1)
 .br
 \fBhelios-get-status\fR(1)
+.br
+\fBhelios-provision-magnatune\fR(1)
 .br
 \fIhttps://www.heliosmusic.io\fR
 .br

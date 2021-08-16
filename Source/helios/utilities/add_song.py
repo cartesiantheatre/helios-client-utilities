@@ -5,19 +5,17 @@
 #
 
 # System imports...
+import argparse
+import base64
+from pprint import pprint
+import sys
+
+# Other imports...
+import attr
 import helios
 from helios.utilities.common import add_common_arguments, zeroconf_find_server
-from pprint import pprint
 from termcolor import colored
-import argparse
-import attr
-import base64
-import colorama
-import datetime
-import sys
 from tqdm import tqdm
-
-import time
 
 # i18n...
 import gettext
@@ -73,9 +71,6 @@ def main():
 
     # Parse the command line...
     arguments = argument_parser.parse_args()
-
-    # Initialize terminal colour...
-    colorama.init()
 
     # Success flag to determine exit code...
     success = False
@@ -150,12 +145,12 @@ def main():
         sys.exit(1)
 
     # Helios exception...
-    except helios.exceptions.ExceptionBase as someException:
-        print(someException.what())
+    except helios.exceptions.ExceptionBase as some_exception:
+        print(some_exception.what())
 
     # Some other kind of exception...
-    except Exception as someException:
-        print(_(f"An unknown exception occurred: {print(someException)}"))
+    except Exception as some_exception:
+        print(_(f"An unknown exception occurred: {print(some_exception)}"))
 
     # Cleanup...
     finally:

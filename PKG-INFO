@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: helios-client-utilities
-Version: 0.5+dev20210706.1
+Version: 0.5.20210815.post1
 Summary: Utilities for interacting with a Helios server.
 Home-page: https://www.heliosmusic.io
 Author: Cartesian Theatre
@@ -51,6 +51,7 @@ Description: ![Helios Logo](https://heliosmusic.io/application/files/thumbnails/
         | `helios-find-servers` | List all helios servers detected on your LAN. |
         | `helios-get-song` | Query metadata for a song within a remote Helios server. |
         | `helios-import-songs` | Batch import songs into Helios. |
+        | `helios-provision-magnatune` | Download Magnatune catalogue and generate CSV for helios-import-songs(1). |
         | `helios-modify-song` | Tool to edit metadata of remote songs already analyzed on a Helios server. |
         | `helios-similar` | Search for similar songs on a remote Helios server. |
         | `helios-status` | Query the status of a remote Helios server. |
