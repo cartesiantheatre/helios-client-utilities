@@ -11,6 +11,7 @@ Build-Depends:
     lintian,
     python3-all,
     python3-attr (>= 18.2.0),
+    python3-dbus,
     python3-helios-client,
     python3-keyring,
     python3-pandas (>= 0.23.3),
@@ -35,6 +36,7 @@ Multi-Arch: foreign
 Depends:
     bash-completion (>= 1:2.1),
     gnome-keyring | libkf5wallet-bin,
+    python3-dbus,
     ${misc:Depends},
     ${python3:Depends}
 Description: utilities for interacting with a Helios server
