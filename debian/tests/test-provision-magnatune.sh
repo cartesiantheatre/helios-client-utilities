@@ -30,11 +30,17 @@ helios-status --verbose
 #  by helios-autopkgtest package's preinst maintainer script...
 . /tmp/magnatune_credentials.sh
 
+# For instructions on getting keyring in helios-provision-magnatune(1) to work
+#  on headless systems, see the following...
+#  <https://github.com/jaraco/keyring#using-keyring-on-headless-linux-systems>
+
 # Start a D-Bus session...
 dbus-run-session -- sh
 
 # Create a keyring using a dummy password...
-echo 'dummypassword' | gnome-keyring-daemon --unlock
+gnome-keyring-daemon --unlock <<EOF
+dummypassword
+EOF
 
 # Download and prepare a catalogue from Magnatune of five random Ogg/Vorbis
 #  songs, each a minimum of 2 minutes in length, with embedded artwork if none

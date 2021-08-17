@@ -34,7 +34,7 @@ Architecture: all
 Multi-Arch: foreign
 Depends:
     bash-completion (>= 1:2.1),
-    gnome-keyring | libkf5wallet-bin | python3-keyrings.alt,
+    gnome-keyring | libkf5wallet-bin,
     ${misc:Depends},
     ${python3:Depends}
 Description: utilities for interacting with a Helios server

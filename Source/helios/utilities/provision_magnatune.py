@@ -16,6 +16,7 @@ import random
 import sqlite3
 import sys
 import tempfile
+import traceback
 import urllib
 
 # Other imports...
@@ -277,11 +278,11 @@ def embed_artwork(song_path, artwork_path):
     song_mime_type      = magic.from_file(song_path, mime=True)
     artwork_mime_type   = magic.from_file(artwork_path, mime=True)
 
-    # Load artwork data...
-    artwork = PIL.Image.open(artwork_path)
+    # Load artwork as a PIL image object...
+    artwork_pil = PIL.Image.open(artwork_path)
 
     # Get dimensions...
-    width, height = artwork.size
+    width, height = artwork_pil.size
 
     # Get depth...
     mode_to_depth = {
@@ -295,10 +296,11 @@ def embed_artwork(song_path, artwork_path):
         'I' : 32,
         'F' : 32
     }
-    depth = mode_to_depth[artwork.mode]
+    depth = mode_to_depth[artwork_pil.mode]
 
     # Get artwork raw data...
-    artwork_data = artwork.getdata()
+    with open(artwork_path, "rb") as artwork_fileobj:
+        artwork_data = artwork_fileobj.read()
 
     # This is an mp3...
     if song_mime_type == "audio/mpeg":
@@ -345,21 +347,17 @@ def embed_artwork(song_path, artwork_path):
     elif song_mime_type in ("audio/ogg", "audio/vorbis", "application/ogg"):
 
         # Open song...
-        vorbis_file = mutagen.oggvorbis.OggVorbis(song_path)
-
-        # Load the artwork data...
-        with open(artwork_path, "rb") as artwork_fileobj:
-            artwork_data = artwork_fileobj.read()
+        vorbis_file             = mutagen.oggvorbis.OggVorbis(song_path)
 
         # Construct a picture...
-        picture         = mutagen.flac.Picture()
-        picture.data    = artwork_data
-        picture.type    = 0x03                  # Cover (front)
-        picture.desc    = u"Cover (front)"      # Exact spelling important and case sensitive too
-        picture.mime    = artwork_mime_type
-        picture.width   = width
-        picture.height  = height
-        picture.depth   = depth
+        picture                 = mutagen.flac.Picture()
+        picture.data            = artwork_data
+        picture.type            = 0x03                  # Cover (front)
+        picture.desc            = u"Cover (front)"      # Exact spelling important and case sensitive too
+        picture.mime            = artwork_mime_type
+        picture.width           = width
+        picture.height          = height
+        picture.depth           = depth
 
         # Encode to a bytes object...
         picture_data            = picture.write()
@@ -592,8 +590,13 @@ def main():
         # If password was not already provided on the command line...
         if arguments.password is None:
 
-            # Query system keyring...
-            keyring_password = keyring.get_password("helios-provision-magnatune", arguments.user)
+            # Try querying system keyring...
+            try:
+                keyring_password = keyring.get_password("helios-provision-magnatune", arguments.user)
+
+            # Problem initializing the keyring...
+            except keyring.errors.InitError as some_exception:
+                raise Exception(F_("Unable to initialize the keyring: {str(some_exception)}"))
 
             # If found in system keyring, use it...
             if keyring_password:
@@ -603,8 +606,13 @@ def main():
             else:
                 arguments.password = getpass.getpass(prompt=_(F'Enter Magnatune passphrase for user {arguments.user}: '))
 
-        # Update keyring cache...
-        keyring.set_password("helios-provision-magnatune", arguments.user, arguments.password)
+        # Try updating keyring cache...
+        try:
+            keyring.set_password("helios-provision-magnatune", arguments.user, arguments.password)
+
+        # Failed to unlock the keyring. This is not a fatal error...
+        except keyring.errors.KeyringLocked:
+            logging.warning(_("Unable to cache passphrase in locked keyring..."))
 
         # If a local cached copy of the Magnatune SQLite database was provided,
         #  use it instead of downloading...
@@ -649,7 +657,7 @@ def main():
         else:
 
             # Log downloading remote database...
-            logging.info(_("Requesting index of Magnatune catalogue..."))
+            logging.info(_("Retrieving Magnatune catalogue index..."))
 
             # Create a tempfile object for the downloaded compressed database...
             [compressed_tempfilefd, compressed_tempfilename] = tempfile.mkstemp()
@@ -895,7 +903,7 @@ def main():
                     artwork_output_path = os.path.join(arguments.output_directory, "artwork.tmp")
 
                     # Log what we are about to download...
-                    logging.info(F"Downloading {index + 1}/{total_requested}: Album artwork...")
+                    logging.info(F"Downloading {index + 1}/{total_requested}: Album artwork to embed...")
 
                     # Download artwork...
                     download_file(url=artwork_url, filename=artwork_output_path)
@@ -946,6 +954,10 @@ def main():
 
                 # Decrement remaining permissible errors...
                 errors_remaining -= 1
+
+                # Dump stack trace...
+                (exception_type, exception_value, exception_traceback) = sys.exc_info()
+                traceback.print_tb(exception_traceback)
 
             # Things to do after each download or if a problem occurs during
             #  transfer...
