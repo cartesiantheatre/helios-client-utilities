@@ -903,7 +903,7 @@ def main():
                     artwork_output_path = os.path.join(arguments.output_directory, "artwork.tmp")
 
                     # Log what we are about to download...
-                    logging.info(F"Downloading {index + 1}/{total_requested}: Album artwork to embed...")
+                    logging.info(F"Downloading {index + 1}/{total_requested}: Album artwork missing. Will embed...")
 
                     # Download artwork...
                     download_file(url=artwork_url, filename=artwork_output_path)
