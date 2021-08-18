@@ -289,7 +289,7 @@ class BatchSongImporter:
 
         # If we're done uploading, update description to analysis stage...
         if bytes_read == bytes_total:
-            logging.info(_(F'consumer {consumer_thread_index}: {reference} Upload complete. Awaiting server analysis...'))
+            logging.info(_(F'consumer {consumer_thread_index}: {reference} Awaiting server analysis...'))
 
        # time.sleep(0.001)
 

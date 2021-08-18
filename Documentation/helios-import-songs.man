@@ -67,8 +67,9 @@ them.
 \fB\--threads-max="<count>"\fR
 Spawn no more than at most this many concurrent import threads. Use this when
 the number of concurrent import threads is automatically detected and your
-server. Use this as a safety valve to ensure the client doesn't spawn hundreds
-of blocking threads it cannot service fast enough. Defaults to 8.
+server has a large number of cores. This can function as a safety valve to
+ensure the client doesn't spawn hundreds of i/o blocking threads it cannot
+service fast enough. The default is 8.
 
 .so man7/helios-client-utilities-common.7
 
