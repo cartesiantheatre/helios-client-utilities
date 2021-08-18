@@ -48,7 +48,7 @@ The following is a summary of the utilities included in this package. For detail
 ## Quick installation
 
 ### Ubuntu
-Packages already prepared for Ubuntu 19.04 (disco) and later are available on our Personal Package Archive (PPA) [here](https://launchpad.net/%7Ekip/+archive/ubuntu/helios-public). To get the package installed and be up and running in seconds, just run the following two commands:
+Packages already prepared for Ubuntu 21.04 (hirsute) and later are available on our Personal Package Archive (PPA) [here](https://launchpad.net/%7Ekip/+archive/ubuntu/helios-public). To get the package installed and be up and running in seconds, just run the following two commands:
 
 ```console
 $ sudo add-apt-repository ppa:kip/helios-public
