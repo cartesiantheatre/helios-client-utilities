@@ -53,7 +53,7 @@ def add_common_arguments(argument_parser):
     argument_parser.add_argument(
         '--timeout-connect',
         action='store',
-        default=15,
+        default=None,
         dest='timeout_connect',
         nargs='?',
         type=int,
@@ -63,7 +63,7 @@ def add_common_arguments(argument_parser):
     argument_parser.add_argument(
         '--timeout-read',
         action='store',
-        default=300,
+        default=None,
         dest='timeout_read',
         nargs='?',
         type=int,
