@@ -128,6 +128,8 @@ class BatchSongImporter:
             api_key=self._arguments.api_key,
             host=self._arguments.host,
             port=self._arguments.port,
+            timeout_connect=self._arguments.timeout_connect,
+            timeout_read=self._arguments.timeout_read,
             tls=self._arguments.tls,
             tls_ca_file=self._arguments.tls_ca_file,
             tls_certificate=self._arguments.tls_certificate,

@@ -7,7 +7,7 @@ _helios_add_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --file --no-store --id --reference --store --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --file --no-store --id --reference --store --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -25,7 +25,7 @@ _helios_delete_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --delete-all --delete-file-only --id --reference --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --delete-all --delete-file-only --id --reference --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -43,7 +43,7 @@ _helios_download_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --id --reference --output -o --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --id --reference --output -o --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -61,7 +61,7 @@ _helios_get_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --all --id --paginate --random --reference --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --all --id --paginate --random --reference --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -79,7 +79,7 @@ _helios_import_songs()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --delimiter --dry-run --max-errors --no-store --offset --threads --threads-maximum --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --delimiter --dry-run --max-errors --no-store --offset --threads --threads-maximum --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -97,7 +97,7 @@ _helios_modify_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --delete-file --edit-album --edit-artist --edit-file --edit-genre --edit-isrc --edit-reference --edit-title --edit-year --id --no-store --store --reference --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --delete-file --edit-album --edit-artist --edit-file --edit-genre --edit-isrc --edit-reference --edit-title --edit-year --id --no-store --store --reference --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -133,7 +133,7 @@ _helios_similar()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --file --id --results --reference --short --url --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --file --id --results --reference --short --url --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -151,7 +151,7 @@ _helios_status()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --host --port --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then

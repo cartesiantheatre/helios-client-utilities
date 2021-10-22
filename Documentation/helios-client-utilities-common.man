@@ -21,6 +21,14 @@ and override any command line settings.
 Specify the port the server is listening on. Defaults to 6440.
 
 .TP
+\fB\--timeout-connect="<seconds>"\fR
+Number of seconds before a connect request times out. Defaults to 15 seconds.
+
+.TP
+\fB\--timeout-read="<seconds>"\fR
+Number of seconds before a read times out. Defaults to 300 seconds. Increase for embedded systems with low horse power.
+
+.TP
 \fB\--tls-disabled\fR
 Disable encryption. By default encryption is enabled.
 

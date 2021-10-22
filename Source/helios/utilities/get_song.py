@@ -105,6 +105,8 @@ def main():
             host=arguments.host,
             port=arguments.port,
             api_key=arguments.api_key,
+            timeout_connect=arguments.timeout_connect,
+            timeout_read=arguments.timeout_read,
             tls=arguments.tls,
             tls_ca_file=arguments.tls_ca_file,
             tls_certificate=arguments.tls_certificate,

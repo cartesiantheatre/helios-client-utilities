@@ -46,7 +46,28 @@ def add_common_arguments(argument_parser):
         action='store',
         default=6440,
         dest='port',
+        type=int,
         help=_('Port remote server is listening on. Defaults to 6440.'))
+
+    # Define behaviour for --timeout-connect...
+    argument_parser.add_argument(
+        '--timeout-connect',
+        action='store',
+        default=15,
+        dest='timeout_connect',
+        nargs='?',
+        type=int,
+        help=_('Number of seconds before a connect request times out.'))
+
+    # Define behaviour for --timeout-read...
+    argument_parser.add_argument(
+        '--timeout-read',
+        action='store',
+        default=300,
+        dest='timeout_read',
+        nargs='?',
+        type=int,
+        help=_('Number of seconds before a read times out.'))
 
     # Define behaviour for --tls-disabled...
     argument_parser.add_argument(
