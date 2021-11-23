@@ -170,14 +170,14 @@ def main():
                 sys.exit(1)
 
             # How many songs are currently in the database?
-            server_status = client.get_server_status()
+            system_status = client.get_system_status()
 
             # Keep deleting songs while there are some...
             songs_remaining = True
             current_page    = 1
             progress_bar    = tqdm(
                 desc=_('Deleting files'),
-                total=server_status.songs,
+                total=system_status.songs,
                 unit=_(' songs'))
             while songs_remaining:
 
@@ -222,13 +222,13 @@ def main():
                 sys.exit(1)
 
             # How many songs are currently in the database?
-            server_status = client.get_server_status()
+            system_status = client.get_system_status()
 
             # Keep deleting songs while there are some...
             songs_remaining = True
             progress_bar    = tqdm(
                 desc=_('Deleting metadata and files'),
-                total=server_status.songs,
+                total=system_status.songs,
                 unit=_(' songs'))
             while songs_remaining:
 

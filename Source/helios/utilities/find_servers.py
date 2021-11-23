@@ -24,7 +24,7 @@ def main():
     try:
 
         # Alert user...
-        print("Probing LAN for all Helios servers... (ctrl-c to abort)")
+        print(_("Searching LAN for Helios servers... (ctrl-c to cancel)"))
 
         # Initialize Zeroconf...
         zeroconf = Zeroconf()
@@ -43,7 +43,7 @@ def main():
 
         # Unless the user requests to abort...
         except KeyboardInterrupt:
-            print('\rAborting, please wait...')
+            print(_(F"\rAborting, please wait..."))
 
         # Cleanup Zeroconf...
         finally:
@@ -51,12 +51,12 @@ def main():
             browser_tls.cancel()
             zeroconf.close()
 
-        # Remember that we were successful...
+        # Set exit status...
         success = True
 
     # Some other kind of exception...
     except Exception as some_exception:
-        print(_(f"An unknown exception occurred: {print(some_exception)}"))
+        print(_(F"An unknown exception occurred: {print(some_exception)}"))
 
     # If unsuccessful, bail...
     if not success:

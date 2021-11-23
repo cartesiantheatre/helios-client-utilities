@@ -87,6 +87,7 @@ setup(
         'keyring',
         'mutagen >= 1.3',
         'python-magic',
+        'netifaces',
         'numpy',
         'pandas >= 0.23.3',
         'pil',

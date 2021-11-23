@@ -54,7 +54,7 @@ def main():
             verbose=arguments.verbose)
 
         # Perform query...
-        server_status = client.get_server_status()
+        system_status = client.get_system_status()
         success = True
 
     # Helios exception...
@@ -67,17 +67,17 @@ def main():
 
     # Some other kind of exception...
     except Exception as some_exception:
-        print(_(f"An unknown exception occurred: {type(some_exception)}"))
+        print(_(F"An unknown exception occurred: {type(some_exception)}"))
 
     # Show server information if received and verbosity enabled...
     if success and arguments.verbose:
-        pprint(attr.asdict(server_status))
+        pprint(attr.asdict(system_status))
 
     # Show success status or failure...
     if success:
-        print(_(f"Server has {server_status.songs} songs."))
+        print(_(F"Server has {system_status.songs} songs."))
     else:
-        print(f"{colored(_('There was a problem verifying the server status.'), 'red')}")
+        print(F"{colored(_('There was a problem verifying the server status.'), 'red')}")
 
     # If unsuccessful, bail...
     if not success:

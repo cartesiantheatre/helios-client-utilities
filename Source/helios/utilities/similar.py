@@ -127,8 +127,8 @@ def main():
             similarity_search_dict['similar_url'] = arguments.similar_url
         similarity_search_dict['maximum_results'] = arguments.maximum_results
 
-        # Query...
-        similar_songs_list = client.get_similar_songs(similarity_search_dict)
+        # Query and show a progress bar...
+        similar_songs_list = client.get_similar_songs(similarity_search_dict, True)
 
         # Note success...
         success = True

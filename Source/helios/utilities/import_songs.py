@@ -493,13 +493,13 @@ def main():
             verbose=arguments.verbose)
 
         # Verify we can reach the server...
-        server_status = client.get_server_status()
+        system_status = client.get_system_status()
 
         # User requested autodetection on the number of consumer threads...
         if arguments.threads == 0:
 
             # Start by setting to the number of logical cores on the server...
-            arguments.threads = max(server_status.cpu.cores, 1)
+            arguments.threads = max(system_status.cpu.cores, 1)
 
             # If the number of threads exceeds the maximum allowed, reduce it.
             #  This is a safety blow out valve in case the server has 144

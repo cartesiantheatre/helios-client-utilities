@@ -5,8 +5,8 @@
 #
 
 # System imports...
+import netifaces
 import re
-import socket
 import threading
 
 # Helios...
@@ -14,6 +14,7 @@ from helios.utilities import __version__
 
 # Other imports...
 from termcolor import colored
+from time import sleep
 from zeroconf import ServiceBrowser, Zeroconf
 
 # i18n...
@@ -137,7 +138,7 @@ class LocalNetworkServiceListener:
 
             # No network service information available...
             if info is None:
-                print(F"Helios server {colored(_('online'), 'green')} (no service information available)")
+                print(_(F"Helios server {colored(_('online'), 'green')} (no service information available)"))
                 return
 
             # Extract host and port...
@@ -151,9 +152,9 @@ class LocalNetworkServiceListener:
 
             # Notify user...
             if re.match(self._service_tls_regex, name) is not None:
-                print(F"Helios server {colored(_('online'), 'green')} at {host}:{port} ({colored(_('TLS'), 'green')})")
+                print(_(F"Helios server {colored(_('online'), 'green')} at {host}:{port} ({colored(_('TLS'), 'green')})"))
             else:
-                print(F"Helios server {colored(_('online'), 'green')} at {host}:{port} ({colored(_('TLS disabled'), 'red')})")
+                print(_(F"Helios server {colored(_('online'), 'green')} at {host}:{port} ({colored(_('TLS disabled'), 'red')})"))
 
             # Alert any waiting threads at least one server is found...
             self.found_event.set()
@@ -170,7 +171,7 @@ class LocalNetworkServiceListener:
 
         # No network service information available...
         if info is None:
-            print(F"Helios server {colored(_('offline'), 'yellow')} (no service information available)")
+            print(_(F"Helios server {colored(_('offline'), 'yellow')} (no service information available)"))
             return
 
         # Extract host and port...
@@ -196,7 +197,7 @@ class LocalNetworkServiceListener:
 def zeroconf_find_server():
 
     # Alert user...
-    print("Probing LAN for a Helios server, please wait... (ctrl-c to cancel)")
+    print(_("Searching LAN for Helios servers... (ctrl-c to cancel)"))
 
     # Initialize Zeroconf...
     zeroconf = Zeroconf()
@@ -208,36 +209,74 @@ def zeroconf_find_server():
     ServiceBrowser(zc=zeroconf, type_="_http._tcp.local.", listener=listener)
     ServiceBrowser(zc=zeroconf, type_="_https._tcp.local.", listener=listener)
 
-    # Wait until it finds server...
+    # Wait until it finds a server...
     listener.found_event.wait()
+
+    # Wait for another. This drastically increases the odds of mitigating a race
+    #  condition whereby the user wants the service running on a local
+    #  interface, but we end up discovering an externally running service
+    #  first...
+    listener.found_event.clear()
+    listener.found_event.wait(1.0)
 
     # Cleanup...
     zeroconf.close()
 
+    # Get list of detected servers...
+    server_list = listener.get_found()
+
+    # If we don't find a better server, use the first one detected...
+    best_server = server_list[0]
+
+    # Set of all local IP addresses...
+    local_ip_addresses = set()
+
+    # Get a set of all available local IP addresses. Traverse each interface by
+    #  name...
+    for interface_name in netifaces.interfaces():
+
+        # Traverse each set of address types on the given named interface...
+        for address_family in netifaces.ifaddresses(interface_name):
+
+            # We're only interested in IPv4 or IPv6 addresses...
+            if (address_family != netifaces.AF_INET):# and (address_family != netifaces.AF_INET6):
+                continue
+
+            # Get list of addresses of given type on the given interface...
+            interface_addresses = netifaces.ifaddresses(interface_name)[address_family]
+
+            # Each interface can have multiple addresses of the same address
+            #  family. Go through each for this address family and extract out
+            #  the interface IP address...
+            for interface in interface_addresses:
+                if 'addr' in interface:
+                    local_ip_addresses.add(interface['addr'])
+
+#    print(F"All local IP addresses: {local_ip_addresses}")
+
+    # But if multiple were found. Select the local host, if present...
+    if len(server_list) > 1:
+
+        # Search through list of detected servers...
+        for (host, port, tls) in server_list:
+
+#            print("{host} in local_ip_addresses: {host in local_ip_addresses}")
+
+            # Found one bound to a local interface...
+            if host in local_ip_addresses:
+
+                # Notify user of our choice...
+                print(_(F"Multiple detected. Defaulting to local: {host}:{port}"))
+
+                # Save best selection...
+                best_server = (host, port, tls)
+
+                # Stop at first local find...
+                break
+
     # Return host, port, and TLS flag of first found...
-    return listener.get_found()[0]
+    return best_server
 
-# Return the preferred local IP address...
-def get_preferred_local_ip_address():
-
-    # Allocate a temporary connectionless socket...
-    temporary_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    # Try to establish a "connection"...
-    try:
-        temporary_socket.connect(('10.255.255.255', 1))
-        local_ip_address = temporary_socket.getsockname()[0]
-
-    # If it failed, use loopback address...
-    except:
-        local_ip_address = '127.0.0.1'
-
-    # Close socket...
-    finally:
-        temporary_socket.close()
-
-    # Return the IP address...
-    return local_ip_address
 
 # Get utilities package version...
 def get_version():
