@@ -55,7 +55,15 @@ def add_arguments(argument_parser):
         dest='similar_url',
         required=False,
         nargs='?',
-        help=_('URL  of  a  song  hosted  on  any of a number of supported external services to use as a search key on the server.'))
+        help=_('URL of a song hosted on any of a number of supported external services to use as a search key on the server.'))
+
+    # Define behaviour for --same-genre, defaults to false...
+    argument_parser.add_argument(
+        '--same-genre',
+        action='store_true',
+        default=False,
+        dest='same_genre',
+        help=_('Limit similarity matches to only those matching the internal search key\'s genre.'))
 
     # Define behaviour for --results...
     argument_parser.add_argument(
@@ -102,6 +110,11 @@ def main():
         if not arguments.host:
             arguments.host, arguments.port, arguments.tls = zeroconf_find_server()
 
+        # User can limit results to search key's genre only if using an internal
+        #  search key...
+        if arguments.same_genre is True and (arguments.similar_file is not None or arguments.similar_url is not None):
+            raise Exception(_("You cannot limit search results to the same genre as the search key unless it was an internal search key."))
+
         # Create a client...
         client = helios.client(
             host=arguments.host,
@@ -125,6 +138,8 @@ def main():
             similarity_search_dict['similar_reference'] = arguments.similar_reference
         if arguments.similar_url:
             similarity_search_dict['similar_url'] = arguments.similar_url
+        if arguments.same_genre:
+            similarity_search_dict['same_genre'] = arguments.same_genre
         similarity_search_dict['maximum_results'] = arguments.maximum_results
 
         # Query and show a progress bar...
