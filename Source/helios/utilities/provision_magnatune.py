@@ -71,6 +71,14 @@ def add_arguments(argument_parser):
         help=_('If a song does not contain embedded cover art, ask Magnatune '
                'for it and then embed it in the file if supported.'))
 
+    # Define behaviour for --cover-artwork-archive...
+    argument_parser.add_argument(
+        '--cover-artwork-archive',
+        dest='cover_artwork_archive_path',
+        required=False,
+        nargs='?',
+        help=_('Archive a copy of each song\'s cover art in here.'))
+
     # Define behaviour for --force-overwrite
     argument_parser.add_argument(
         '--force-overwrite',
@@ -543,6 +551,21 @@ def main():
     # Create output directory, if not already...
     os.makedirs(name=arguments.output_directory, exist_ok=True)
 
+    # A cover artwork directory was specified. Prepare for it...
+    if arguments.cover_artwork_archive_path is not None:
+
+        # If it's not an absolute path, convert it...
+        if not os.path.isabs(arguments.cover_artwork_archive_path):
+            arguments.cover_artwork_archive_path = os.path.abspath(arguments.cover_artwork_archive_path)
+
+        # Create the path, if not already...
+        os.makedirs(name=arguments.cover_artwork_archive_path, exist_ok=True)
+
+        # Make sure it is writeable...
+        if not os.access(arguments.cover_artwork_archive_path, os.W_OK):
+            logging.error(_(F"Cover artwork archival directory is not writeable. Check permissions: {arguments.cover_artwork_archive_path}"))
+            sys.exit(1)
+
     # Calculate absolute path to user's requested output directory, if not
     #  already...
     if not os.path.isabs(arguments.output_directory):
@@ -859,25 +882,59 @@ def main():
             # Format complete output path...
             output_path = os.path.join(arguments.output_directory, filename_with_extension)
 
-            # If user requested not to overwrite already existing songs, and
-            #  this song has already been downloaded...
-            if not arguments.force_overwrite and os.path.isfile(output_path):
-
-                # Log it...
-                logging.info(F"Skipping {index + 1}/{total_requested}: {filename_with_extension}")
-
-                # Remember add the song to the successfully downloaded list so
-                #  it is added to the generated CSV later...
-                downloaded_songs.append(songs[index])
-
-                # Skip it...
-                continue
-
-            # Log what we are about to download...
-            logging.info(F"Downloading {index + 1}/{total_requested}: {filename_with_extension}")
-
-            # Try to download the song...
+            # Try to download the song, and possibly artwork too if requested...
             try:
+
+                # If we were asked to archive a copy of all available cover
+                #  artwork, do it...
+                if arguments.cover_artwork_archive_path is not None:
+
+                    # List of available dimensions from Magnatune...
+                    available_square_dimensions = [50, 75, 100, 160, 200, 300, 600, 1400]
+
+                    # Do it for each available square dimension...
+                    for dimension in available_square_dimensions:
+
+                        # Format url to cover artwork...
+                        artwork_url = F"http://he3.magnatune.com/music/{urllib.parse.quote(artist)}/{urllib.parse.quote(album)}/cover_{dimension}.jpg"
+
+                        # Construct path to local download location for artwork...
+                        artwork_output_path = os.path.join(arguments.cover_artwork_archive_path, F"MAGNATUNE_{song_id}_{dimension}x{dimension}.jpg")
+
+                        # If the file already exists, skip it...
+                        if os.path.exists(artwork_output_path):
+                            logging.info(F"[{song_id}] Skipping song {index + 1}/{total_requested}: Already archived {dimension}x{dimension} album artwork...")
+                            continue
+
+                        # Otherwise log what we are about to download...
+                        logging.info(F"[{song_id}] Downloading song {index + 1}/{total_requested}: Archiving {dimension}x{dimension} album artwork...")
+
+                        # If anything unexpected happens before file download is
+                        #  complete, be sure to delete corrupt file...
+                        temporary_filenames.append(artwork_output_path)
+
+                        # Download artwork...
+                        download_file(url=artwork_url, filename=artwork_output_path)
+
+                        # Don't delete file on exit, now that we have all of it...
+                        temporary_filenames.remove(artwork_output_path)
+
+                # If user requested not to overwrite already existing songs, and
+                #  this song has already been downloaded...
+                if not arguments.force_overwrite and os.path.isfile(output_path):
+
+                    # Log it...
+                    logging.info(F"[{song_id}] Skipping song {index + 1}/{total_requested}: {filename_with_extension}")
+
+                    # Remember add the song to the successfully downloaded list so
+                    #  it is added to the generated CSV later...
+                    downloaded_songs.append(songs[index])
+
+                    # Skip it...
+                    continue
+
+                # Log what we are about to download...
+                logging.info(F"[{song_id}] Downloading song {index + 1}/{total_requested}: {filename_with_extension}")
 
                 # If anything unexpected happens before file download is
                 #  complete, be sure to delete corrupt file...
@@ -896,23 +953,39 @@ def main():
                 #  present in the song we just downloaded, embed it...
                 if arguments.cover_artwork and not is_artwork_embedded(song_path=output_path):
 
-                    # Format url to cover artwork...
+                    # Format url to high resolution cover artwork, if we need to fetch it...
                     artwork_url = F"http://he3.magnatune.com/music/{urllib.parse.quote(artist)}/{urllib.parse.quote(album)}/cover_1400.jpg"
 
                     # Construct path to local download location for artwork...
                     artwork_output_path = os.path.join(arguments.output_directory, "artwork.tmp")
 
-                    # Log what we are about to download...
-                    logging.info(F"Downloading {index + 1}/{total_requested}: Album artwork missing. Will embed...")
+                    # Construct path to potentially extant already archived copy of the artwork...
+                    archived_output_path = os.path.join(arguments.cover_artwork_archive_path, F"MAGNATUNE_{song_id}_1400x1400.jpg")
 
-                    # Download artwork...
-                    download_file(url=artwork_url, filename=artwork_output_path)
+                    # Check if the high resolution was already archived to prevent double download...
+                    if os.path.exists(archived_output_path):
+
+                        # Log that we are not about to download...
+                        logging.info(F"[{song_id}] Skipping song {index + 1}/{total_requested}: High resolution album artwork already archived. Will embed...")
+
+                        # Use path to archived artwork for embedding...
+                        artwork_output_path = archived_output_path
+
+                    # Otherwise if it has not been downloaded already...
+                    else:
+
+                        # Log what we are about to download...
+                        logging.info(F"[{song_id}] Downloading song {index + 1}/{total_requested}: High resolution album artwork missing. Will embed...")
+
+                        # Download artwork...
+                        download_file(url=artwork_url, filename=artwork_output_path)
 
                     # Embed artwork...
                     embed_artwork(song_path=output_path, artwork_path=artwork_output_path)
 
-                    # Delete artwork file...
-                    os.remove(artwork_output_path)
+                    # Delete temporary artwork file if it wasn't in the archived folder...
+                    if not os.path.samefile(archived_output_path, artwork_output_path):
+                        os.remove(artwork_output_path)
 
                 # Remember add the song to the successfully downloaded list so
                 #  it is added to the generated CSV later...
@@ -929,10 +1002,22 @@ def main():
                 if some_exception.response.status_code == 401:
 
                     # Format error...
-                    message = _(F"{filename_with_extension}: Bad username or password...")
+                    message = _(F"[{song_id}] Error: Bad username or password...")
 
                     # Notify user now...
-                    logging.error(_(F"Error: {message}"))
+                    logging.error(message)
+
+                    # ...and again later when we are ready to exit...
+                    error_messages.append(message)
+
+                # Something else...
+                else:
+
+                    # Format error...
+                    message = _(F"[{song_id}] Error: {str(some_exception)}")
+
+                    # Notify user now...
+                    logging.error(message)
 
                     # ...and again later when we are ready to exit...
                     error_messages.append(message)

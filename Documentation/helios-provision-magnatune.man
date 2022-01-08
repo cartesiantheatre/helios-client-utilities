@@ -29,6 +29,10 @@ Don't attempt to retrieve the SQLite database from the remote Magnatune service.
 If a song does not contain embedded cover art, ask Magnatune for it and then embed it in the file if supported.
 
 .TP
+\fB\--cover-artwork-archive\fR \fI<output_directory>\fR
+Archive a copy of each song's cover art in all available dimensions in \fIoutput_directory\fR. Each song will have a corresponding \fIsong_reference_WIDTHxHEIGHT.jpg\fR saved within this directory where WIDTH and HEIGHT are values denoting the image's square dimension of 50, 75, 100, 160, 200, 300, 600, or 1400 pixels. This switch may still be used absent \fI--cover-artwork\fR.
+
+.TP
 \fB\--force-overwrite\fR
 By default songs that are already present in the \fIoutput_directory\fR are not downloaded again. Use this switch to force an overwrite with a fresh download. Note that if the local copy is in a different format than the requested format, the songs will not be considered the same.
 
@@ -58,7 +62,7 @@ Password to use when authenticating as \fI<user>\fR with the remote Magnatune se
 
 .TP
 \fB\--random\fR
-If \fB\--song-count \fI<count>\fR is greater than zero, but less than the total size of the available Magnatune catalogue, randomly select \fB<count>\fR songs to download.
+If \fB\--song-count\fR \fI<count>\fR is greater than zero, but less than the total size of the available Magnatune catalogue, randomly select \fI<count>\fR songs to download.
 
 .TP
 \fB\--song-count\fR \fI<count>\fR

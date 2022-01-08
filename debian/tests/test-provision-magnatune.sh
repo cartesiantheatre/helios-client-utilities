@@ -52,10 +52,12 @@ helios-provision-magnatune                                                      
     --password $MAGNATUNE_PASSWORD                                              \
     --format vorbis                                                             \
     --cover-artwork                                                             \
+    --cover-artwork-archive Output/Artwork                                      \
     --song-count 5                                                              \
     --random                                                                    \
     --minimum-length 120                                                        \
-    --absolute-path Output/
+    --absolute-path                                                             \
+    Output/Songs
 
 # Batch import the generated CSV catalogue...
 echo "*** Batch import songs from Magnatune CSV..."
