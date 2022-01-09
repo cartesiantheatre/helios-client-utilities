@@ -61,7 +61,7 @@ helios-provision-magnatune                                                      
 
 # Batch import the generated CSV catalogue...
 echo "*** Batch import songs from Magnatune CSV..."
-helios-import-songs Output/magnatune.csv
+helios-import-songs Output/Songs/magnatune.csv
 
 # Purge the song database...
 echo "*** Delete all songs..."
