@@ -385,6 +385,21 @@ def embed_artwork(song_path, artwork_path):
     else:
         raise Exception(_(F"Don't know how to embed artwork in song of type {song_mime_type}."))
 
+# Generate a unique Magnatune song reference based on the song's filename and
+#  extension...
+def get_magnatune_reference(filename_with_extension):
+
+    # Split file name and extension...
+    filename, extension = os.path.splitext(filename_with_extension)
+
+    # Format song unique reference string...
+    reduced_filename_with_extension = re.sub("[^0-9a-zA-Z]+", "_", filename_with_extension)
+    reduced_filename_with_extension = reduced_filename_with_extension.upper()
+    unique_reference = F"MAGNATUNE_{reduced_filename_with_extension}"
+
+    # Return unique reference...
+    return unique_reference
+
 # Get utilities package version...
 def get_version():
     return __version__.version
@@ -900,8 +915,12 @@ def main():
                         # Format url to cover artwork...
                         artwork_url = F"http://he3.magnatune.com/music/{urllib.parse.quote(artist)}/{urllib.parse.quote(album)}/cover_{dimension}.jpg"
 
+                        # Generate a unique reference to the song based on its
+                        #  filename and extension...
+                        unique_reference = get_magnatune_reference(filename_with_extension)
+
                         # Construct path to local download location for artwork...
-                        artwork_output_path = os.path.join(arguments.cover_artwork_archive_path, F"MAGNATUNE_{song_id}_{dimension}x{dimension}.jpg")
+                        artwork_output_path = os.path.join(arguments.cover_artwork_archive_path, F"{unique_reference}_{dimension}x{dimension}.jpg")
 
                         # If the file already exists, skip it...
                         if os.path.exists(artwork_output_path):
@@ -1077,13 +1096,8 @@ def main():
                 if arguments.absolute_path:
                     output_path = os.path.join(arguments.output_directory, filename_with_extension)
 
-                # Split file name and extension...
-                filename, extension = os.path.splitext(filename_with_extension)
-
                 # Format song unique reference string...
-                reduced_filename_with_extension = re.sub("[^0-9a-zA-Z]+", "_", filename_with_extension)
-                reduced_filename_with_extension = reduced_filename_with_extension.upper()
-                unique_reference = F"MAGNATUNE_{reduced_filename_with_extension}"
+                unique_reference = get_magnatune_reference(filename_with_extension)
 
                 # Check if the song reference wasn't actually unique...
                 if unique_reference in unique_references:

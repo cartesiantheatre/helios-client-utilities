@@ -6,4 +6,4 @@
 
 # Utilities version...
 #  <https://www.python.org/dev/peps/pep-0440/>
-version = '0.5.20220109.post1'
+version = '0.5.20220109.post2'
