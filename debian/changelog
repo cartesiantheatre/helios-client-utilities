@@ -1,6 +1,6 @@
-helios-client-utilities (0.5-git20220109-2-ct1) hirsute; urgency=medium
+helios-client-utilities (0.5-git20220109-3-ct1) hirsute; urgency=medium
 
   * Build for hirsute.
 
- -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Sun, 09 Jan 2022 22:18:00 -0700
+ -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Sun, 09 Jan 2022 23:00:00 -0700
 

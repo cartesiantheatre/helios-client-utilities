@@ -980,8 +980,12 @@ def main():
                     # Construct path to local download location for artwork...
                     artwork_output_path = os.path.join(arguments.output_directory, "artwork.tmp")
 
+                    # Generate a unique reference to the song based on its
+                    #  filename and extension...
+                    unique_reference = get_magnatune_reference(filename_with_extension)
+
                     # Construct path to potentially extant already archived copy of the artwork...
-                    archived_output_path = os.path.join(arguments.cover_artwork_archive_path, F"MAGNATUNE_{song_id}_1400x1400.jpg")
+                    archived_output_path = os.path.join(arguments.cover_artwork_archive_path, F"{unique_reference}_1400x1400.jpg")
 
                     # Check if the high resolution was already archived to prevent double download...
                     if os.path.exists(archived_output_path):
