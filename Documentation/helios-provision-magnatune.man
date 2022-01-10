@@ -1,4 +1,4 @@
-.TH helios-provision-magnatune 1 "August 2021"
+.TH helios-provision-magnatune 1 "January 2022"
 .SH NAME
 helios-provision-magnatune - Download Magnatune catalogue and generate CSV for \fBhelios-import-songs\fR(1)
 
@@ -85,12 +85,12 @@ Show version of utility.
 Authenticate as user \fIme\fR with the remote Magnatune service. Download 25 random Alt Rock songs into the \fIcatalogue\fR directory. Each song must be at least two minutes in length and encoded in the Ogg/Vorbis format. Verify that album artwork is present in every song, automatically retrieving and embedding the correct artwork if it was not already present in the song.
 
 .BR
-$ helios-provision-magnatune --user me --format vorbis --song-count=25 --random --genre alt-rock --cover-artwork --minimum-length=120 catalogue/
+$ helios-provision-magnatune --user me --format vorbis --song-count=25 --random --genre alt-rock --cover-artwork --minimum-length=120 catalogue/ --cover-artwork-archive artwork/
 
 .BR
 $ cat catalogue/magnatune.csv
     ...
-    "REFERENCE_123", "Some album", "Some artist", "Some \"title\"", "Some genre", "USA2P0502717", "135.72", "2003", "some_song.flac"
+    "MAGNATUNE_06_FUNKY_BREEZE_COZMIKBEATS_MP3", "Some album", "Some artist", "Some \"title\"", "Some genre", "USA2P0502717", "135.72", "2003", "some_song.flac"
     ...
 
 .SH EXIT STATUS

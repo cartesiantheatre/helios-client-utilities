@@ -13,6 +13,7 @@ import itertools
 import logging
 import os
 import random
+import re
 import sqlite3
 import sys
 import tempfile
@@ -735,7 +736,7 @@ def main():
         total_eligible = 0
 
         # Get a list of all available songs from database...
-        songs = cursor.execute(
+        query = cursor.execute(
         """
             SELECT songs.song_id AS song_id, artists.name AS artist, albums.name AS album, genres.name AS genre, songs.duration as duration, songs.mp3 as filename
             FROM songs
@@ -744,7 +745,8 @@ def main():
             INNER JOIN genres_albums ON genres_albums.album_id = albums.album_id
             INNER JOIN genres ON genres.genre_id = genres_albums.genre_id
             ORDER BY songs.song_id;
-        """).fetchall()
+        """)
+        songs = query.fetchall()
 
         # Remove all those that don't match the user's requested genre, if
         #  specified...
@@ -1061,6 +1063,10 @@ def main():
             # Start by emitting the column fields...
             print("reference,path", file=file)
 
+            # Set that will be used to make sure each song reference is truly
+            #  unique...
+            unique_references = set()
+
             # Write out each song, line by line...
             for index, (song_id, artist, album, genre, duration, filename_with_extension) in enumerate(downloaded_songs):
 
@@ -1071,10 +1077,35 @@ def main():
                 if arguments.absolute_path:
                     output_path = os.path.join(arguments.output_directory, filename_with_extension)
 
-                # Format line...
-                current_line = F"MAGNATUNE_{song_id},{output_path}"
+                # Split file name and extension...
+                filename, extension = os.path.splitext(filename_with_extension)
 
-                # Write it out...
+                # Format song unique reference string...
+                reduced_filename_with_extension = re.sub("[^0-9a-zA-Z]+", "_", filename_with_extension)
+                reduced_filename_with_extension = reduced_filename_with_extension.upper()
+                unique_reference = F"MAGNATUNE_{reduced_filename_with_extension}"
+
+                # Check if the song reference wasn't actually unique...
+                if unique_reference in unique_references:
+
+                    # Format warning...
+                    message = _(F"Non-unique song reference \"{unique_reference}\" for song ID {song_id}...")
+
+                    # Notify user now...
+                    logging.warning(_(F"Warning: {message}"))
+
+                    # ...and again later when we are ready to exit...
+                    error_messages.append(message)
+
+                # Otherwise add it to the set of unique references so we can
+                #  verify subsequent songs all have unique references too...
+                else:
+                    unique_references.add(unique_reference)
+
+                # Format line for CSV...
+                current_line = F"{unique_reference},{output_path}"
+
+                # Write out line to CSV...
                 print(current_line, file=file)
 
         # Determine how we will exit...
@@ -1096,7 +1127,7 @@ def main():
         if len(error_messages) > 0:
 
             # Notify user...
-            print(_(F"Download failed for {len(error_messages)} songs: "))
+            print(_(F"Warnings or failures for {len(error_messages)} songs: "))
 
             # Try to open a log file...
             try:
