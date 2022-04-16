@@ -48,7 +48,7 @@ The following is a summary of the utilities included in this package. For detail
 ## Quick installation
 
 ### Ubuntu
-Packages already prepared for Ubuntu 21.04 (hirsute) and later are available on our Personal Package Archive (PPA) [here](https://launchpad.net/%7Ekip/+archive/ubuntu/helios-public). To get the package installed and be up and running in seconds, just run the following two commands:
+Packages already prepared for Ubuntu 21.10 (impish) and later are available on our Personal Package Archive (PPA) [here](https://launchpad.net/%7Ekip/+archive/ubuntu/helios-public). To get the package installed and be up and running in seconds, just run the following two commands:
 
 ```console
 $ sudo add-apt-repository ppa:kip/helios-public
@@ -77,5 +77,5 @@ $ man helios
 
 ## Licensing
 
-This package is released under the terms of the [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html) or greater. Copyright (C) 2015-2021 Cartesian Theatre. See [Copying](./Copying) for more information.
+This package is released under the terms of the [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html) or greater. Copyright (C) 2015-2022 Cartesian Theatre. See [Copying](./Copying) for more information.
 
