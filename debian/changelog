@@ -1,6 +1,6 @@
-helios-client-utilities (0.5-git20220225-1-ct1) impish; urgency=medium
+helios-client-utilities (0.5-git20220602-1-ct1) jammy; urgency=medium
 
-  * Build for impish.
+  * Build for Jammy.
 
- -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Fri, 25 Feb 2022 22:08:00 -0700
+ -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Thu, 02 Jun 2022 18:57:00 -0700
 

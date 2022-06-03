@@ -1,4 +1,4 @@
-.TH helios-get-song 1 "May 2021"
+.TH helios-get-song 1 "June 2022"
 .SH NAME
 helios-get-song - Query metadata for a song within a remote Helios server.
 
@@ -65,7 +65,7 @@ Cartesian Theatre <info@cartesiantheatre.com>
 Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
 
 .SH COPYRIGHT
-Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
+Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
 
 .SH SEE ALSO
 \fBhelios\fR(7)

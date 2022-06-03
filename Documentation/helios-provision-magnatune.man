@@ -1,4 +1,4 @@
-.TH helios-provision-magnatune 1 "January 2022"
+.TH helios-provision-magnatune 1 "June 2022"
 .SH NAME
 helios-provision-magnatune - Download Magnatune catalogue and generate CSV for \fBhelios-import-songs\fR(1)
 
@@ -93,6 +93,24 @@ $ cat catalogue/magnatune.csv
     "MAGNATUNE_06_FUNKY_BREEZE_COZMIKBEATS_MP3", "Some album", "Some artist", "Some \"title\"", "Some genre", "USA2P0502717", "135.72", "2003", "some_song.flac"
     ...
 
+.SH NOTES
+
+During a session you will see output similar to the following:
+
+    ...
+    12:44:34: [23246] Downloading song 19578/20888: Archiving 200x200 album artwork...
+    12:44:34: [23246] Downloading song 19578/20888: Archiving 300x300 album artwork...
+    12:44:34: [23246] Downloading song 19578/20888: Archiving 600x600 album artwork...
+    12:44:35: [23246] Downloading song 19578/20888: Archiving 1400x1400 album artwork...
+    12:44:36: [23246] Downloading song 19578/20888: 03-The Sound-Toni Castells.mp3
+    12:44:39: [23247] Downloading song 19579/20888: Archiving 50x50 album artwork...
+    12:44:39: [23247] Downloading song 19579/20888: Archiving 75x75 album artwork...
+    ...
+
+The tool logs on each line every step it takes to retrieve the catalogue. From left to right you can read this as the time stamp the activity took place on, the Magnatune issued song ID, a descriptive explanation on what is being done, and the latter containing the current progress.
+
+In the above example the last line reads that at 12:44:39 a song with Magnatune ID 23247 had its album artwork fetched at 75x75 dimensions as part of song 19579 of 20888 that is currently scheduled to be retrieved.
+
 .SH EXIT STATUS
 \fBhelios-provision-magnatune\fR exits with a status of zero if no errors occurred.
 
@@ -103,7 +121,7 @@ Cartesian Theatre <info@cartesiantheatre.com>
 Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
 
 .SH COPYRIGHT
-Copyright (C) 2015-2021 Cartesian Theatre. All rights reserved.
+Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
 
 .SH SEE ALSO
 
