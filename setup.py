@@ -95,7 +95,7 @@ setup(
         'termcolor',
         'tqdm',
         'wheel',
-        'zeroconf >= 0.25.1'
+        'zeroconf >= 0.27.0'
     ],
     package_dir={'': 'Source'},
     packages=find_namespace_packages(where='Source'),

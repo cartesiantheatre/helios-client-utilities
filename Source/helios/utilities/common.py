@@ -191,6 +191,10 @@ class LocalNetworkServiceListener:
     def get_found(self):
         return self._servers
 
+    # Service updated callback...
+    def update_service(self, zeroconf, type, name):
+        pass
+
 
 # Find the first available Helios server on the local network and return its
 #  host and port...

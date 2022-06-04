@@ -1,6 +1,6 @@
-helios-client-utilities (0.5-git20220602-1-ct1) jammy; urgency=medium
+helios-client-utilities (0.5-git20220603-1-ct1) jammy; urgency=medium
 
   * Build for Jammy.
 
- -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Thu, 02 Jun 2022 18:57:00 -0700
+ -- Cartesian Theatre Packaging <packages@cartesiantheatre.com>  Fri, 03 Jun 2022 17:28:00 -0700
 
