@@ -2,7 +2,7 @@ Source: helios-client-utilities
 Section: sound
 Priority: optional
 Maintainer: Cartesian Theatre Packaging <packaging@cartesiantheatre.com>
-Standards-Version: 4.5.0.3
+Standards-Version: 4.6.0.1
 Build-Depends:
     bash-completion (>= 1:2.1),
     debhelper-compat (= 11),
