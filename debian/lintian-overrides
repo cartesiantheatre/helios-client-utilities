@@ -1,0 +1,7 @@
+## For innocuous warnings emit by lintian, as per DNMG § 5.14. This is for the
+#   helios-client-utilities binary package only...
+
+# This is not standalone documentation, but is meant to be loaded at runtime by
+#  the GUI...
+helios-client-utilities: package-contains-documentation-outside-usr-share-doc [usr/share/applications/helios-trainer/text/quick_start_page.txt]
+

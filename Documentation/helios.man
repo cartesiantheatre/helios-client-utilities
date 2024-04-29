@@ -1,4 +1,4 @@
-.TH helios 7 "June 2022"
+.TH helios 7 "April 2024"
 .SH NAME
 Helios - An intelligent music recommendation platform.
 
@@ -6,30 +6,25 @@ Helios - An intelligent music recommendation platform.
 Helios is an intelligent music recommendation platform.
 
 .SH DESCRIPTION
-Helios consists of several pieces of software. The \fBhelios-extractor\fR
-utility performs the acoustic analysis of your music collection. It is generally
-operated from the system cron job \fBhelios-extractor-cron\fR, but can be used
-directly.
-
-The \fBhelios-similar\fR utility can be used to find similar music in your
-collection to a given one. Although the similar music must have been previously
-analyzed and stored within your database with \fBhelios-extractor\fR, the given
-song need not be.
+Helios consists of an ensemble of software. These are a selection of mostly
+command line tools described below in \fBSEE ALSO\fR and the \fBheliosd\fR
+server.
 
 The \fBheliosd\fR system service provides an embedded HTTP server which exports
-a RESTful API. The API can be used for adding, removing, and analyzing new music
-in the catalogue; similarity matching; and playlist generation. The server and
-its API can be used as the basis for powerful web based applications built on
-top of the Helios platform.
+a RESTful API available to power web-based or other types of applications. The
+API can be used for managing a catalogue, performing analysis, and discovering
+music. Virtually everything the REST API can do is accessible from the command
+line tools.
 
 The \fBhelios-add-song\fR(1), \fBhelios-delete-song\fR(1),
 \fBhelios-download-song\fR(1), \fBhelios-find-servers\fR(1),
-\fBhelios-get-song\fR(1), \fBhelios-import-songs\fR(1),
-\fBhelios-modify-song\fR(1), \fBhelios-similar\fR(1), and \fBhelios-status\fR(1)
-utilities are all provided by the \fIhelios-client-utilities\fR package; the
-\fBheliosd\fR(1) daemon by the \fIhelios-server\fR package; the database
-backend by the \fIhelios-database-local\fR package; and the pure Python client
-API module by the \fIpython3-helios-client\fR package.
+\fBhelios-get-song\fR(1), \fBhelios-import-songs\fR(1), \fBhelios-learn\fR(1),
+\fBhelios-modify-song\fR(1), \fBhelios-similar\fR(1), \fBhelios-status\fR(1),
+and \fBhelios-trainer\fR(1) utilities are all provided by the
+\fIhelios-client-utilities\fR package; the \fBheliosd\fR(1) daemon by the
+\fIhelios-server\fR package; the database backend by the
+\fIhelios-database-local\fR package; and the pure Python 3 client API module by
+the \fIpython3-helios-client\fR package.
 
 All of the utilities that ship with the \fIhelios-client-utilities\fR package
 were written in Python using the \fIpython3-helios-client\fR module. They can
@@ -43,7 +38,7 @@ Cartesian Theatre <info@cartesiantheatre.com>
 Report bugs to Cartesian Theatre <info@cartesiantheatre.com>.
 
 .SH COPYRIGHT
-Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
+Copyright (C) 2015-2024 Cartesian Theatre. All rights reserved.
 
 .SH SEE ALSO
 \fBheliosd\fR(1)
@@ -60,6 +55,8 @@ Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
 .br
 \fBhelios-import-songs\fR(1)
 .br
+\fBhelios-learn\fR(1)
+.br
 \fBhelios-modify-song\fR(1)
 .br
 \fBhelios-provision-magnatune\fR(1)
@@ -67,6 +64,8 @@ Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
 \fBhelios-similar\fR(1)
 .br
 \fBhelios-status\fR(1)
+.br
+\fBhelios-trainer\fR(1)
 .br
 
 \fIhttps://www.heliosmusic.io\fR

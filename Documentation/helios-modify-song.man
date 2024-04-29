@@ -1,4 +1,4 @@
-.TH helios-modify-song 1 "June 2022"
+.TH helios-modify-song 1 "April 2024"
 .SH NAME
 helios-modify-song - Tool to edit metadata of remote songs already analyzed on a Helios server.
 
@@ -62,7 +62,7 @@ Cartesian Theatre <info@cartesiantheatre.com>
 Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
 
 .SH COPYRIGHT
-Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
+Copyright (C) 2015-2024 Cartesian Theatre. All rights reserved.
 
 .SH SEE ALSO
 \fBhelios\fR(7)

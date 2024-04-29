@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Helios Trainer
+GenericName=Interactively train Helios using a friendly GUI.
+Comment=Interactively train Helios using a friendly GUI.
+Icon=com.cartesiantheatre.helios_trainer
+Exec=helios-trainer %f
+Terminal=false
+MimeType=application/x-helios-training-session;
+Categories=Music;Audio;Development;Science;GTK;ArtificialIntelligence;ComputerScience;
+Keywords=science;artificial intelligence;music;machine learning;computer science;helios;
+StartupNotify=true
+

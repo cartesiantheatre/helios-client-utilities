@@ -1,0 +1,125 @@
+.TH helios-learn 1 "April 2024"
+.SH NAME
+helios-learn - Perform Helios supervised machine learning related tasks.
+
+.SH SYNOPSIS
+.B helios-learn <\fIACTION\fR> [\fIOPTIONS\fR]
+
+.SH DESCRIPTION
+Use this utility to perform various machine learning related tasks that improve
+the performance of your Helios server.
+
+The user provides a set of learning examples, or "triplets". Each triplet
+consists of three song references. These are an anchor, positive, and a negative
+example together as a tuple. Generally the more triplet learning examples, the
+better Helios will perform after training.
+
+An anchor is an arbitrary song. The positive is a song that you think is similar
+to the anchor. The negative is a song which you think is less similar to the
+anchor than the positive is. Songs are identified by their song reference and
+not ID.
+
+By way of example you might have a song from Louis Armstrong as an anchor, Ella
+Fitzgerald as a positive, and something from Radiohead as a negative.
+
+This form of contrastive learning requires a weak form of supervision because
+the user need not provide an exact measure of similarity between songs. They
+need only provide a relative order of similarity.
+
+.SH ACTION
+
+.TP
+\fBadd\fR
+Add a learning example to be used when training. This requires an --anchor,
+--positive, and --negative song references to specify the triplet.
+
+.TP
+\fBdelete\fR
+Delete a learning example triplet stored on the server that was awaiting
+training. This requires an --anchor, --positive, and --negative song references
+to specify the triplet.
+
+.TP
+\fBimport\fR \fB<session.hts>\fR
+Import learning example triplets from a Helios training session (.hts) stored on
+disk. You can generate one of these files through the interactive GUI provided
+by \fBhelios-trainer(1)\fR.
+
+.TP
+\fBlist\fR
+List all learning example triplets stored on the server awaiting training.
+
+.TP
+\fBpurge\fR
+Delete all learning examples stored on the server.
+
+.TP
+\fBsummary\fR
+Show a summary on learning examples and your catalogue.
+
+.TP
+\fBtrain\fR
+Request the server perform machine learning based on available learning
+examples.
+
+.SH OPTIONS
+
+.TP
+\fB\--anchor="<song_reference>"\fR
+Specify an arbitrary song in your catalogue by reference.
+
+.TP
+\fB\--positive="<song_reference>"\fR
+Specify a song in your catalogue by reference. This song will be used as an
+example of a song more similar to the anchor than the negative.
+
+.TP
+\fB\--negative="<song_reference>"\fR
+Specify a song in your catalogue by reference. This song will be used as the
+negative example to which the positive is more similar to the anchor than the
+negative.
+
+.so man7/helios-client-utilities-common.7
+
+.SH EXAMPLES
+.TP
+
+Add a learning example to the server where <anchor>, <positive>, and <negative> refer to song references for the anchor, positive, and negative examples:
+
+$ helios-learn add --anchor=<anchor> --positive=<positive> --negative=<negative>
+
+.TP
+Remove a learning example:
+
+$ helios-learn delete --anchor=<anchor> --positive=<positive> --negative=<negative>
+
+.TP
+Remove all learning examples:
+
+$ helios-learn purge
+
+.SH EXIT STATUS
+\fBhelios-learn\fR exits with a status of zero if there were no problems, one
+otherwise.
+
+.SH AUTHOR
+Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH REPORTING BUGS
+Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
+
+.SH COPYRIGHT
+Copyright (C) 2015-2024 Cartesian Theatre. All rights reserved.
+
+.SH SEE ALSO
+\fBhelios\fR(7)
+.br
+\fBhelios-import-songs\fR(1)
+.br
+\fBhelios-provision-magnatune\fR(1)
+.br
+\fBhelios-trainer\fR(1)
+.br
+\fIhttps://www.heliosmusic.io\fR
+.br
+

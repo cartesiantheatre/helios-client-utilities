@@ -1,4 +1,4 @@
-.TH helios-provision-magnatune 1 "June 2022"
+.TH helios-provision-magnatune 1 "April 2024"
 .SH NAME
 helios-provision-magnatune - Download Magnatune catalogue and generate CSV for \fBhelios-import-songs\fR(1)
 
@@ -121,7 +121,7 @@ Cartesian Theatre <info@cartesiantheatre.com>
 Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
 
 .SH COPYRIGHT
-Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
+Copyright (C) 2015-2024 Cartesian Theatre. All rights reserved.
 
 .SH SEE ALSO
 

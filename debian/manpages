@@ -6,8 +6,10 @@ Documentation/helios-download-song.man
 Documentation/helios-find-servers.man
 Documentation/helios-get-song.man
 Documentation/helios-import-songs.man
+Documentation/helios-learn.man
 Documentation/helios-modify-song.man
 Documentation/helios-provision-magnatune.man
 Documentation/helios-similar.man
 Documentation/helios-status.man
+Documentation/helios-trainer.man
 

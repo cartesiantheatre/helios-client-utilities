@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 #
 #   Helios, intelligent music.
-#   Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
+#   Copyright (C) 2015-2024 Cartesian Theatre. All rights reserved.
 #
 
 # Import modules...
 from __future__ import with_statement
-from setuptools import setup, find_namespace_packages
+from setuptools import setup, find_packages
 import importlib.util
 import os
 import sys
@@ -15,7 +15,7 @@ import sys
 #  the one hosting this script so that setuptools can find the required files...
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-# Get the long description from the ReadMe.md...
+# Get the long description from the README.md...
 def get_long_description():
     long_description = []
     with open('README.md') as file:
@@ -29,7 +29,7 @@ def get_version():
     version_file = None
 
     # Load the version module...
-    spec = importlib.util.spec_from_file_location('version', 'Source/helios/utilities/__version__.py')
+    spec = importlib.util.spec_from_file_location('version', 'Source/helios_client_utilities/__version__.py')
     spec.cached = None # Doesn't work
     version_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(version_module)
@@ -42,7 +42,7 @@ setup(
 
     # Metadata...
     author='Cartesian Theatre',
-    author_email='info@heliosmusic.io',
+    author_email='kip@heliosmusic.io',
     classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -65,7 +65,16 @@ setup(
         'Topic :: Utilities'
     ],
     description='Utilities for interacting with a Helios server.',
-    keywords=['music', 'similarity', 'match', 'catalogue', 'digital', 'signal', 'processing'],
+    keywords=[
+        'music',
+        'similarity',
+        'match',
+        'catalogue',
+        'digital',
+        'signal',
+        'processing',
+        'machine',
+        'learning'],
     license='GPL',
     long_description=get_long_description(),
     long_description_content_type='text/markdown',
@@ -82,38 +91,61 @@ setup(
     include_package_data=True,
     install_requires=[
         'attrs >= 18.2.0',
-        'dbus',
+        'PyGObject >= 3.22',
         'helios-client',
+        'importlib_resources',
         'keyring',
         'mutagen >= 1.3',
         'python-magic',
         'netifaces',
         'numpy',
         'pandas >= 0.23.3',
-        'pil',
+        'pillow',
+        'requests',
+        'requests-toolbelt',
         'simplejson',
         'termcolor',
         'tqdm',
-        'wheel',
+        'urllib3',
         'zeroconf >= 0.27.0'
     ],
     package_dir={'': 'Source'},
-    packages=find_namespace_packages(where='Source'),
+    packages=find_packages(where='Source'),
+    data_files=[
+        ('share/applications', ['Data/share/applications/com.cartesiantheatre.helios_trainer.desktop']),
+        ('share/applications/helios-trainer/text', ['Data/share/applications/helios-trainer/text/quick_start_page.txt']),
+        ('share/applications/helios-trainer', ['Data/share/applications/helios-trainer/login_logo.png']),
+        ('share/mime/packages', ['Data/share/mime/packages/helios-trainer-mime.xml']),
+        ('share/icons/hicolor/16x16/apps', ['Data/share/icons/hicolor/16x16/apps/com.cartesiantheatre.helios_trainer.png']),
+        ('share/icons/hicolor/24x24/apps', ['Data/share/icons/hicolor/24x24/apps/com.cartesiantheatre.helios_trainer.png']),
+        ('share/icons/hicolor/32x32/apps', ['Data/share/icons/hicolor/32x32/apps/com.cartesiantheatre.helios_trainer.png']),
+        ('share/icons/hicolor/48x48/apps', ['Data/share/icons/hicolor/48x48/apps/com.cartesiantheatre.helios_trainer.png']),
+        ('share/icons/hicolor/64x64/apps', ['Data/share/icons/hicolor/64x64/apps/com.cartesiantheatre.helios_trainer.png']),
+        ('share/icons/hicolor/128x128/apps', ['Data/share/icons/hicolor/128x128/apps/com.cartesiantheatre.helios_trainer.png']),
+        ('share/icons/hicolor/256x256/apps', ['Data/share/icons/hicolor/256x256/apps/com.cartesiantheatre.helios_trainer.png']),
+        ('share/icons/hicolor/scalable/apps', ['Data/share/icons/hicolor/scalable/apps/com.cartesiantheatre.helios_trainer.svg']),
+        ('share/icons/hicolor/scalable/mimetypes', ['Data/share/icons/hicolor/scalable/mimetypes/com.cartesiantheatre.helios_training_session.svg']),
+        ('share/icons/hicolor/symbolic/apps', ['Data/share/icons/hicolor/symbolic/apps/com.cartesiantheatre.helios_trainer.svg'])
+    ],
     entry_points={
         'console_scripts': [
-            'helios-add-song = helios.utilities.add_song:main',
-            'helios-delete-song = helios.utilities.delete_song:main',
-            'helios-download-song = helios.utilities.download_song:main',
-            'helios-find-servers = helios.utilities.find_servers:main',
-            'helios-get-song = helios.utilities.get_song:main',
-            'helios-import-songs = helios.utilities.import_songs:main',
-            'helios-modify-song = helios.utilities.modify_song:main',
-            'helios-provision-magnatune = helios.utilities.provision_magnatune:main',
-            'helios-similar = helios.utilities.similar:main',
-            'helios-status = helios.utilities.status:main'
+            'helios-add-song = helios_client_utilities.add_song:main',
+            'helios-delete-song = helios_client_utilities.delete_song:main',
+            'helios-download-song = helios_client_utilities.download_song:main',
+            'helios-find-servers = helios_client_utilities.find_servers:main',
+            'helios-get-song = helios_client_utilities.get_song:main',
+            'helios-import-songs = helios_client_utilities.import_songs:main',
+            'helios-learn = helios_client_utilities.learn:main',
+            'helios-modify-song = helios_client_utilities.modify_song:main',
+            'helios-provision-magnatune = helios_client_utilities.provision_magnatune:main',
+            'helios-similar = helios_client_utilities.similar:main',
+            'helios-status = helios_client_utilities.status:main'
         ],
+        'gui_scripts': [
+            'helios-trainer = helios_client_utilities.trainer.main:main'
+        ]
     },
-    python_requires='>= 3.7',
+    python_requires='>= 3.10',
     zip_safe=True
 )
 

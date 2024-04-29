@@ -34,21 +34,23 @@ The following is a summary of the utilities included in this package. For detail
 
 | Command | Description |
 |---------|-------------|
-| `helios-add-song` | Add a single song to a Helios server's catalogue. |
-| `helios-delete-song` | Delete a remote song or songs on a Helios server. |
-| `helios-download-song` | Download a song from a remote Helios server. |
-| `helios-find-servers` | List all helios servers detected on your LAN. |
-| `helios-get-song` | Query metadata for a song within a remote Helios server. |
-| `helios-import-songs` | Batch import songs into Helios. |
-| `helios-provision-magnatune` | Download Magnatune catalogue and generate CSV for helios-import-songs(1). |
-| `helios-modify-song` | Tool to edit metadata of remote songs already analyzed on a Helios server. |
-| `helios-similar` | Search for similar songs on a remote Helios server. |
-| `helios-status` | Query the status of a remote Helios server. |
+| `helios-add-song(1)` | Add a single song to a Helios server's catalogue. |
+| `helios-delete-song(1)` | Delete a remote song or songs on a Helios server. |
+| `helios-download-song(1)` | Download a song from a remote Helios server. |
+| `helios-find-servers(1)` | List all helios servers detected on your LAN. |
+| `helios-get-song(1)` | Query metadata for a song within a remote Helios server. |
+| `helios-import-songs(1)` | Batch import songs into Helios. |
+| `helios-learn(1)` | Perform machine learning related tasks. |
+| `helios-provision-magnatune(1)` | Download Magnatune catalogue and generate CSV for helios-import-songs(1). |
+| `helios-modify-song(1)` | Tool to edit metadata of remote songs already analyzed on a Helios server. |
+| `helios-similar(1)` | Search for similar songs on a remote Helios server. |
+| `helios-status(1)` | Query the status of a remote Helios server. |
+| `helios-trainer(1)` | GUI supervised learning tool to improve Helios server performance. |
 
 ## Quick installation
 
 ### Ubuntu
-Packages already prepared for Ubuntu 22.04 (Jammy) and later are available on our Personal Package Archive (PPA) [here](https://launchpad.net/%7Ekip/+archive/ubuntu/helios-public). To get the package installed and be up and running in seconds, just run the following two commands:
+Packages already prepared for Ubuntu 23.10 (Mantic) and later are available on our Personal Package Archive (PPA) [here](https://launchpad.net/%7Ekip/+archive/ubuntu/helios-public). To get the package installed and be up and running in seconds, just run the following two commands:
 
 ```console
 $ sudo add-apt-repository ppa:kip/helios-public

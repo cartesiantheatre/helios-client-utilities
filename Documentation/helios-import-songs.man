@@ -1,4 +1,4 @@
-.TH helios-import-songs 1 "June 2022"
+.TH helios-import-songs 1 "April 2024"
 .SH NAME
 helios-import-songs - Batch import songs into Helios.
 
@@ -111,7 +111,7 @@ any combination of alpha-numeric characters and underscores.
 Other than \fIreference\fR and \fIpath\fR, all other fields may be optionally
 omitted.
 
-An ommitted field and one that contains an explicit empty "" string have
+An omitted field and one that contains an explicit empty "" string have
 different semantics. If it is possible for a field to be automatically detected
 and that is what you actually desire, omit the field. But if you really do want
 an empty string for, say, the song title, provide an empty "" string.
@@ -140,7 +140,7 @@ The \fIpath\fR field contains either an operating system path or a URL. If the
 former it can be either an absolute or relative path.
 
 If the file is an operating system path to a remote NFS mount or other network
-share (as is common in a data centre enviroment), you should ensure you have
+share (as is common in a data centre environment), you should ensure you have
 adequate bandwidth and fast file system traversal capability. The latter is
 especially important when dealing with directories containing millions of songs.
 An inefficient file system traversal can waste substantial amounts of time
@@ -174,7 +174,7 @@ Cartesian Theatre <info@cartesiantheatre.com>
 Report bugs to Cartesian Theatre <info@cartesiantheatre.com>
 
 .SH COPYRIGHT
-Copyright (C) 2015-2022 Cartesian Theatre. All rights reserved.
+Copyright (C) 2015-2024 Cartesian Theatre. All rights reserved.
 
 .SH SEE ALSO
 \fBgzip\fR(1)

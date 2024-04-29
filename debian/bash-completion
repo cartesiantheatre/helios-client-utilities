@@ -61,7 +61,7 @@ _helios_get_song()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --all --id --paginate --random --reference --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --all --id --paginate --random --reference --host --port --save-catalogue --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -80,6 +80,24 @@ _helios_import_songs()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     opts="--api-key --delimiter --dry-run --max-errors --no-store --offset --threads --threads-maximum --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# helios-learn(1) completion
+[ -x /usr/bin/helios-learn ] &&
+_helios_learn()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="add delete import list purge summary train --anchor --api-key --host --negative --port --positive --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then
@@ -160,14 +178,34 @@ _helios_status()
     fi
 }
 
+# helios-trainer(1) completion
+[ -x /usr/bin/helios-trainer ] &&
+_helios_trainer()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--api-key --collector-host --collector-port --disable-tls --host --port --total-matches --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
 # Register completion callbacks...
 complete -f -F _helios_add_song helios-add-song
 complete -f -F _helios_delete_song helios-delete-song
 complete -f -F _helios_download_song helios-download-song
 complete -f -F _helios_get_song helios-get-song
 complete -f -F _helios_import_songs helios-import-songs
+complete -f -F _helios_learn helios-learn
 complete -f -F _helios_modify_song helios-modify-song
 complete -f -F _helios_provision_magnatune helios-provision-magnatune
 complete -f -F _helios_similar helios-similar
 complete -f -F _helios_status helios-status
+complete -f -F _helios_trainer helios-trainer
 
