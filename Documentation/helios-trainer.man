@@ -1,9 +1,9 @@
 .TH helios-learn 1 "April 2024"
 .SH NAME
-helios-trainer - GUI supervised learning tool to improve Helios server performance.
+helios-trainer - GUI for supervised learning to better tune Helios server performance.
 
 .SH SYNOPSIS
-.B helios-trainer [\fIOPTIONS\fR]
+.B helios-trainer [\fIOPTIONS\fR] [\fI<hts_file>\fR]
 
 .SH DESCRIPTION
 This is a GTK based graphical user interface utility to enable supervised

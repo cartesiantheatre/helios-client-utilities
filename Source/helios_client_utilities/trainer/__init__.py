@@ -10,7 +10,7 @@ from .safe_thread import SafeThread
 from .miscellaneous import launch_uri, image_data_to_pixbuf
 from ..common import LocalNetworkHeliosServiceListener
 from ..common import TrainingSession
-from .config import get_application_id, get_application_name, get_config_dir, get_data_dir, get_version, guess_user_display_name
+from .config import get_application_id, get_application_name, get_config_dir, get_data_dir, get_version, guess_user_display_name, set_icon_theme_search
 from .stack_page import StackPage
 from .end_session_page import EndSessionPage
 from .find_servers_window import FindServersWindow

@@ -59,13 +59,13 @@ menu_xml = """
       <attribute name='label'>_Help</attribute>
       <section>
         <item>
-          <attribute name="label" translatable="yes">_Quick Start Guide</attribute>
-          <attribute name="action">win.quick_start_guide</attribute>
-          <attribute name="icon">help-contents</attribute>
-        </item>
-        <item>
           <attribute name="label" translatable="yes">_Website</attribute>
           <attribute name="action">app.website</attribute>
+          <attribute name="icon">go-home</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">_Report Issue</attribute>
+          <attribute name="action">app.report_issue</attribute>
           <attribute name="icon">go-home</attribute>
         </item>
       </section>
@@ -73,7 +73,7 @@ menu_xml = """
         <item>
           <attribute name="label" translatable="yes">_About</attribute>
           <attribute name="action">app.about</attribute>
-          <attribute name="icon">help-about</attribute>
+          <attribute name="icon">dialog-warning</attribute>
         </item>
       </section>
     </submenu>

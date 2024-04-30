@@ -125,6 +125,11 @@ class TrainerApplication(Gtk.Application):
             _('Show application version information'),
             None)
 
+        # Set path to icon theme search path if running in a virtual
+        #  environment. This ensures icons still load outside of a proper Debian
+        #  package...
+        set_icon_theme_search()
+
         # Connect signals...
       #  self.connect('command-line', self.on_command_line)
         self.connect('startup', self.on_startup)
@@ -166,9 +171,9 @@ class TrainerApplication(Gtk.Application):
         dialog.set_website("https://www.heliosmusic.io") 
 
         # Add credit section for testing...
-        dialog.add_credit_section(
-            _("Expert Musicians"),
-            ["(names)"])
+        #dialog.add_credit_section(
+        #    _("Expert Musicians"),
+        #    ["(names)"])
 
         # Set copyright year...
         dialog.set_copyright("© 2015-2024 Cartesian Theatre Corp.") 
@@ -177,7 +182,7 @@ class TrainerApplication(Gtk.Application):
         dialog.set_authors(["Cartesian Theatre Corp."])
 
         # Set icon...
-        dialog.set_logo_icon_name(get_application_name())
+        dialog.set_logo_icon_name(get_application_id())
 
         # Display about window
         dialog.present()
@@ -219,25 +224,15 @@ class TrainerApplication(Gtk.Application):
     def get_command_line_dictionary(self):
         return self._command_line_dictionary
 
-#    # Action for dark mode toggle...
-#    def on_dark_mode(self, action, parameter):
-
-#        # Get whether dark mode is toggled or not...
-#        is_dark_mode = parameter.get_boolean()
-
-#        # Toggle menu item...
-#        menuitem = self.lookup_action('dark_mode')
-#        menuitem.set_state(GLib.Variant('b', is_dark_mode))
-
-#        # Use a dark color scheme, if available...
-#        settings = Gtk.Settings.get_default()
-#        settings.set_property("gtk-application-prefer-dark-theme", is_dark_mode)
-
     # Action handler for quit...
     def on_quit(self, action, param):
 
         # Exit...
         self.quit()
+
+    # Open issue tracker...
+    def on_report_issue(self, action, param):
+        launch_uri('https://github.com/cartesiantheatre/helios-client-utilities/issues')
 
     # Application shutting down...
     def on_shutdown(self, application):
@@ -263,9 +258,9 @@ class TrainerApplication(Gtk.Application):
 
         # Create basic actions...
         self.create_action('about', self.on_about)
-        #self.create_action('dark_mode', self.on_dark_mode)
-        self.create_action('website', self.on_website)
         self.create_action('quit', self.on_quit)
+        self.create_action('report_issue', self.on_report_issue)
+        self.create_action('website', self.on_website)
 
         # Dark mode action...
         #action = Gio.SimpleAction.new_stateful('dark_mode', None, GLib.Variant('b', False))

@@ -45,7 +45,7 @@ The following is a summary of the utilities included in this package. For detail
 | `helios-modify-song(1)` | Tool to edit metadata of remote songs already analyzed on a Helios server. |
 | `helios-similar(1)` | Search for similar songs on a remote Helios server. |
 | `helios-status(1)` | Query the status of a remote Helios server. |
-| `helios-trainer(1)` | GUI supervised learning tool to improve Helios server performance. |
+| `helios-trainer(1)` | GUI for supervised learning to better tune Helios server performance. |
 
 ## Quick installation
 
