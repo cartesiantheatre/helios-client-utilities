@@ -1,0 +1,21 @@
+# helios-provision-magnatune(1) completion
+[ -x /usr/bin/helios-provision-magnatune ] &&
+_helios_provision_magnatune()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--absolute-path --cached-sqlite --cover-artwork --cover-artwork-archive --force-overwrite --format --genre --help --maximum-errors --minimum-length --output-csv --password --random --song-count --user --verbose --version"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# Register completion callback...
+complete -f -F _helios_provision_magnatune helios-provision-magnatune
+

@@ -115,7 +115,17 @@ setup(
         ('share/applications', ['Data/share/applications/com.cartesiantheatre.helios_trainer.desktop']),
         ('share/applications/helios-trainer/text', ['Data/share/applications/helios-trainer/text/quick_start_page.txt']),
         ('share/applications/helios-trainer', ['Data/share/applications/helios-trainer/login_logo.png']),
-        ('share/mime/packages', ['Data/share/mime/packages/helios-trainer-mime.xml']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-add-song']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-delete-song']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-download-song']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-get-song']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-import-songs']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-learn']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-modify-song']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-provision-magnatune']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-similar']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-status']),
+        ('share/bash-completion/completions', ['Data/share/bash-completion/completions/helios-trainer']),
         ('share/icons/hicolor/16x16/apps', ['Data/share/icons/hicolor/16x16/apps/com.cartesiantheatre.helios_trainer.png']),
         ('share/icons/hicolor/24x24/apps', ['Data/share/icons/hicolor/24x24/apps/com.cartesiantheatre.helios_trainer.png']),
         ('share/icons/hicolor/32x32/apps', ['Data/share/icons/hicolor/32x32/apps/com.cartesiantheatre.helios_trainer.png']),
@@ -125,7 +135,8 @@ setup(
         ('share/icons/hicolor/256x256/apps', ['Data/share/icons/hicolor/256x256/apps/com.cartesiantheatre.helios_trainer.png']),
         ('share/icons/hicolor/scalable/apps', ['Data/share/icons/hicolor/scalable/apps/com.cartesiantheatre.helios_trainer.svg']),
         ('share/icons/hicolor/scalable/mimetypes', ['Data/share/icons/hicolor/scalable/mimetypes/com.cartesiantheatre.helios_training_session.svg']),
-        ('share/icons/hicolor/symbolic/apps', ['Data/share/icons/hicolor/symbolic/apps/com.cartesiantheatre.helios_trainer.svg'])
+        ('share/icons/hicolor/symbolic/apps', ['Data/share/icons/hicolor/symbolic/apps/com.cartesiantheatre.helios_trainer.svg']),
+        ('share/mime/packages', ['Data/share/mime/packages/helios-trainer-mime.xml'])
     ],
     entry_points={
         'console_scripts': [

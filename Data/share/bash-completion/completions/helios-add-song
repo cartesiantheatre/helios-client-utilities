@@ -1,0 +1,21 @@
+# helios-add-song(1) completion
+[ -x /usr/bin/helios-add-song ] &&
+_helios_add_song()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--api-key --file --no-store --id --reference --store --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# Register completion callback...
+complete -f -F _helios_add_song helios-add-song
+

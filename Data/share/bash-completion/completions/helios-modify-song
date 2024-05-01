@@ -1,0 +1,21 @@
+# helios-modify-song(1) completion
+[ -x /usr/bin/helios-modify-song ] &&
+_helios_modify_song()
+{
+    local cur prev opts
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--api-key --delete-file --edit-album --edit-artist --edit-file --edit-genre --edit-isrc --edit-reference --edit-title --edit-year --id --no-store --store --reference --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+
+    # TODO: Figure out how to get = to not print escaped as \=
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+# Register completion callback...
+complete -f -F _helios_modify_song helios-modify-song
+
