@@ -121,6 +121,10 @@ yes YES 2>/dev/null | helios-learn purge
 echo "*** Delete all songs..."
 yes YES 2>/dev/null | helios-delete-song --delete-all
 
+# TODO: Test helios-trainer
+#  Use dogtail to test GUI in headless environment:
+#  <https://gitlab.com/dogtail/dogtail/-/tree/master/examples/>
+
 # Alert user all done...
 echo "*** OK"
 

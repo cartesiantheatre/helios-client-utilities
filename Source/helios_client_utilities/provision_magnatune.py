@@ -984,11 +984,16 @@ def main():
                     #  filename and extension...
                     unique_reference = get_magnatune_reference(filename_with_extension)
 
+                    # Path to archived copy of artwork. If it wasn't already archived this
+                    #  will stay None...
+                    archived_output_path = None
+
                     # Construct path to potentially extant already archived copy of the artwork...
-                    archived_output_path = os.path.join(arguments.cover_artwork_archive_path, F"{unique_reference}_1400x1400.jpg")
+                    if arguments.cover_artwork_archive_path is not None:
+                        archived_output_path = os.path.join(arguments.cover_artwork_archive_path, F"{unique_reference}_1400x1400.jpg")
 
                     # Check if the high resolution was already archived to prevent double download...
-                    if os.path.exists(archived_output_path):
+                    if archived_output_path is not None and os.path.exists(archived_output_path):
 
                         # Log that we are not about to download...
                         logging.info(F"[{song_id}] Skipping song {index + 1}/{total_requested}: High resolution album artwork already archived. Will embed...")
@@ -1009,7 +1014,7 @@ def main():
                     embed_artwork(song_path=output_path, artwork_path=artwork_output_path)
 
                     # Delete temporary artwork file if it wasn't in the archived folder...
-                    if not os.path.samefile(archived_output_path, artwork_output_path):
+                    if archived_output_path is not None and not os.path.samefile(archived_output_path, artwork_output_path):
                         os.remove(artwork_output_path)
 
                 # Remember add the song to the successfully downloaded list so
