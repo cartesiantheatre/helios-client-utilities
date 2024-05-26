@@ -7,7 +7,7 @@ _helios_provision_magnatune()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--absolute-path --cached-sqlite --cover-artwork --cover-artwork-archive --force-overwrite --format --genre --help --maximum-errors --minimum-length --output-csv --password --random --song-count --user --verbose --version"
+    opts="--absolute-path --cached-sqlite --cover-artwork --cover-artwork-archive --force-overwrite --format --genre --help --maximum-errors --minimum-disk-free --minimum-length --output-csv --password --random --song-count --user --verbose --version"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then

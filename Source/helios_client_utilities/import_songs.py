@@ -234,6 +234,11 @@ class BatchSongImporter:
                     failure_message = _(F"Server said: {str(some_exception)}")
                     logging.info(_(F"consumer {consumer_thread_index}: {reference} Server said: {str(some_exception)}"))
 
+                # Server internal error...
+                except helios.exceptions.InternalServer as some_exception:
+                    failure_message = _(F"Server internal error: {str(some_exception)}")
+                    logging.info(_(F"consumer {consumer_thread_index}: {reference} Server internal error: {str(some_exception)}"))
+
                 # Some other exception occured...
                 except Exception as some_exception:
 

@@ -48,6 +48,10 @@ By default music of any genre will be downloaded. Use this switch to limit downl
 \fB\--maximum-errors\fR \fI<max>\fR
 Maximum number of errors to tolerate before exiting. The default is one. Set to zero for unlimited non-fatal errors.
 
+.TO
+\fB\--minimum-disk-free\fR \fI<MB>\fR
+Minimum disk space in MB that must be available before a song is downloaded. Otherwise will exit with an error. Default is 100 MB. Set to 0 to disable.
+
 .TP
 \fB\--minimum-length\fR \fI<seconds>\fR
 Only consider songs at least \fI<seconds>\fR in length. The default is zero, or any length.

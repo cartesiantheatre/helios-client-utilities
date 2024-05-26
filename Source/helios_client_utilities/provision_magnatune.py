@@ -14,6 +14,7 @@ import logging
 import os
 import random
 import re
+import shutil
 import sqlite3
 import sys
 import tempfile
@@ -118,6 +119,17 @@ def add_arguments(argument_parser):
         type=int,
         help=_('Maximum number of errors to tolerate before exiting. Defaults '
                'to one. Set to zero for unlimited non-fatal.'))
+
+    # Define behaviour for --minimum-disk-free...
+    argument_parser.add_argument(
+        '--minimum-disk-free',
+        default=100,
+        dest='minimum_disk_free',
+        nargs='?',
+        type=int,
+        help=_('Minimum disk space in MB that must be available before a song '
+               'is downloaded. Otherwise will exit with an error. Default is '
+               '100 MB. Set to 0 to disable.'))
 
     # Define behaviour for --minimum-length...
     argument_parser.add_argument(
@@ -873,6 +885,20 @@ def main():
 
         # Fetch each requested songs...
         for index, (song_id, artist, album, genre, duration, filename_with_extension) in enumerate(songs):
+
+            # Unless overridden by the user, check remaining disk space...
+            if arguments.minimum_disk_free > 0:
+
+                # Get the remaining free disk space in bytes...
+                free_space_bytes = shutil.disk_usage(arguments.output_directory).free
+
+                # Convert to megabytes...
+                free_space_megabytes = int(free_space_bytes / (1024*1024))
+
+                # Check if it is less than or equal to the minimum user
+                #  requested...
+                if free_space_megabytes <= arguments.minimum_disk_free:
+                    raise Exception(_(F'You have less than {arguments.minimum_disk_free} MB of free disk space available at {free_space_megabytes} MB.'))
 
             # Split file name and extension...
             filename, extension = os.path.splitext(filename_with_extension)
