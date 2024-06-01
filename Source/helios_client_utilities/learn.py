@@ -237,7 +237,6 @@ def show_learning_examples_summary(client, arguments):
     # Report success...
     return True
 
-
 # Main function...
 def main():
 
