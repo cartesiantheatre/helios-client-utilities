@@ -24,7 +24,7 @@ avahi-browse --all --terminate | grep Helios
 
 # Verify we can find the server via helios-status(1)...
 echo "*** Verifying server status via helios-status(1)..."
-helios-status --verbose
+helios-status --host localhost --verbose
 
 # Get Magnatune authentication credentials sources from shell script generated
 #  by helios-autopkgtest package's preinst maintainer script...
@@ -61,11 +61,11 @@ helios-provision-magnatune                                                      
 
 # Batch import the generated CSV catalogue...
 echo "*** Batch import songs from Magnatune CSV..."
-helios-import-songs Output/Songs/magnatune.csv
+helios-import-songs --host localhost Output/Songs/magnatune.csv
 
 # Purge the song database...
 echo "*** Delete all songs..."
-yes YES 2>/dev/null | helios-delete-song --delete-all
+yes YES 2>/dev/null | helios-delete-song --host localhost --delete-all
 
 # Alert user all done...
 echo "*** OK"

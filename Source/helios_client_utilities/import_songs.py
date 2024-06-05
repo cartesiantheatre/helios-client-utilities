@@ -106,17 +106,19 @@ def add_arguments(argument_parser):
 class BatchSongImporter:
 
     # Constructor...
-    def __init__(self, arguments, songs_total):
+    def __init__(self, arguments, songs_total, existing_song_references):
 
-        self._arguments             = arguments
-        self._errors_remaining      = arguments.maximum_errors
-        self._executor              = None
-        self._failures              = []
-        self._queue                 = queue.Queue(self._arguments.threads) # maxsize=1
-        self._songs_processed       = arguments.offset - 1
-        self._songs_total           = songs_total
-        self._stop_event            = threading.Event()
-        self._thread_lock           = threading.Lock()
+        self._arguments                 = arguments
+        self._errors_remaining          = arguments.maximum_errors
+        self._executor                  = None
+        self._existing_song_references  = existing_song_references
+        self._failures                  = []
+        self._queue                     = queue.Queue(self._arguments.threads) # maxsize=1
+        self._songs_processed           = arguments.offset - 1
+        self._songs_total               = songs_total
+        self._songs_uploaded            = 0
+        self._stop_event                = threading.Event()
+        self._thread_lock               = threading.Lock()
 
     # Consumer thread which submits music to server...
     def _add_song_consumer_thread(self, consumer_thread_index):
@@ -160,28 +162,27 @@ class BatchSongImporter:
                         logging.debug(_(F"consumer {consumer_thread_index}: {reference} Got a job."))
                         with self._thread_lock:
                             self._songs_processed += 1
-                            logging.info(_(F"consumer {consumer_thread_index}: {reference} Processing song {self._songs_processed} of {self._songs_total}."))
+                            logging.debug(_(F"consumer {consumer_thread_index}: {reference} Processing song {self._songs_processed} of {self._songs_total}."))
 
                     # Queue is empty. Try again...
                     except queue.Empty:
                         logging.debug(_(F"consumer {consumer_thread_index}: Job queue empty, will try again."))
                         continue
 
-                    # Check if the song already has been added, and if so, skip it...
-                    try:
-                        # Probe server to see if song already exists...
-                        logging.debug(_(F"consumer {consumer_thread_index}: {reference} Checking if song already exists."))
-                        client.get_song(song_reference=csv_row['reference'])
-                        logging.info(_(F"consumer {consumer_thread_index}: {reference} Song already known to server, skipping."))
+                    # Get song reference...
+                    song_reference=csv_row['reference']
 
-                        # It already exists. Treat this as a success and go to
-                        #  next song...
+                    # Checking to see if song already exists on server, and skip
+                    #  if it does...
+                    logging.debug(_(F"consumer {consumer_thread_index}: {reference} Checking if already exists."))
+                    if song_reference in self._existing_song_references:
+
+                        # Notify user it already does...
+                        logging.debug(_(F"consumer {consumer_thread_index}: {reference} Already known to server, skipping."))
+
+                        # Treat this as a success and go to next song...
                         success = True
                         continue
-
-                    # Song doesn't aleady exist, so proceed to try to upload...
-                    except helios.exceptions.NotFound:
-                        pass
 
                     # Construct new song...
                     new_song_dict = {
@@ -199,6 +200,11 @@ class BatchSongImporter:
 
                     # Upload if not a dry run...
                     if not self._arguments.dry_run:
+
+                        # Otherwise log adding new song...
+                        logging.info(_(F"consumer {consumer_thread_index}: {reference} Uploading."))
+
+                        # Perform upload...
                         client.add_song(
                             new_song_dict=new_song_dict,
                             store=self._arguments.store,
@@ -207,7 +213,10 @@ class BatchSongImporter:
 
                     # Otherwise log the pretend upload dry run...
                     else:
-                        logging.info(_(F"consumer {consumer_thread_index}: {reference} Dry run uploading."))
+                        logging.info(_(F"consumer {consumer_thread_index}: {reference} Would have uploaded, if not for dry run."))
+
+                    # Increment upload tracker...
+                    self._songs_uploaded += 1
 
                 # JSON decoder error...
                 except simplejson.errors.JSONDecodeError as some_exception:
@@ -309,6 +318,10 @@ class BatchSongImporter:
     def get_failures(self):
         return self._failures
 
+    # Get the total number of successful uploads...
+    def get_upload_count(self):
+        return self._songs_uploaded
+
     # Start batch import. This generates work for consumer threads...
     def start(self, csv_reader):
 
@@ -400,6 +413,9 @@ class BatchSongImporter:
                 self.stop()
                 logging.debug(_("producer: All work in work queue completed."))
 
+                # Log how many songs were actually uploaded...
+                logging.info(_(F"Completed uploading a total of {self.get_upload_count()} new songs..."))
+
             # Parser error, treated as fatal...
             except ValueError as some_exception:
                 logging.error(_(F"producer: Song {current_song_offset}, parser error: {some_exception}."))
@@ -442,6 +458,49 @@ class BatchSongImporter:
 
         # Stop importation...
         self.stop()
+
+# Get a set of all of the existing song references on the Helios server...
+def get_existing_song_references(client):
+
+    # Pagination tracker starts on page one and grabs songs in batches of a
+    #  thousand at a time...
+    current_page    = 1
+    page_size       = 1000
+
+    # Set of all song references on the Helios server...
+    existing_song_references = set()
+
+    # Log that we are about to count the number of songs on server...
+    logging.info(_(F"Please wait while retrieving list of songs from server..."))
+
+    # Keep fetching songs while there are some...
+    while True:
+
+        # Try to get a batch of songs for current page...
+        page_songs_list = client.get_all_songs(
+            page=current_page,
+            page_size=page_size)
+
+        # None left...
+        if len(page_songs_list) == 0:
+            break
+
+        # Dump each song and end with a new line...
+        for song in page_songs_list:
+            existing_song_references.add(song.reference)
+
+        # Give some feedback...
+        print(_(F"\rRetrieved {len(existing_song_references):,} songs..."), end='', flush=True)
+
+        # Seek to the next page on next query...
+        current_page += 1
+
+    # Provide summary...
+    print("\r", end='')
+    logging.info(_(F"Retrieved a total of {len(existing_song_references):,} songs from server..."))
+
+    # Return set of all existing song references to caller...
+    return existing_song_references
 
 # Main function...
 def main():
@@ -596,12 +655,12 @@ def main():
 
             # Every thousand songs give some feedback...
             if songs_total % 10 == 0:
-                print(_(F"\rFound {songs_total:,} songs..."), end='', flush=True)
+                print(_(F"\rCounted {songs_total:,}..."), end='', flush=True)
 
         # Provide summary and reset seek pointer for parser to next line after
         #  headers...
         print("\r", end='')
-        logging.info(_(F"Counted a total of {songs_total:,} songs..."))
+        logging.info(_(F"Found a total of {songs_total:,} songs in input catalogue..."))
 
         # Now initialize the reader we will actually use to parse the records
         #  and supply the consumer threads...
@@ -624,8 +683,15 @@ def main():
             encoding='utf-8',
             low_memory=True)
 
+        # Get the list of songs already on the Helios server and return a set
+        #  of all the song references...
+        existing_song_references = get_existing_song_references(client)
+
         # Initialize batch song importer...
-        batch_importer = BatchSongImporter(arguments, songs_total)
+        batch_importer = BatchSongImporter(
+            arguments,
+            songs_total,
+            existing_song_references)
 
         # Submit the songs...
         batch_importer.start(reader)
@@ -688,7 +754,7 @@ def main():
 
             # If this was a dry run, remind the user...
             if arguments.dry_run:
-                print(_("Note that this was a dry run."))
+                print(_("Note that this was a dry run and nothing was actually uploaded."))
 
         # Close input catalogue file...
         if catalogue_file:
