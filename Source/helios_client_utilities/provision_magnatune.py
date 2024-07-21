@@ -765,7 +765,7 @@ def main():
         # Get a list of all available songs from database...
         query = cursor.execute(
         """
-            SELECT songs.song_id AS song_id, artists.name AS artist, albums.name AS album, genres.name AS genre, songs.duration as duration, songs.mp3 as filename
+            SELECT songs.song_id AS song_id, artists.name AS artist, songs.name AS title, albums.name AS album, genres.name AS genre, songs.duration as duration, songs.mp3 as filename
             FROM songs
             INNER JOIN albums ON songs.album_id = albums.album_id
             INNER JOIN artists ON albums.artist_id = artists.artists_id
@@ -788,14 +788,14 @@ def main():
             # Each song can be listed multiple times since it can belong to
             #  multiple genres. If we find that the song is tagged with the
             #  requested genre, take note of the song's ID...
-            for (song_id, artist, album, genre, duration, filename) in songs:
+            for (song_id, artist, title, album, genre, duration, filename) in songs:
                 if genre_column == genre:
                     song_ids_to_keep.add(song_id)
 
             # Now take a second pass through list and remove any song that
             #  doesn't have a song ID in the keep list...
             kept_songs = []
-            for index, (song_id, artist, album, genre, duration, filename) in enumerate(songs):
+            for index, (song_id, artist, title, album, genre, duration, filename) in enumerate(songs):
 
                 # If song had a matching genre tag, keep it...
                 if song_id in song_ids_to_keep:
@@ -815,7 +815,7 @@ def main():
         #  with multiple genres...
         song_ids_to_keep = set()
         kept_songs = []
-        for index, (song_id, artist, album, genre, duration, filename) in enumerate(songs):
+        for index, (song_id, artist, title, album, genre, duration, filename) in enumerate(songs):
 
             # If we haven't already seen this song, add it to the preservation
             #  list...
@@ -833,7 +833,7 @@ def main():
             kept_songs = []
 
             # Check duration of each song...
-            for index, (song_id, artist, album, genre, duration, filename) in enumerate(songs):
+            for index, (song_id, artist, title, album, genre, duration, filename) in enumerate(songs):
 
                 # If duration is at least required minimum length, then add it
                 #  to the preservation list...
@@ -887,7 +887,7 @@ def main():
         new_songs_count = 0
 
         # Fetch each requested songs...
-        for index, (song_id, artist, album, genre, duration, filename_with_extension) in enumerate(songs):
+        for index, (song_id, artist, title, album, genre, duration, filename_with_extension) in enumerate(songs):
 
             # Unless overridden by the user, check remaining disk space...
             if arguments.minimum_disk_free > 0:
@@ -915,7 +915,7 @@ def main():
 
             # Save it back in list so that when we write out paths to CSV, the
             #  correct file extension is saved...
-            songs[index] = (song_id, artist, album, genre, duration, filename_with_extension)
+            songs[index] = (song_id, artist, title, album, genre, duration, filename_with_extension)
 
             # Escape URL components so it is properly URL encoded...
             escaped_artist = urllib.parse.quote(artist)
@@ -1121,14 +1121,20 @@ def main():
         with open(arguments.output_csv, "w") as file:
 
             # Start by emitting the column fields...
-            print("reference,path", file=file)
+            print("reference,artist,title,album,genre,path", file=file)
 
             # Set that will be used to make sure each song reference is truly
             #  unique...
             unique_references = set()
 
             # Write out each song, line by line...
-            for index, (song_id, artist, album, genre, duration, filename_with_extension) in enumerate(downloaded_songs):
+            for index, (song_id, artist, title, album, genre, duration, filename_with_extension) in enumerate(downloaded_songs):
+
+                # Escape quotation characters in fields...
+                album   = album.replace('"', r'\"')
+                artist  = artist.replace('"', r'\"')
+                title   = title.replace('"', r'\"')
+                genre   = genre.replace('"', r'\"')
 
                 # Get song file name...
                 output_path = filename_with_extension
@@ -1158,7 +1164,7 @@ def main():
                     unique_references.add(unique_reference)
 
                 # Format line for CSV...
-                current_line = F"{unique_reference},{output_path}"
+                current_line = F"{unique_reference}, \"{artist}\", \"{title}\", \"{album}\", \"{genre}\", \"{output_path}\""
 
                 # Write out line to CSV...
                 print(current_line, file=file)

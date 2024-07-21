@@ -601,6 +601,9 @@ class MatchTunerPage(StackPage):
     # Play the requested song at the given path...
     def play_song(self, song_object, path, label_markup):
 
+        # Unload / stop any other song that might have been playing...
+        self._media_controls.set_media_stream(None)
+
         # Set artist / title label...
         self._playback_artist_and_title.set_markup(label_markup)
 

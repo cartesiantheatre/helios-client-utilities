@@ -7,7 +7,7 @@ _helios_import_songs()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--api-key --delimiter --dry-run --max-errors --no-store --offset --threads --threads-maximum --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
+    opts="--api-key --delimiter --dry-run --maximum-errors --no-store --offset --threads --threads-maximum --host --port --timeout-connect --timeout-read --tls-disabled --tls-ca-file --tls-certificate --tls-key --verbose --version --help -h"
 
     # TODO: Figure out how to get = to not print escaped as \=
     if [[ ${cur} == -* ]] ; then

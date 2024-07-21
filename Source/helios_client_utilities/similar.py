@@ -57,13 +57,13 @@ def add_arguments(argument_parser):
         nargs='?',
         help=_('URL of a song hosted on any of a number of supported external services to use as a search key on the server.'))
 
-    # Define behaviour for --same-genre, defaults to false...
+    # Define behaviour for --algorithm...
     argument_parser.add_argument(
-        '--same-genre',
-        action='store_true',
-        default=False,
-        dest='same_genre',
-        help=_('Limit similarity matches to only those matching the internal search key\'s genre.'))
+        '--algorithm',
+        dest='algorithm',
+        required=False,
+        nargs='?',
+        help=_('Algorithm to use during similarity matching.'))
 
     # Define behaviour for --results...
     argument_parser.add_argument(
@@ -116,11 +116,6 @@ def main():
             # Select the first interface on the server...
             arguments.host = addresses[0]
 
-        # User can limit results to search key's genre only if using an internal
-        #  search key...
-        if arguments.same_genre is True and (arguments.similar_file is not None or arguments.similar_url is not None):
-            raise Exception(_("You cannot limit search results to the same genre as the search key unless it was an internal search key."))
-
         # Create a client...
         client = helios.Client(
             host=arguments.host,
@@ -136,6 +131,8 @@ def main():
 
         # Prepare request parameters...
         similarity_search_dict = {}
+        if arguments.algorithm:
+            similarity_search_dict['algorithm'] = arguments.algorithm
         if arguments.similar_file:
             similarity_search_dict['similar_file'] = base64.b64encode(open(arguments.similar_file, 'rb').read()).decode('ascii')
         if arguments.similar_id:
@@ -144,8 +141,6 @@ def main():
             similarity_search_dict['similar_reference'] = arguments.similar_reference
         if arguments.similar_url:
             similarity_search_dict['similar_url'] = arguments.similar_url
-        if arguments.same_genre:
-            similarity_search_dict['same_genre'] = arguments.same_genre
         similarity_search_dict['maximum_results'] = arguments.maximum_results
 
         # Query and show a progress bar...

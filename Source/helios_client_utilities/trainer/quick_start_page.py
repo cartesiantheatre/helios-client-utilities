@@ -55,6 +55,10 @@ class QuickStartPage(StackPage):
         scrolled_window.set_child(guide_label)
         scrolled_window.connect('edge-reached', self.on_scroll_edge_reached)
 
+        # Connect unmap callback to vertical scrollbar so we know when it's
+        #  visible...
+        scrolled_window.get_vscrollbar().connect('unmap', self.on_vscrollbar_unmap)
+
         # Create ready button...
         self._got_it_button = Gtk.Button()
         self._got_it_button.set_halign(Gtk.Align.END)
@@ -97,4 +101,11 @@ class QuickStartPage(StackPage):
         # If the user scrolled to the bottom of the guide then enable button...
         if position is Gtk.PositionType.BOTTOM:
             self._got_it_button.set_sensitive(True)
+
+    # Vertical scrollbar is now hidden...
+    def on_vscrollbar_unmap(self, vscrollbar):
+
+        # Enable Got It button because there is no scrollbar to scroll to the
+        #  bottom of...
+        self._got_it_button.set_sensitive(True)
 

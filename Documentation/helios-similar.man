@@ -26,6 +26,10 @@ immediately deleted after analysis.
 .SH OPTIONS
 
 .TP
+\fB\--algorithm="<algorithm>"\fR
+Algorithm to use for similarity matching. Defaults to "default".
+
+.TP
 \fB\--file="<file>"\fR
 Path to a local song file to use as a search key on the server. This performs
 the query using an external search key. You must provide exactly one of --file,
@@ -44,13 +48,6 @@ Maximum number of similarity results to return. Default is ten.
 \fB\--reference="<song_reference>"\fR
 Unique reference of song already within the database to use as a search key.
 You must provide exactly one of --file, --id, --reference, or --url.
-
-.TP
-\fB\--same-genre\fR
-Limit similarity matches to only those matching the internal search key's genre.
-Note that you can only use this when using an internal search key (e.g. you are
-using --id or --reference) because external search keys are more likely to have
-an unreliable genre metadata.
 
 .TP
 \fB\--short\fR

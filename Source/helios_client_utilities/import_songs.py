@@ -202,7 +202,7 @@ class BatchSongImporter:
                     if not self._arguments.dry_run:
 
                         # Otherwise log adding new song...
-                        logging.info(_(F"consumer {consumer_thread_index}: {reference} Uploading."))
+                        logging.info(_(F"consumer {consumer_thread_index}: {reference} Uploading..."))
 
                         # Perform upload...
                         client.add_song(
