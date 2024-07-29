@@ -141,6 +141,9 @@ class MatchTunerPage(StackPage):
         scrolled_window.set_overlay_scrolling(False)
         self._sizer.append(scrolled_window)
 
+        # TODO: Split the scrolled window into two, one for system and the other
+        #       for user rankings.
+
         # Construct a horizontal master sizer that the scrolled window will
         #  contain all widgets within...
         scrolled_sizer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
@@ -600,6 +603,9 @@ class MatchTunerPage(StackPage):
 
     # Play the requested song at the given path...
     def play_song(self, song_object, path, label_markup):
+
+        # TODO: Fix not stopping existing song playing before playing another
+        #       when user initiates a second play quickly.
 
         # Unload / stop any other song that might have been playing...
         self._media_controls.set_media_stream(None)

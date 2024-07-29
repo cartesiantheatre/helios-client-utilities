@@ -661,9 +661,13 @@ def main():
         try:
             keyring.set_password("helios-provision-magnatune", arguments.user, arguments.password)
 
-        # Failed to unlock the keyring. This is not a fatal error...
+        # Failed to initialize keyring backend. Not fatal...
+        except keyring.errors.InitError:
+            logging.warning(_("Unable to initialize keyring backend (try 'keyring --list-backends'). Skipping passphrase caching..."))
+
+        # Failed to unlock the keyring. Not fatal...
         except keyring.errors.KeyringLocked:
-            logging.warning(_("Unable to cache passphrase in locked keyring..."))
+            logging.warning(_("Keyring locked. Skipping passphrase caching..."))
 
         # If a local cached copy of the Magnatune SQLite database was provided,
         #  use it instead of downloading...
