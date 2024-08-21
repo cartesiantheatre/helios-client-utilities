@@ -40,6 +40,11 @@ training. This requires an --anchor, --positive, and --negative song references
 to specify the triplet.
 
 .TP
+\fBexamine\fR \fB<session.hts>\fR
+Examine a user's Helios training session (.hts) and display information about
+the file.
+
+.TP
 \fBimport\fR \fB<session.hts>\fR
 Import learning example triplets from a Helios training session (.hts) stored on
 disk. You can generate one of these files through the interactive GUI provided
@@ -55,7 +60,7 @@ Delete all learning examples stored on the server.
 
 .TP
 \fBsummary\fR
-Show a summary on learning examples and your catalogue.
+Show a summary of learning examples awaiting training on your server.
 
 .TP
 \fBtrain\fR

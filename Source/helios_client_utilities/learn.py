@@ -6,7 +6,7 @@
 
 # System imports...
 import argparse
-import datetime
+from datetime import datetime
 from pprint import pprint
 import sys
 
@@ -83,6 +83,16 @@ def add_arguments(argument_parser):
         nargs='?',
         help=_('Negative song reference.'))
 
+    # Create subparser for 'examine' action...
+    examine_parser = subparsers.add_parser('examine')
+
+    # Define behavior for examine file action...
+    examine_parser.add_argument(
+        dest='hts_file',
+        action='store',
+        type=str,
+        help=_('.hts file to examine'))
+
     # Create subparser for 'import' action...
     import_parser = subparsers.add_parser('import')
 
@@ -155,9 +165,51 @@ def delete_learning_example(client, arguments):
     # Report success...
     return True
 
+# Examine a Helios training session (.hts) stored on disk and passed as a
+#  parameter to the 'examine' action...
+def examine_training_session(arguments):
+
+    # Construct a training session...
+    training_session = TrainingSession()
+
+    # Load from disk...
+    training_session.load(arguments.hts_file)
+
+    # Get examples from user's training session...
+    learning_example_triplets = training_session.get_examples()
+
+    # Set containing every unique song reference from every learning example
+    #  triplet...
+    all_songs_listened_to = set()
+
+    # Count how many unique songs were listened to...
+    for learning_example_triplet in learning_example_triplets:
+        all_songs_listened_to.add(learning_example_triplet['anchor'])
+        all_songs_listened_to.add(learning_example_triplet['positive'])
+        all_songs_listened_to.add(learning_example_triplet['negative'])
+
+    # Show information about training session...
+    print(_(F"Session:"))    
+    print(_(F"  Total songs listened to: {len(all_songs_listened_to)}"))    
+    print(_(F"  Total learning examples: {training_session.get_total_examples()}"))
+    print(_(F"Expert:"))
+    print(_(F"  Name: {training_session.get_expert_name()}"))
+    print(_(F"  Email: {training_session.get_expert_email()}"))
+    print(_(F"Date: {training_session.get_datetime()}"))
+    print(_(F"Server:"))
+    print(_(F"  Host: {training_session.get_host()}"))
+    print(_(F"  Port: {training_session.get_port()}"))
+    print(_(F"  TLS: {training_session.get_tls()}"))
+    print(_(F"  Version: {training_session.get_version()}"))
+    print(_(F"  API Key: {training_session.get_api_key()}"))
+    print(_(F"Date: {training_session.get_datetime()}"))
+
+    # Report success...
+    return True
+
 # Import learning example triplets from a Helios training session (.hts) stored
 #  on disk and passed as a parameter to the 'import' action...
-def import_learning_examples(client, arguments):
+def import_training_session(client, arguments):
 
     # Construct a training session...
     training_session = TrainingSession()
@@ -207,24 +259,8 @@ def perform_training(client, arguments):
     # Report success...
     return True
 
-# Show summary of learning examples...
+# Show summary of learning examples on server...
 def show_learning_examples_summary(client, arguments):
-
-    # Get the genres information...
-    genres_information_list = client.get_genres_information()
-
-    # Show each genre's information...
-    for genre_information in genres_information_list:
-
-        # If no genre available, annotate as such...
-        if not genre_information.genre:
-            genre_information.genre = _("(Unknown)")
-
-        # Show genre and total number of songs belonging to it...
-        print(F"{genre_information.genre:>16} : {genre_information.count:<10}")
-
-    # Add some white space...
-    print('')
 
     # Get system status...
     system_status = client.get_system_status()
@@ -263,28 +299,35 @@ def main():
         if arguments.action in ['add', 'delete'] and (None in [arguments.anchor_song_reference, arguments.positive_song_reference, arguments.negative_song_reference]):
             raise Exception(_(F"The \"{arguments.action}\" action requires an anchor, positive, and negative song references."))
 
-        # If no host provided, use Zeroconf auto detection...
-        if not arguments.host:
+        # Client to be constructed, if necessary...
+        client = None
 
-            # Get the list of all IP addresses for every interface for the best
-            #  server, its port, and TLS flag...
-            addresses, arguments.port, arguments.tls = zeroconf_find_server()
+        # For every action, other than these, probe the LAN if necessary for a
+        #  server and construct a client...
+        if arguments.action not in ['examine']:
 
-            # Select the first interface on the server...
-            arguments.host = addresses[0]
+            # If no host provided, use Zeroconf auto detection...
+            if not arguments.host:
 
-        # Create a client...
-        client = helios.Client(
-            host=arguments.host,
-            port=arguments.port,
-            api_key=arguments.api_key,
-            timeout_connect=arguments.timeout_connect,
-            timeout_read=arguments.timeout_read,
-            tls=arguments.tls,
-            tls_ca_file=arguments.tls_ca_file,
-            tls_certificate=arguments.tls_certificate,
-            tls_key=arguments.tls_key,
-            verbose=arguments.verbose)
+                # Get the list of all IP addresses for every interface for the best
+                #  server, its port, and TLS flag...
+                addresses, arguments.port, arguments.tls = zeroconf_find_server()
+
+                # Select the first interface on the server...
+                arguments.host = addresses[0]
+
+            # Create a client...
+            client = helios.Client(
+                host=arguments.host,
+                port=arguments.port,
+                api_key=arguments.api_key,
+                timeout_connect=arguments.timeout_connect,
+                timeout_read=arguments.timeout_read,
+                tls=arguments.tls,
+                tls_ca_file=arguments.tls_ca_file,
+                tls_certificate=arguments.tls_certificate,
+                tls_key=arguments.tls_key,
+                verbose=arguments.verbose)
 
         # Perform the requested action...
         match arguments.action:
@@ -297,9 +340,13 @@ def main():
             case 'delete':
                 success = delete_learning_example(client, arguments)
 
-            # Import learning examples from disk...
+            # Examine a .hts file on disk...
+            case 'examine':
+                success = examine_training_session(arguments)
+
+            # Import learning examples from a .hts file on disk...
             case 'import':
-                success = import_learning_examples(client, arguments)
+                success = import_training_session(client, arguments)
 
             # List all learning examples...
             case 'list':

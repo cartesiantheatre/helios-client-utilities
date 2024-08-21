@@ -281,6 +281,10 @@ class TrainingSession:
     def get_api_key(self) -> str:
         return self._api_key
 
+    # Get datetime...
+    def get_datetime(self) -> str:
+        return self._datetime
+
     # Get expert email...
     def get_expert_email(self) -> str:
         return self._expert_email
@@ -354,6 +358,7 @@ class TrainingSession:
         self._expert_email  = json_object['expert_email']
         self._expert_name   = json_object['expert_name']
         self._api_key       = json_object['api-key']
+        self._datetime      = json_object['datetime']
         self._host          = json_object['host']
         self._port          = json_object['port']
         self._tls           = json_object['tls']
@@ -381,6 +386,7 @@ class TrainingSession:
 
         # Initialize attributes to defaults for basic metadata...
         self._api_key       = None
+        self._datetime      = None
         self._expert_email  = None
         self._expert_name   = None
         self._host          = None
@@ -399,11 +405,14 @@ class TrainingSession:
         if path is not None:
             self.set_path(path)
 
+        # Update save datetime...
+        self._datetime = datetime.now().isoformat()
+
         # Construct dictionary of data to be written out...
         dictionary = {
             'helios-training-session-format'    : self._format,
             'api-key'                           : self._api_key,
-            'datetime'                          : datetime.now().isoformat(),
+            'datetime'                          : self._datetime,
             'expert_email'                      : self._expert_email,
             'expert_name'                       : self._expert_name,
             'host'                              : self._host,

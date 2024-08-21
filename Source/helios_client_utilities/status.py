@@ -59,8 +59,13 @@ def main():
             tls_key=arguments.tls_key,
             verbose=arguments.verbose)
 
-        # Perform query...
+        # Get server status...
         system_status = client.get_system_status()
+
+        # Get server genres information...
+        genres_information_list = client.get_genres_information()
+
+        # Signal to shell everything was fine...
         success = True
 
     # Helios exception...
@@ -79,9 +84,29 @@ def main():
     if success and arguments.verbose:
         pprint(attr.asdict(system_status))
 
-    # Show success status or failure...
+    # Show server catalogue information...
     if success:
-        print(_(F"Server has {format(system_status.songs, ',d')} songs."))
+
+        # Show how many songs in catalogue...
+        print(_(F"Server has {format(system_status.songs, ',d')} songs:"))
+
+        # Add some white space...
+        print('')
+
+        # Show song histogram arranged by genre...
+        for genre_information in genres_information_list:
+
+            # If no genre available, annotate as such...
+            if not genre_information.genre:
+                genre_information.genre = _("(Unknown)")
+
+            # Show genre and total number of songs belonging to it...
+            print(F"{genre_information.genre:>16} : {genre_information.count:<10}")
+
+        # Add some trailing white space...
+        print('')
+
+    # Some problem occurred...
     else:
         print(F"{colored(_('There was a problem verifying the server status.'), 'red')}")
 
