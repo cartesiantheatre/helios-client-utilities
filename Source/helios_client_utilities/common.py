@@ -277,6 +277,22 @@ class TrainingSession:
         # Add dictionary to list of triplets...
         self._triplets.append(example)
 
+    # Get a set of references for every song listened to...
+    def get_all_song_references(self):
+
+        # Set containing every unique song reference from every learning example
+        #  triplet...
+        all_songs_listened_to = set()
+
+        # Add each song's reference to the set...
+        for learning_example_triplet in self._triplets:
+            all_songs_listened_to.add(learning_example_triplet['anchor'])
+            all_songs_listened_to.add(learning_example_triplet['positive'])
+            all_songs_listened_to.add(learning_example_triplet['negative'])
+
+        # Return the set to caller...
+        return all_songs_listened_to
+
     # Get API key...
     def get_api_key(self) -> str:
         return self._api_key
@@ -316,6 +332,16 @@ class TrainingSession:
     # Get the list of triplets...
     def get_examples(self):
         return self._triplets
+
+    # Get the total number of songs the expert listened to...
+    def get_total_songs_listened(self):
+
+        # Get set containing every unique song reference from every learning
+        #  example triplet...
+        all_songs_listened_to = self.get_all_song_references()
+
+        # Return the total number of songs listened to...
+        return len(all_songs_listened_to)
 
     # Get Helios server version...
     def get_version(self) -> str:

@@ -14,6 +14,7 @@ import sys
 import attr
 import helios
 from helios_client_utilities.common import add_common_arguments, TrainingSession, zeroconf_find_server
+import pandas
 from termcolor import colored
 from tqdm import tqdm
 
@@ -55,6 +56,23 @@ def add_arguments(argument_parser):
         required=True,
         nargs='?',
         help=_('Negative song reference.'))
+
+    # Create subparser for 'create-csv' action...
+    examine_parser = subparsers.add_parser('create-csv')
+
+    # Define behavior for create-csv training session argument...
+    examine_parser.add_argument(
+        dest='hts_file',
+        action='store',
+        type=str,
+        help=_('.hts file to read list of examined songs from'))
+
+    # Define behavior for create-csv master CSV catalogue argument...
+    examine_parser.add_argument(
+        dest='csv_file',
+        action='store',
+        type=str,
+        help=_('.csv file to find songs referenced in training session'))
 
     # Create parser for 'delete' action...
     delete_parser = subparsers.add_parser('delete')
@@ -130,6 +148,98 @@ def add_learning_example(client, arguments):
     # Report success...
     return True
 
+# Examine a .hts file on disk, cross referencing examined songs in,
+#  a CSV file, and generating a new CSV to stdout only containing
+#  the examined songs...
+def create_csv(arguments):
+
+    # Construct a training session...
+    training_session = TrainingSession()
+
+    # Load from disk...
+    training_session.load(arguments.hts_file)
+
+    # Get the set references for every song the user listened to...
+    all_songs_listened_to = training_session.get_all_song_references()
+
+    # These are the types for every acceptable header. Note that for
+    #  beats_per_minute and year, these should be integral types, but nullable
+    #  integers weren't added until Pandas 0.24.0...
+    acceptable_field_types = {
+        'reference'         : 'str',
+        'album'             : 'str',
+        'artist'            : 'str',
+        'title'             : 'str',
+        'genre'             : 'str',
+        'isrc'              : 'str',
+        'beats_per_minute'  : 'float',
+        'year'              : 'float',
+        'path'              : 'str'
+    }
+
+    # Open CSV catalogue reader...
+    reader = pandas.read_csv(
+        filepath_or_buffer=arguments.csv_file,
+        comment='#',
+        compression='infer',
+        delimiter=',',
+        dtype=acceptable_field_types,
+        header=0,
+        skipinitialspace=True,
+        skip_blank_lines=True,
+        iterator=True,
+        na_values=[],
+        chunksize=1,
+        quotechar='"',
+        quoting=0, # csv.QUOTE_MINIMAL
+        doublequote=False,
+        escapechar='\\',
+        encoding='utf-8',
+        low_memory=True)
+
+    # Whether we've printed headers to stdout already or not. Will be untoggled
+    #  after printing the first time...
+    header=True
+
+    # Shell exit status flag...
+    success=True
+
+    # Examine every record in the CSV file...
+    for data_frame in reader:
+
+        # Get the Panda series or row for the current song...
+        series = data_frame.get('reference')
+
+        # Get the song row's reference...
+        reference = series.values[0]
+
+        # If this song is one the user listened to...
+        if reference in all_songs_listened_to:
+
+            # Print it to stdout...
+            print(data_frame.to_csv(None, index=False, header=header), end='')
+
+            # Don't show headers again...
+            header = False
+
+            # Make note that this song the user listened to was found in the CSV
+            #  catalogue...
+            all_songs_listened_to.remove(reference)
+
+    # Were any songs remaining that the user listened to that weren't found in
+    #  the provided CSV catalogue?
+    for remaining_reference in all_songs_listened_to:
+
+        # Log warning...
+        print(F'Warning: Not found {reference}', file=sys.stderr)
+
+    # If there were any songs not found, the shell should note an error...
+    if len(all_songs_listened_to) > 0:
+        success = False
+
+    # Report success status...
+    return success
+
 # Delete all learning examples...
 def delete_all_learning_examples(client, argument):
 
@@ -175,22 +285,9 @@ def examine_training_session(arguments):
     # Load from disk...
     training_session.load(arguments.hts_file)
 
-    # Get examples from user's training session...
-    learning_example_triplets = training_session.get_examples()
-
-    # Set containing every unique song reference from every learning example
-    #  triplet...
-    all_songs_listened_to = set()
-
-    # Count how many unique songs were listened to...
-    for learning_example_triplet in learning_example_triplets:
-        all_songs_listened_to.add(learning_example_triplet['anchor'])
-        all_songs_listened_to.add(learning_example_triplet['positive'])
-        all_songs_listened_to.add(learning_example_triplet['negative'])
-
     # Show information about training session...
-    print(_(F"Session:"))    
-    print(_(F"  Total songs listened to: {len(all_songs_listened_to)}"))    
+    print(_(F"Session:"))
+    print(_(F"  Total songs listened to: {training_session.get_total_songs_listened()}"))
     print(_(F"  Total learning examples: {training_session.get_total_examples()}"))
     print(_(F"Expert:"))
     print(_(F"  Name: {training_session.get_expert_name()}"))
@@ -304,7 +401,7 @@ def main():
 
         # For every action, other than these, probe the LAN if necessary for a
         #  server and construct a client...
-        if arguments.action not in ['examine']:
+        if arguments.action not in ['create-csv', 'examine']:
 
             # If no host provided, use Zeroconf auto detection...
             if not arguments.host:
@@ -335,6 +432,12 @@ def main():
             # Add a learning example...
             case 'add':
                 success = add_learning_example(client, arguments)
+
+            # Examine a .hts file on disk, cross referencing examined songs in,
+            #  a CSV file, and generating a new CSV to stdout only containing
+            #  the examined songs...
+            case 'create-csv':
+                success = create_csv(arguments)
 
             # Delete a learning example...
             case 'delete':

@@ -164,22 +164,28 @@ class TrainerApplication(Gtk.Application):
         dialog.set_license_type(Gtk.License(Gtk.License.GPL_3_0)) 
 
         # Set comments...
-        dialog.set_comments(_("Interactive GUI for music experts to tune\nHelios similarity algorithms."))
+        dialog.set_comments(_("Interactive GUI for music experts to tune\n"
+                              "Helios similarity algorithms."))
 
         # Set product website...
         dialog.set_website_label(_("Website"))
         dialog.set_website("https://www.heliosmusic.io") 
 
-        # Add credit section for testing...
-        #dialog.add_credit_section(
-        #    _("Expert Musicians"),
-        #    ["(names)"])
-
         # Set copyright year...
         dialog.set_copyright("© 2015-2024 Cartesian Theatre Corp.") 
 
         # Set author...
-        dialog.set_authors(["Cartesian Theatre Corp."])
+        dialog.set_authors(["Kip Warner"])
+
+        # Add music experts...
+        dialog.add_credit_section(
+            "Music Experts",
+            [
+                "Angus Lau",
+                "Joseph Liau",
+                "Nathan Barrett",
+                "Stephen Wright"
+            ])
 
         # Set icon...
         dialog.set_logo_icon_name(get_application_id())

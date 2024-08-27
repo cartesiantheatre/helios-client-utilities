@@ -34,6 +34,13 @@ Add a learning example to be used when training. This requires an --anchor,
 --positive, and --negative song references to specify the triplet.
 
 .TP
+\fBcreate-csv\fR \fB<session.hts>\fR \fB<master.csv>\fR
+Examine the given training session file, cross referencing songs examined in the
+\fBmaster.csv\fR CSV file, and dump to stdout a new CSV file containing only
+those songs referenced in \fBmaster.csv\fR. The \fBmaster.csv\fR file is
+expected to be in the same format as that described in \fBhelios-import(1)\fR.
+
+.TP
 \fBdelete\fR
 Delete a learning example triplet stored on the server that was awaiting
 training. This requires an --anchor, --positive, and --negative song references

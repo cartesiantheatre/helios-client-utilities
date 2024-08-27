@@ -37,7 +37,7 @@ The following is a summary of the utilities included in this package. For detail
 | `helios-add-song(1)` | Add a single song to a Helios server's catalogue. |
 | `helios-delete-song(1)` | Delete a remote song or songs on a Helios server. |
 | `helios-download-song(1)` | Download a song from a remote Helios server. |
-| `helios-find-servers(1)` | List all helios servers detected on your LAN. |
+| `helios-find-servers(1)` | List all Helios servers detected on your LAN. |
 | `helios-get-song(1)` | Query metadata for a song within a remote Helios server. |
 | `helios-import-songs(1)` | Batch import songs into Helios. |
 | `helios-learn(1)` | Perform machine learning related tasks. |
