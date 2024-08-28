@@ -158,7 +158,7 @@ class TrainerApplication(Gtk.Application):
         dialog.set_program_name(get_application_name())
 
         # Set program version...
-        dialog.set_version(F"{helios.__version__.version}") 
+        dialog.set_version(F"{get_version()}") 
 
         # Set license to GPL v3...
         dialog.set_license_type(Gtk.License(Gtk.License.GPL_3_0)) 

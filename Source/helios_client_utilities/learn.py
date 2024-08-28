@@ -6,6 +6,7 @@
 
 # System imports...
 import argparse
+import csv # For csv.QUOTE_NONNUMERIC constant...
 from datetime import datetime
 from pprint import pprint
 import sys
@@ -216,8 +217,18 @@ def create_csv(arguments):
         # If this song is one the user listened to...
         if reference in all_songs_listened_to:
 
+            # Format the CSV line...
+            line = data_frame.to_csv(
+                None,
+                index=False,
+                header=header,
+                quotechar='"',
+                quoting=csv.QUOTE_NONNUMERIC,
+                escapechar='\\',
+                encoding='utf-8')
+
             # Print it to stdout...
-            print(data_frame.to_csv(None, index=False, header=header), end='')
+            print(line, end='')
 
             # Don't show headers again...
             header = False
@@ -231,7 +242,7 @@ def create_csv(arguments):
     for remaining_reference in all_songs_listened_to:
 
         # Log warning...
-        print(F'Warning: Not found {reference}', file=sys.stderr)
+        print(F'Warning: Not found {remaining_reference}', file=sys.stderr)
 
     # If there were any songs not found, the shell should note an error...
     if len(all_songs_listened_to) > 0:
