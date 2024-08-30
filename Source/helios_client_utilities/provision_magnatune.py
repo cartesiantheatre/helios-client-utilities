@@ -1168,7 +1168,7 @@ def main():
                     unique_references.add(unique_reference)
 
                 # Format line for CSV...
-                current_line = F"{unique_reference}, \"{artist}\", \"{title}\", \"{album}\", \"{genre}\", \"{output_path}\""
+                current_line = F"\"{unique_reference}\", \"{artist}\", \"{title}\", \"{album}\", \"{genre}\", \"{output_path}\""
 
                 # Write out line to CSV...
                 print(current_line, file=file)

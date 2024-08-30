@@ -86,7 +86,7 @@ class MatchTunerPage(StackPage):
 
         # Create media controls...
         self._media_controls = Gtk.MediaControls()
-        search_key_sizer.append(self._media_controls)
+        playback_sizer.append(self._media_controls)
 
         # Create playback artist / title label...
         self._playback_artist_and_title = Gtk.Label(label=_('<i>Click a song to play.</i>'))
