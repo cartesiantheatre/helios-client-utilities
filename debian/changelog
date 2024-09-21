@@ -1,6 +1,6 @@
-helios-client-utilities (1.2-git20240920-1-ct1) noble; urgency=medium
+helios-client-utilities (1.2-git20240920-2-ct1) noble; urgency=medium
 
   * Build for Noble.
 
- -- Cartesian Theatre Packages <packages@cartesiantheatre.com>  Fri, 20 Sep 2024 19:02:00 -0700
+ -- Cartesian Theatre Packages <packages@cartesiantheatre.com>  Fri, 20 Sep 2024 19:35:00 -0700
 

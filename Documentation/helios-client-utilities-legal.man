@@ -1,3 +1,9 @@
+\O0
+.TH helios-client-utilities-legal 7 "September 2024"
+.SH NAME
+helios-client-utilities-legal - Helios legal notices
+\O1
+
 .SH LEGAL
 Copyright (C) 2015-2024 Cartesian Theatre. All rights reserved. Helios® is a
 registered trademark of CT in Canada and with other applications that may be
