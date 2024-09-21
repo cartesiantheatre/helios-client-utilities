@@ -33,6 +33,9 @@ class TrainerApplication(Gtk.Application):
         # Main application window will be stored here after it is created...
         self._application_window = None
 
+        # Path to a file to open that was passed on the command line, if any...
+        self._open_path = None
+
         # Store training session here...
         self._training_session = TrainingSession()
 
@@ -40,9 +43,19 @@ class TrainerApplication(Gtk.Application):
         #  do_command_line() callback...
         self._command_line_dictionary = {}
 
-        # Show help summary...
+        # Add parameter for an optional training session file to restore...
+        self.set_option_context_parameter_string('[session.hts]')
+
+        # Set summary for training session file parameter...
         self.set_option_context_summary(
-            _('Interactive GUI for music experts to tune Helios similarity algorithms.'))
+            _('A single .hts file can optionally be provided to restore a '
+              'user\'s previous training session.'))
+
+        # Set help description...
+        self.set_option_context_description(
+            _('Interactive user interface for music experts to tune Helios '
+              'similarity algorithms. See helios-trainer(1) for more '
+              'information.'))
 
         # Add --api-key command line interface...
         self.add_main_option(
@@ -131,10 +144,15 @@ class TrainerApplication(Gtk.Application):
         set_icon_theme_search()
 
         # Connect signals...
-      #  self.connect('command-line', self.on_command_line)
-        self.connect('startup', self.on_startup)
         self.connect('activate', self.on_activate)
         self.connect('shutdown', self.on_shutdown)
+        self.connect('startup', self.on_startup)
+
+        # Tell GApplication we can consume command line arguments. Note that
+        #  HANDLES_COMMAND_LINE and HANDLES_OPEN are mutually exclusive. If you
+        #  want to do anything other than just open a file, then you need to
+        #  specify the former...
+        self.set_flags(Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
 
     # Create an action with the given callback and register with application...
     def create_action(self, name, callback):
@@ -161,25 +179,29 @@ class TrainerApplication(Gtk.Application):
         dialog.set_version(F"{get_version()}") 
 
         # Set license to GPL v3...
-        dialog.set_license_type(Gtk.License(Gtk.License.GPL_3_0)) 
+        dialog.set_license_type(Gtk.License(Gtk.License.GPL_3_0))
 
         # Set comments...
-        dialog.set_comments(_("Interactive GUI for music experts to tune\n"
-                              "Helios similarity algorithms."))
+        dialog.set_comments(_(
+            "An interactive user interface for music experts to tune Helios "
+            "similarity algorithms."))
 
         # Set product website...
-        dialog.set_website_label(_("Website"))
+        dialog.set_website_label(_("Product Website"))
         dialog.set_website("https://www.heliosmusic.io") 
 
         # Set copyright year...
-        dialog.set_copyright("© 2015-2024 Cartesian Theatre Corp.") 
+        dialog.set_copyright(
+            "© 2015-2024 Cartesian Theatre Corp. (\"CT\"). Helios® is a "
+            "registered trademark of CT in Canada and with other applications "
+            "that may be pending elsewhere.")
 
         # Set author...
         dialog.set_authors(["Kip Warner"])
 
-        # Add music experts...
+        # Add beta testers...
         dialog.add_credit_section(
-            "Music Experts",
+            _("Beta Testers:"),
             [
                 "Angus Lau",
                 "Joseph Liau",
@@ -187,10 +209,31 @@ class TrainerApplication(Gtk.Application):
                 "Stephen Wright"
             ])
 
+        # Add documenters...
+        dialog.set_documenters(['Kip Warner'])
+
+        # Add music experts...
+        dialog.add_credit_section(
+            _("Music Experts:"),
+            [
+                "Angus Lau",
+                "Joseph Liau",
+                "Nathan Barrett",
+                "Stephen Wright"
+            ])
+
+        # Add additional thanks...
+        dialog.add_credit_section(
+            _("Additional Thanks:"),
+            [
+                "John Buckman",
+                "Magnatune"
+            ])
+
         # Set icon...
         dialog.set_logo_icon_name(get_application_id())
 
-        # Display about window
+        # Display about window...
         dialog.present()
 
     # Signal handler for application activation...
@@ -203,6 +246,12 @@ class TrainerApplication(Gtk.Application):
         # Make main window visible...
         self._application_window.present()
 
+        # Was a file to open passed on the command line? If so...
+        if self._open_path is not None:
+
+            # Tell the session selector to use it...
+            self._application_window._session_selector_page._file_path = self._open_path
+
     # Parse command line...
     def do_command_line(self, command_line):
 
@@ -210,6 +259,16 @@ class TrainerApplication(Gtk.Application):
         #  in turn into a normal Python dictionary...
         options = command_line.get_options_dict()
         self._command_line_dictionary = options.end().unpack()
+
+        # Get the command line arguments as a list of paths, the first of which
+        #  being this process...
+        arguments = command_line.get_arguments()
+
+        # User provided a training session file to restore...
+        if len(arguments) > 1:
+
+            # Get path to training session file passed on command line...
+            self._open_path = arguments[1]
 
         # User requested version...
         if 'version' in self._command_line_dictionary:

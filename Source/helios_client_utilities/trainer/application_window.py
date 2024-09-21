@@ -42,6 +42,7 @@ class ApplicationWindow(Gtk.ApplicationWindow):
 
         # Connect signals and property watches for window itself...
         self.connect('notify::fullscreened', self.on_notify_fullscreened)
+        self.connect('map', self.on_map)
 
         # Create a top level box container and set as the sole child of
         #  window...
@@ -64,7 +65,7 @@ class ApplicationWindow(Gtk.ApplicationWindow):
         status_hbox.set_margin_end(5)
 
         # Create a status label...
-        self._status_label = Gtk.Label(label=_('Status area...'))
+        self._status_label = Gtk.Label()
         self._status_label.set_hexpand(True)
         self._status_label.set_halign(Gtk.Align.START)
         self._status_label.set_valign(Gtk.Align.END)
@@ -109,7 +110,7 @@ class ApplicationWindow(Gtk.ApplicationWindow):
         self._end_session_page = EndSessionPage(application_window=self)
         self._end_session_page.add_to_stack(self._stack)
 
-        # Create a stack switcher to be used during debugging to reveal all
+        # Create a stack switcher to be used only during debugging to reveal all
         #  pages...
         stack_switcher = Gtk.StackSwitcher()
         stack_switcher.set_stack(self._stack)
@@ -130,9 +131,6 @@ class ApplicationWindow(Gtk.ApplicationWindow):
 
         # Register all actions...
         self.connect_actions()
-
-        # Set status to nothing...
-        self.set_status(_(''))
 
         # Upon successful login, this will contain the client...
         self._client = None
@@ -186,6 +184,14 @@ class ApplicationWindow(Gtk.ApplicationWindow):
         # Otherwise enable it...
         else:
             self.fullscreen()
+
+    # Application window is visible...
+    def on_map(self, user_data):
+
+        # If the user provided a session file to restore, start the login
+        #  process automatically as if the user had clicked the button...
+        if self._application._open_path:
+            self._login_page._login_button.emit('clicked')
 
     # State of the toplevel window associated with the given widget has
     #  changed...

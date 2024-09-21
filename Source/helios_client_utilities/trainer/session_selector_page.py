@@ -99,8 +99,12 @@ class SessionSelectorPage(StackPage):
         self._resume_session.connect('toggled', self.on_session_radio_select)
         self._resume_session.set_group(self._new_session)
 
-        # Location to store training session file...
+        # Location to load from or save to training session file...
         self._file_path = None
+
+        # If a file was passed on the command line, use it...
+        if self._application._open_path is not None:
+            self._file_path = self._application._open_path
 
         # Construct sizer for session type check buttons...
         session_type_sizer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
@@ -114,7 +118,7 @@ class SessionSelectorPage(StackPage):
         session_type_sizer.append(self._resume_session)
         self._sizer.append(session_type_sizer)
 
-        # Create sizer for location and ready buttons...
+        # Create sizer for back, location and ready buttons...
         button_sizer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
         button_sizer.set_vexpand(True)
         button_sizer.set_halign(Gtk.Align.CENTER)
@@ -122,6 +126,23 @@ class SessionSelectorPage(StackPage):
         button_sizer.set_margin_start(20)
         button_sizer.set_margin_bottom(20)
         button_sizer.set_margin_end(20)
+
+        # Create back button...
+        #  Disabling this for now because it's not clear what to do if the user
+        #  resumed a training session but then logins in with a different server
+        #  or API key...
+#        self._back_button = Gtk.Button()
+#        back_button_sizer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+#        back_button_sizer.set_halign(Gtk.Align.CENTER)
+#        self._back_button.set_child(back_button_sizer)
+#        self._back_button.set_sensitive(True)
+#        self._back_button.connect('clicked', self.on_back)
+#        back_button_image = Gtk.Image.new_from_icon_name('go-previous')
+#        back_button_image.set_icon_size(Gtk.IconSize.LARGE)
+#        self._back_button_label = Gtk.Label(label=_('Back'))
+#        back_button_sizer.append(back_button_image)
+#        back_button_sizer.append(self._back_button_label)
+#        button_sizer.append(self._back_button)
 
         # Create a file chooser button...
         self._select_session_button = Gtk.Button()
@@ -153,8 +174,21 @@ class SessionSelectorPage(StackPage):
         # Add button sizer to master sizer...
         self._sizer.append(button_sizer)
 
-        # Update UI based on starting a new training session...
-        self._new_session.emit('toggled')
+        # If a file to open was passed on the command line....
+        if self._file_path:
+
+            # Toggle restore session radio button...
+            self._resume_session.set_active(True)
+            self._resume_session.emit('toggled')
+
+            # Update it's user interface...
+            self.update_ready_state()
+
+        # Otherwise default to starting a new session...
+        else:
+
+            # Update UI based on starting a new training session...
+            self._new_session.emit('toggled')
 
     # Guess the best default location to save a session...
     def default_save_file(self):
@@ -176,6 +210,12 @@ class SessionSelectorPage(StackPage):
         else:
             return os.path.join(home, username + '.hts')
 
+    # Back button clicked...
+    def on_back(self, button):
+
+        # Take user back to the login page...
+        self._application_window._stack.set_visible_child_name('Login')
+
     # Either the name or email text changed...
     def on_name_or_email_text_change(self, entry_buffer, result):
 
@@ -185,39 +225,39 @@ class SessionSelectorPage(StackPage):
     # Ready button clicked...
     def on_ready(self, button):
 
-        # Try to create new or resume previous session...
+        # Get the login page...
+        login_page = self._application_window._login_page
+
+        # Set API key in training session from user interface...
+        api_key = login_page._api_key_entry.get_text()
+        self._application._training_session.set_api_key(api_key)
+
+        # Set host in training session from user interface...
+        host = login_page._host_entry.get_text()
+        self._application._training_session.set_host(host)
+
+        # Set port in training session from user interface...
+        port = int(login_page._port_entry.get_text())
+        self._application._training_session.set_port(port)
+
+        # Set TLS flag in training session from user interface...
+        tls = login_page._use_tls_switch.get_active()
+        self._application._training_session.set_tls(tls)
+
+        # Set expert name in training session from user interface...
+        expert_name = self._name_entry.get_text()
+        self._application._training_session.set_expert_name(expert_name)
+
+        # Set expert email in training session from user interface...
+        expert_email = self._email_entry.get_text()
+        self._application._training_session.set_expert_email(expert_email)
+
+        # Set server version in training session from server response...
+        server_version = self._application._system_status.version
+        self._application._training_session.set_version(server_version)
+
+        # Try to save session...
         try:
-
-            # Get the login page...
-            login_page = self._application_window._login_page
-
-            # Set API key in training session from user interface...
-            api_key = login_page._api_key_entry.get_text()
-            self._application._training_session.set_api_key(api_key)
-
-            # Set host in training session from user interface...
-            host = login_page._host_entry.get_text()
-            self._application._training_session.set_host(host)
-
-            # Set port in training session from user interface...
-            port = int(login_page._port_entry.get_text())
-            self._application._training_session.set_port(port)
-
-            # Set TLS flag in training session from user interface...
-            tls = login_page._use_tls_switch.get_active()
-            self._application._training_session.set_tls(tls)
-
-            # Set expert name in training session from user interface...
-            expert_name = self._name_entry.get_text()
-            self._application._training_session.set_expert_name(expert_name)
-
-            # Set expert email in training session from user interface...
-            expert_email = self._email_entry.get_text()
-            self._application._training_session.set_expert_email(expert_email)
-
-            # Set server version in training session from server response...
-            server_version = self._application._system_status.version
-            self._application._training_session.set_version(server_version)
 
             # Save session to disk...
             self._application._training_session.save(self._file_path)
@@ -340,9 +380,6 @@ class SessionSelectorPage(StackPage):
                 # Don't do anything else...
                 return
 
-        # Show path to file in status bar...
-        self._application_window.set_status(_(F'Training session location: {self._file_path}'))
-
         # Update ready state...
         self.update_ready_state()
 
@@ -410,8 +447,21 @@ class SessionSelectorPage(StackPage):
                 self._name_entry.disconnect_by_func(self.on_name_or_email_text_change)
                 self._email_entry.disconnect_by_func(self.on_name_or_email_text_change)
 
-                # Load session...
-                self._application._training_session.load(self._file_path)
+                # Try to load session...
+                try:
+                    self._application._training_session.load(self._file_path)
+
+                # Unable to load...
+                except Exception as some_exception:
+
+                    # Show error message in status bar...
+                    self._application_window.set_status(str(some_exception))
+
+                    # Disable ready button...
+                    self._ready_button.set_sensitive(False)
+
+                    # Don't do anything else...
+                    return
 
                 # Get the login page...
                 login_page = self._application_window._login_page

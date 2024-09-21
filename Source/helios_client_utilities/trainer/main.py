@@ -23,9 +23,7 @@ _ = gettext.gettext
 def main():
 
     # Construct application...
-    application = TrainerApplication(
-        application_id=get_application_id(),
-        flags=Gio.ApplicationFlags.HANDLES_OPEN | Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
+    application = TrainerApplication(application_id=get_application_id())
 
     # Run application and capture exit code...
     status = application.run(sys.argv)

@@ -40,8 +40,7 @@ class LoginPage(StackPage):
         self._sizer.set_halign(Gtk.Align.CENTER)
 
         # Create login page artwork...
-        logo_image = Gtk.Image.new_from_file(
-            os.path.join(get_data_dir(), 'login_logo.png'))
+        logo_image = Gtk.Image.new_from_file(os.path.join(get_data_dir(), 'login_logo.png'))
         logo_image.set_size_request(400, 400)
         logo_image.set_valign(Gtk.Align.CENTER)
         logo_image.set_halign(Gtk.Align.END)
@@ -71,7 +70,7 @@ class LoginPage(StackPage):
         self._api_key_entry.set_size_request(500, 20)
         self._api_key_entry.set_alignment(0.5)
         self._api_key_entry.connect('notify::text', self.on_login_text_change)
-        #self._api_key_entry.connect('activate', self.on_entry_activate)
+        self._api_key_entry.connect('activate', self.on_entry_activate)
 
         # Construct host label...
         host_label = Gtk.Label(label=_("Host:"))
@@ -82,7 +81,7 @@ class LoginPage(StackPage):
         self._host_entry.set_alignment(0.5)
         self._host_entry.set_text('demobackend.heliosmusic.io')
         self._host_entry.get_buffer().connect('notify::text', self.on_login_text_change)
-        #self._host_entry.connect('activate', self.on_entry_activate)
+        self._host_entry.connect('activate', self.on_entry_activate)
 
         # Construct port label...
         port_label = Gtk.Label(label=_("Port:"))
@@ -95,7 +94,7 @@ class LoginPage(StackPage):
         self._port_entry.set_text('6440')
         self._port_entry_insert_signal = self._port_entry.get_buffer().connect('inserted-text', self.on_port_text_change)
         self._port_entry.get_buffer().connect('notify::text', self.on_login_text_change)
-        #self._port_entry.connect('activate', self.on_entry_activate)
+        self._port_entry.connect('activate', self.on_entry_activate)
 
         # Construct TLS label...
         use_tls_label = Gtk.Label(label=_("Use TLS:"))
@@ -155,11 +154,25 @@ class LoginPage(StackPage):
         if 'tls-disabled' in command_line_dictionary:
             self._use_tls_switch.set_active(not command_line_dictionary['tls-disabled'])
 
-        # If user did not provide any connection details on command line
-        #  interface, then try and guess host, port, and TLS by scanning LAN...
-        if 'host' not in command_line_dictionary and 'port' not in command_line_dictionary and 'tls-disabled' not in command_line_dictionary:
+        # Default to automatically probing the LAN for first found server,
+        #  unless we determine otherwise...
+        auto_probe = True
 
-            # Try probing LAN for first found server...
+        # If user provided any connection details on command line interface,
+        #  then don't try and guess host, port, and TLS by scanning LAN...
+        if 'host' in command_line_dictionary or 'port' in command_line_dictionary or 'tls-disabled' in command_line_dictionary:
+            auto_probe = False
+
+        # If user provided a training session on the command line, then don't
+        #  automatically probe LAN because connection details already provided
+        #  in training session file...
+        if self._application._open_path:
+            auto_probe = False
+
+        # Probe LAN for first found server, if appropriate to do so...
+        if auto_probe:
+
+            # Try probing...
             try:
 
                 # Probe for at most three seconds...
@@ -215,8 +228,18 @@ class LoginPage(StackPage):
             # Update status...
             GLib.idle_add(self._application_window.set_status, _(F"Successfully authenticated. Found {format(self._application._system_status.songs, ',d')} songs..."))
 
-            # Switch to quick start page...
-            GLib.idle_add(self._application_window._stack.set_visible_child_name, 'QuickStart')
+            # Switch to quick start page, unless restoring a session...
+            if self._application._open_path is None:
+                GLib.idle_add(self._application_window._stack.set_visible_child_name, 'QuickStart')
+
+            # Otherwise switch to session selector page...
+            else:
+
+                # Switch to page...
+                GLib.idle_add(self._application_window._stack.set_visible_child_name, 'SessionSelector')
+
+                # Update its user interface...
+                GLib.idle_add(self._application_window._session_selector_page.update_ready_state)
 
         # Authorization problem...
         except helios.exceptions.Unauthorized:
@@ -236,15 +259,17 @@ class LoginPage(StackPage):
     #  pressed...
     def on_entry_activate(self, entry):
 
+        # Needed to suppress a Gtk-WARNING which otherwise would have emitted
+        #  "If you handle this event, you must return GDK_EVENT_PROPAGATE so "
+        #  "the default handler gets the event as well"
+        self._application_window.set_focus(self._login_button)
+
         # If the login button is enabled, click it...
         if self._login_button.get_sensitive():
             self._login_button.activate()
 
-        # TODO: Figure out how to properly handle this event once done with the
-        #  above. This is not correct according to a Gtk-WARNING emitted which
-        #  says: "If you handle this event, you must return GDK_EVENT_PROPAGATE
-        #  so the default handler gets the event as well"
-        return True
+        # Let default handler get the event too...
+        return Gdk.EVENT_PROPAGATE
 
     # Find servers button clicked...
     def on_find_servers(self, button):

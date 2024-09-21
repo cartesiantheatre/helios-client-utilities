@@ -1,0 +1,5 @@
+.SH LEGAL
+Copyright (C) 2015-2024 Cartesian Theatre. All rights reserved. Helios® is a
+registered trademark of CT in Canada and with other applications that may be
+pending elsewhere.
+

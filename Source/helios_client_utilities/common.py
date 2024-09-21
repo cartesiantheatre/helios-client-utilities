@@ -10,6 +10,7 @@ import ipaddress
 import json
 import netifaces
 import re
+import sys
 import threading
 
 # Helios...
@@ -366,7 +367,12 @@ class TrainingSession:
                 json_object = json.load(infile)
 
         # Failed...
-        except json.decoder.JSONDecodeError as some_exception:
+        except Exception as some_exception:
+
+            # Log failure details...
+            sys.stderr.write(F'{some_exception}\n')
+
+            # Notify user...
             raise Exception(F'File is either corrupt or not an .hts file!')
 
         # Make sure there is a format version field...
@@ -599,3 +605,4 @@ def zeroconf_find_server(wait_time=None):
 # Get utilities package version...
 def get_version():
     return __version__.version
+

@@ -6,6 +6,7 @@
 
 # System imports...
 import html
+import sys
 import threading
 
 # Gtk related imports...
@@ -81,12 +82,36 @@ class MatchTunerPage(StackPage):
         search_key_sizer.append(self._search_key_artist_and_title_label)
 
         # Create playback sizer...
-        playback_sizer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        playback_sizer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         search_key_sizer.append(playback_sizer)
 
-        # Create media controls...
-        self._media_controls = Gtk.MediaControls()
-        playback_sizer.append(self._media_controls)
+        # Note: Song playback was previously managed via Gtk.MediaControls, but
+        #  found it to be unreliable with Gtk 4.14. The seek bar does not always
+        #  appear. There also appears to be a possible race condition in playing
+        #  two songs at the same time without the first one being stopped.
+        #  <https://lists.freedesktop.org/archives/gstreamer-devel/2024-July/082073.html>
+
+        # Create play button...
+        self._play_button = Gtk.Button.new_from_icon_name('media-playback-start')
+        self._play_button.set_sensitive(False)
+        self._play_button.connect('clicked', self.on_play_button)
+        playback_sizer.append(self._play_button)
+
+        # Create stop button...
+        self._stop_button = Gtk.Button.new_from_icon_name('media-playback-stop')
+        self._stop_button.set_sensitive(False)
+        self._stop_button.connect('clicked', self.on_stop_button)
+        playback_sizer.append(self._stop_button)
+
+        # Create a seek slider...
+        self._slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 0.5)
+        self._slider.set_size_request(300, 20)
+        self._slider_handler_id = self._slider.connect('value-changed', self.on_slider_seek)
+        playback_sizer.append(self._slider)
+
+        # Create a seek time label...
+        self._seek_label = Gtk.Label(label='00:00 / 00:00')
+        playback_sizer.append(self._seek_label)
 
         # Create playback artist / title label...
         self._playback_artist_and_title = Gtk.Label(label=_('<i>Click a song to play.</i>'))
@@ -306,33 +331,71 @@ class MatchTunerPage(StackPage):
         #  nothing dragged there...
         self._user_ranking_indices = [None] * self._asset_loader_page._total_matches
 
-    # Save button clicked. Mine triplets...
-    def on_save_button(self, button):
+        # Initialize GStreamer...
+        Gst.init(None)
 
-        # Create an alert dialog...
-        alert_dialog = Gtk.AlertDialog()
-        alert_dialog.set_message(_('Save?'))
-        alert_dialog.set_detail(_(F'Are you ready to add this training data into your session? This cannot be undone.'))
-        alert_dialog.set_buttons([_('Cancel'), _('Save')])
-        alert_dialog.set_default_button(0)
-        alert_dialog.set_modal(True)
+        # Create a playbin element for audio playback...
+        self._playbin = Gst.ElementFactory.make("playbin", None)
 
-        # Show dialog...
-        alert_dialog.choose(self._application_window, None, self.on_save_confirm_dialog_callback, None)
+        # Failed to initialize playbin element...
+        if not self._playbin:
 
-    # Save confirm dialog callback...
-    def on_save_confirm_dialog_callback(self, alert_dialog, async_result, _):
+            # Log it
+            sys.stderr.write('The playbin GStreamer plugin appears to be missing...\n')
 
-        # Get the user's selection...
-        selection = alert_dialog.choose_finish(async_result)
+            # Exit...
+            sys.exit(1)
 
-        # User requested to cancel...
-        if selection == 0:
-            return
+        # Start an update timer for every quarter of a second...
+        GLib.timeout_add(250, self.update_timer_callback)
 
-        # Otherwise spawn triplet mining thread...
-        self._triplet_mining_thread = threading.Thread(target=self.triplet_mining_thread_entry)
-        self._triplet_mining_thread.start()
+    # Load the current match bundle...
+    def load_match_bundle(self):
+
+        # Get the current match bundle...
+        self._match_bundle = self._asset_loader_page._match_bundle_queue.get()
+
+        # Notify queue the enqueued task is complete...
+        self._asset_loader_page._match_bundle_queue.task_done()
+
+        # Set search key artwork...
+        artwork_pixel_buffer = image_data_to_pixbuf(self._match_bundle.get_search_key_artwork())
+        self._search_key_image.set_from_pixbuf(artwork_pixel_buffer)
+
+        # Get the search key song object...
+        search_key_song_object = self._match_bundle.get_search_key_song_object()
+
+        # Escape the artist and title in case they contain characters that might
+        #  break markup...
+        artist = html.escape(search_key_song_object.artist)
+        title = html.escape(search_key_song_object.title)
+
+        # Set artist and title...
+        self._search_key_artist_and_title_label.set_label(F'{title}\n<i><small>{artist}</small></i>')
+
+        # Load each Helios match...
+        for match_index in range(0, self._asset_loader_page._total_matches):
+
+            # Get artwork widget...
+            artwork_image = self._helios_ranking_artwork_image_list[match_index]
+
+            # Set artwork...
+            artwork_pixel_buffer = image_data_to_pixbuf(self._match_bundle.get_match_artwork(match_index))
+            artwork_image.set_from_pixbuf(artwork_pixel_buffer)
+
+            # Get match object...
+            match_object = self._match_bundle.get_match_song_object(match_index)
+
+            # Get artist / title label...
+            artist_title_label = self._helios_ranking_artist_title_label_list[match_index]
+
+            # Escape the artist and title in case they contain characters that
+            #  might break markup...
+            artist = html.escape(match_object.artist)
+            title = html.escape(match_object.title)
+
+            # Set artist / title label...
+            artist_title_label.set_label(F'{title}\n\n<i><small>{artist}</small></i>')
 
     # Drag source: User about to beging dragging a Helios ranked match...
     def on_helios_ranked_match_drag_prepare(self, drag_source, x_coordinate, y_coordinate):
@@ -346,6 +409,72 @@ class MatchTunerPage(StackPage):
         # Construct a content provider that stores the above and return it...
         return Gdk.ContentProvider.new_for_value(
             GObject.Value(GObject.TYPE_INT, match_ordinal))
+
+    # User released primary mouse on a Helios ranked match...
+    def on_helios_ranked_match_primary_released(self, gesture_click, number_of_press, x_coordinate, y_coordinate):
+
+        # Get the widget mouse button was released on...
+        widget = gesture_click.get_widget()
+
+        # Make sure release was inside the widget...
+        if not widget.contains(x_coordinate, y_coordinate):
+            return
+
+        # Get the Helios ranked match ordinal...
+        match_ordinal = widget.frame_ordinal
+
+        # Get the song object for match...
+        song_object = self._match_bundle.get_match_song_object(match_ordinal)
+
+        # Get the path to the song...
+        path = self._match_bundle.get_match_path(match_ordinal)
+
+        # Start playing the match...
+        self.play_song(song_object, path, F'<i>Ranked match #{match_ordinal + 1}</i>')
+
+    # Play button clicked...
+    def on_play_button(self, button):
+
+        # Get playback state...
+        state = self._playbin.get_state(Gst.CLOCK_TIME_NONE)
+
+        # Song is currently playing, so pause it...
+        if state.state is Gst.State.PLAYING:
+            self._playbin.set_state(Gst.State.PAUSED)
+
+        # Song is currently paused, so resume playing...
+        elif state.state is Gst.State.PAUSED:
+            self._playbin.set_state(Gst.State.PLAYING)
+
+    # Drop target: User dropped a Helios or user ranked match over a drag target
+    #  user ranking slot...
+    def on_ranked_match_drop(self, drop_target, gvalue, x_coordinate, y_coordinate):
+
+        # Get frame containing the user ranked match...
+        frame = drop_target.get_widget()
+
+        # Make sure release was inside the frame. If it wasn't, don't accept the
+        #  drop...
+        if not frame.contains(x_coordinate, y_coordinate):
+            return False
+
+        # Get the Helios and user match indices...
+        source_helios_match_index = int(gvalue)
+        destination_user_match_index = frame.frame_ordinal
+
+        # Check if this Helios match was already among the user rankings...
+        for index in range(0, self._asset_loader_page._total_matches):
+            if self._user_ranking_indices[index] is source_helios_match_index:
+                self._user_ranking_indices[index] = None
+
+        # Load source match index into the destination...
+        self._user_ranking_indices[destination_user_match_index] = source_helios_match_index
+
+        # Reload user interface for user matches...
+        self.refresh_user_interface()
+
+        # Accept the drop...
+        return True
 
     # Drag source: User about to begin dragging a user ranked match...
     def on_user_ranked_match_drag_prepare(self, drag_source, x_coordinate, y_coordinate):
@@ -383,58 +512,6 @@ class MatchTunerPage(StackPage):
         # Signal that we handled the cancel operation...
         return True
 
-    # Drop target: User dropped a Helios or user ranked match over a drag target
-    #  user ranking slot...
-    def on_ranked_match_drop(self, drop_target, gvalue, x_coordinate, y_coordinate):
-
-        # Get frame containing the user ranked match...
-        frame = drop_target.get_widget()
-
-        # Make sure release was inside the frame. If it wasn't, don't accept the
-        #  drop...
-        if not frame.contains(x_coordinate, y_coordinate):
-            return False
-
-        # Get the Helios and user match indices...
-        source_helios_match_index = int(gvalue)
-        destination_user_match_index = frame.frame_ordinal
-
-        # Check if this Helios match was already among the user rankings...
-        for index in range(0, self._asset_loader_page._total_matches):
-            if self._user_ranking_indices[index] is source_helios_match_index:
-                self._user_ranking_indices[index] = None
-
-        # Load source match index into the destination...
-        self._user_ranking_indices[destination_user_match_index] = source_helios_match_index
-
-        # Reload user interface for user matches...
-        self.refresh_user_interface()
-
-        # Accept the drop...
-        return True
-
-    # User released primary mouse on a Helios ranked match...
-    def on_helios_ranked_match_primary_released(self, gesture_click, number_of_press, x_coordinate, y_coordinate):
-
-        # Get the widget mouse button was released on...
-        widget = gesture_click.get_widget()
-
-        # Make sure release was inside the widget...
-        if not widget.contains(x_coordinate, y_coordinate):
-            return
-
-        # Get the Helios ranked match ordinal...
-        match_ordinal = widget.frame_ordinal
-
-        # Get the song object for match...
-        song_object = self._match_bundle.get_match_song_object(match_ordinal)
-
-        # Get the path to the song...
-        path = self._match_bundle.get_match_path(match_ordinal)
-
-        # Start playing the match...
-        self.play_song(song_object, path, F'<i>Ranked match #{match_ordinal + 1}</i>')
-
     # User released primary mouse on a user ranked match...
     def on_user_ranked_match_primary_released(self, gesture_click, number_of_press, x_coordinate, y_coordinate):
 
@@ -452,7 +529,7 @@ class MatchTunerPage(StackPage):
         if match_ordinal is None:
 
             # Unload any media stream...
-            self._media_controls.set_media_stream(None)
+            self.stop_playback()
 
             # Clear artist / title label...
             self._playback_artist_and_title.set_markup(_('<i>Click a song to play.</i>'))
@@ -526,60 +603,6 @@ class MatchTunerPage(StackPage):
         #  contents are what appears to be dragged...
         drag_source.set_icon(paintable, 0, 0)
 
-    # Drop target: User dragged a Helios ranked match over a user match slot...
-    def on_user_match_accept(self, drop_target, user_data):
-
-        # Accept the drop...
-        return True
-
-    # Load the current match bundle...
-    def load_match_bundle(self):
-
-        # Get the current match bundle...
-        self._match_bundle = self._asset_loader_page._match_bundle_queue.get()
-
-        # Notify queue the enqueued task is complete...
-        self._asset_loader_page._match_bundle_queue.task_done()
-
-        # Set search key artwork...
-        artwork_pixel_buffer = image_data_to_pixbuf(self._match_bundle.get_search_key_artwork())
-        self._search_key_image.set_from_pixbuf(artwork_pixel_buffer)
-
-        # Get the search key song object...
-        search_key_song_object = self._match_bundle.get_search_key_song_object()
-
-        # Escape the artist and title in case they contain characters that might
-        #  break markup...
-        artist = html.escape(search_key_song_object.artist)
-        title = html.escape(search_key_song_object.title)
-
-        # Set artist and title...
-        self._search_key_artist_and_title_label.set_label(F'{title}\n<i><small>{artist}</small></i>')
-
-        # Load each Helios match...
-        for match_index in range(0, self._asset_loader_page._total_matches):
-
-            # Get artwork widget...
-            artwork_image = self._helios_ranking_artwork_image_list[match_index]
-
-            # Set artwork...
-            artwork_pixel_buffer = image_data_to_pixbuf(self._match_bundle.get_match_artwork(match_index))
-            artwork_image.set_from_pixbuf(artwork_pixel_buffer)
-
-            # Get match object...
-            match_object = self._match_bundle.get_match_song_object(match_index)
-
-            # Get artist / title label...
-            artist_title_label = self._helios_ranking_artist_title_label_list[match_index]
-
-            # Escape the artist and title in case they contain characters that
-            #  might break markup...
-            artist = html.escape(match_object.artist)
-            title = html.escape(match_object.title)
-
-            # Set artist / title label...
-            artist_title_label.set_label(F'{title}\n\n<i><small>{artist}</small></i>')
-
     # Revert button clicked...
     def on_revert_button(self, button):
 
@@ -601,39 +624,91 @@ class MatchTunerPage(StackPage):
         # Trigger a fresh asset bundle retrieval...
         self._application_window._asset_loader_page.fetch_assets()
 
+    # Drop target: User dragged a Helios ranked match over a user match slot...
+    def on_user_match_accept(self, drop_target, user_data):
+
+        # Accept the drop...
+        return True
+
+    # Save button clicked...
+    def on_save_button(self, button):
+
+        # Create an alert dialog...
+        alert_dialog = Gtk.AlertDialog()
+        alert_dialog.set_message(_('Save?'))
+        alert_dialog.set_detail(_(F'Are you ready to add this training data into your session? This cannot be undone.'))
+        alert_dialog.set_buttons([_('Cancel'), _('Save')])
+        alert_dialog.set_default_button(0)
+        alert_dialog.set_modal(True)
+
+        # Show dialog...
+        alert_dialog.choose(self._application_window, None, self.on_save_confirm_dialog_callback, None)
+
+    # Save confirm dialog callback...
+    def on_save_confirm_dialog_callback(self, alert_dialog, async_result, _):
+
+        # Get the user's selection...
+        selection = alert_dialog.choose_finish(async_result)
+
+        # User requested to cancel...
+        if selection == 0:
+            return
+
+        # Otherwise spawn triplet mining thread...
+        self._triplet_mining_thread = threading.Thread(target=self.triplet_mining_thread_entry)
+        self._triplet_mining_thread.start()
+
+    # The user is trying to seek...
+    def on_slider_seek(self, slider):
+
+        # Get the new requested time...
+        seek_time_seconds = self._slider.get_value()
+
+        # Tell playbin to seek in stream...
+        self._playbin.seek_simple(
+            Gst.Format.TIME,
+            Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
+            seek_time_seconds * Gst.SECOND)
+
+    # Stop button clicked...
+    def on_stop_button(self, button):
+
+        # Stop playback...
+        self.stop_playback()
+
     # Play the requested song at the given path...
     def play_song(self, song_object, path, label_markup):
 
-        # TODO: Fix not stopping existing song playing before playing another
-        #       when user initiates a second play quickly.
+        # Stop any other song that might have been playing...
+        self.stop_playback()
 
-        # Unload / stop any other song that might have been playing...
-        self._media_controls.set_media_stream(None)
+        # Unload any other song that might have been loaded...
+        self._playbin.set_state(Gst.State.NULL)
 
         # Set artist / title label...
         self._playback_artist_and_title.set_markup(label_markup)
 
-        # Load media file, which implements media stream...
-        media_file = Gtk.MediaFile.new_for_filename(path)
+        # Create a URI to the media file to play...
+        media_file_uri = Gst.filename_to_uri(path)
 
-        # Check if there was an error...
-        if media_file.get_error() is not None:
+        # Load the media file...
+        self._playbin.set_property('uri', media_file_uri)
 
-            # Show an error message...
-            alert_dialog = Gtk.AlertDialog()
-            alert_dialog.set_message(_('Error'))
-            alert_dialog.set_detail(media_file.get_error().message)
-            alert_dialog.set_modal(True)
-            alert_dialog.show()
+#        # Check if there was an error...
+#        if media_file.get_error() is not None:
 
-            # Do nothing else...
-            return
+#            # Show an error message...
+#            alert_dialog = Gtk.AlertDialog()
+#            alert_dialog.set_message(_('Error'))
+#            alert_dialog.set_detail(media_file.get_error().message)
+#            alert_dialog.set_modal(True)
+#            alert_dialog.show()
 
-        # Load the stream...
-        self._media_controls.set_media_stream(media_file)
+#            # Do nothing else...
+#            return
 
         # Begin playback...
-        media_file.play()
+        self._playbin.set_state(Gst.State.PLAYING)
 
     # Reload user interface...
     def refresh_user_interface(self):
@@ -700,10 +775,21 @@ class MatchTunerPage(StackPage):
         self._match_bundle = None
 
         # Unload any media stream...
-        self._media_controls.set_media_stream(None)
+        self.stop_playback()
 
         # Clear artist / title label...
         self._playback_artist_and_title.set_markup(_('<i>Click a song to play.</i>'))
+
+    # Stop playback...
+    def stop_playback(self):
+
+        # Pause the stream...
+        self._playbin.set_state(Gst.State.PAUSED)
+
+        # Move seek slider back to the beginning. This will also have the effect
+        #  of calling on_slider_seek() which will reset the playback position in
+        #  the actual stream...
+        self._slider.set_value(0)
 
     # Entry point for user training session upload thread...
     def triplet_mining_thread_entry(self):
@@ -794,4 +880,99 @@ class MatchTunerPage(StackPage):
 
             # Re-enable user interface...
             GLib.idle_add(self._sizer.set_sensitive, True)
+
+    # User interface update timer callback...
+    def update_timer_callback(self):
+
+        # Try to get duration of song...
+        duration_success, duration_nanoseconds = self._playbin.query_duration(Gst.Format.TIME)
+
+        # If we were able to get the duration...
+        if duration_success:
+
+            # Update seek slider's range...
+            self._slider.set_range(0, duration_nanoseconds / Gst.SECOND)
+
+            # Convert duration from nanoseconds to minutes and seconds...
+            duration_total_seconds = duration_nanoseconds / 1000000000
+            duration_minutes = int(duration_total_seconds / 60)
+            duration_seconds = int(duration_total_seconds - (duration_minutes * 60))
+
+        # Try to get the playback position of song...
+        position_success, position_nanoseconds = self._playbin.query_position(Gst.Format.TIME)
+
+        # If we were able to obtain the playback position...
+        if position_success:
+
+            # Convert playback position from nanoseconds to minutes and seconds...
+            position_total_seconds = position_nanoseconds / 1000000000
+            position_minutes = int(position_total_seconds / 60)
+            position_seconds = int(position_total_seconds - (position_minutes * 60))
+
+            # Move seek bar position, blocking the seek handler so we don't
+            #  seek when we set_value()...
+            self._slider.handler_block(self._slider_handler_id)
+            self._slider.set_value(float(position_nanoseconds) / Gst.SECOND)
+            self._slider.handler_unblock(self._slider_handler_id)
+
+        # If we were able to get both the duration of the song and its
+        #  current playback position...
+        if duration_success and position_success:
+
+            # Update seek label...
+            self._seek_label.set_label(F'{position_minutes:02}:{position_seconds:02} / {duration_minutes:02}:{duration_seconds:02}')
+
+        # Get playback state...
+        state = self._playbin.get_state(Gst.CLOCK_TIME_NONE)
+
+        # Song is currently playing...
+        if state.state is Gst.State.PLAYING:
+
+            # Change play button's icon to a pause icon...
+            self._play_button.set_icon_name('media-playback-pause')
+
+            # Enable play, stop, and seek slider...
+            self._play_button.set_sensitive(True)
+            self._stop_button.set_sensitive(True)
+            self._slider.set_sensitive(True)
+
+            # If we were able to get both the duration of the song and its
+            #  current playback position...
+            if duration_success and position_success:
+
+                # If we reached the end of the song, update UI for stop state.
+                #  For some reason GStreamer sometimes reports a position that 
+                #  isn't exactly the end when it's reached the end. Sometimes it
+                #  is earlier than the end and other times it exceeds it...
+                if position_nanoseconds + Gst.SECOND >= duration_nanoseconds:
+                    self.stop_playback()
+
+        # Song is paused...
+        elif state.state is Gst.State.PAUSED:
+
+            # Change play button's icon to a play icon...
+            self._play_button.set_icon_name('media-playback-start')
+
+            # Make seek slider sensitive...
+            self._slider.set_sensitive(True)
+
+        # Song is not loaded...
+        elif state.state is Gst.State.NULL:
+
+            # Reset seek bar position, blocking the seek handler so we don't
+            #  seek when we set_value()...
+            self._slider.handler_block(self._slider_handler_id)
+            self._slider.set_value(0)
+            self._slider.handler_unblock(self._slider_handler_id)
+
+            # Disable play, stop, and seek slider...
+            self._play_button.set_sensitive(False)
+            self._stop_button.set_sensitive(False)
+            self._slider.set_sensitive(False)
+
+            # Reset seek label...
+            self._seek_label.set_label('00:00 / 00:00')
+
+        # Don't cancel timer...
+        return True
 
