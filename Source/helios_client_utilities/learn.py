@@ -310,7 +310,6 @@ def examine_training_session(arguments):
     print(_(F"  TLS: {training_session.get_tls()}"))
     print(_(F"  Version: {training_session.get_version()}"))
     print(_(F"  API Key: {training_session.get_api_key()}"))
-    print(_(F"Date: {training_session.get_datetime()}"))
 
     # Report success...
     return True
