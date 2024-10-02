@@ -1,4 +1,4 @@
 include Copying
 include *.md
 recursive-include Documentation *.man
-
+prune debian/

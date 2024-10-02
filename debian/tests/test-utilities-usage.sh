@@ -21,16 +21,16 @@ SONG_REFERENCE_B="REF_2"
 SONG_REFERENCE_C="REF_3"
 
 # Sample list of songs that should be installed from the lincity-ng 
-SAMPLE_SONG_A="/usr/share/games/lincity-ng/music/default/01 - pronobozo - lincity.ogg"
-SAMPLE_SONG_B="/usr/share/games/lincity-ng/music/default/02 - Robert van Herk - City Blues.ogg"
-SAMPLE_SONG_C="/usr/share/games/lincity-ng/music/default/03 - Robert van Herk - Architectural Contemplations.ogg"
+SAMPLE_SONG_A="/usr/share/lincity-ng/music/default/01 - pronobozo - lincity.ogg"
+SAMPLE_SONG_B="/usr/share/lincity-ng/music/default/02 - Robert van Herk - City Blues.ogg"
+SAMPLE_SONG_C="/usr/share/lincity-ng/music/default/03 - Robert van Herk - Architectural Contemplations.ogg"
 
 # Treat all Python warnings as fatal errors...
 export PYTHONWARNINGS="error,ignore::ResourceWarning"
 
 # Verify helios-trainer modules load...
 #  https://pygobject.readthedocs.io/en/latest/guide/testing.html
-#echo "*** Checking all modules load in helios-trainer(1) with --version"
+echo "*** Checking all modules load in helios-trainer(1) with --version"
 helios-trainer --version
 
 # Verify we can find the server via avahi-browse(1)...

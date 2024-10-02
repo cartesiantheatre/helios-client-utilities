@@ -101,14 +101,14 @@ def main():
             tls_key=arguments.tls_key,
             verbose=arguments.verbose)
 
+        # Progress bar to be allocated by tqdm as soon as we know the total size...
+        progress_bar = None
+
         # Prepare new song data...
         new_song_dict = {
             'file': base64.b64encode(open(arguments.song_file, 'rb').read()).decode('ascii'),
             'reference': arguments.song_reference
         }
-
-        # Progress bar to be allocated by tqdm as soon as we know the total size...
-        progress_bar = None
 
         # Progress bar callback...
         def progress_callback(bytes_read, new_bytes, bytes_total):
@@ -155,6 +155,10 @@ def main():
     # Helios exception...
     except helios.exceptions.ExceptionBase as some_exception:
         print(some_exception.what())
+
+    # A system function failed...
+    except OSError as some_exception:
+        print(_(f"System error: {some_exception.strerror}"))
 
     # Some other kind of exception...
     except Exception as some_exception:
