@@ -16,6 +16,7 @@ Build-Depends:
     python3-all (>= 3.10),
     python3-attr (>= 18.2.0),
     python3-gi,
+    python3-gst-1.0,
     python3-helios-client,
     python3-importlib-resources,
     python3-keyring,
@@ -48,6 +49,7 @@ Depends:
     gir1.2-gstreamer-1.0,
     gir1.2-gtk-4.0,
     gobject-introspection,
+    gstreamer1.0-plugins-base,
     libgtk-4-media-gstreamer,
     ${misc:Depends},
     ${python3:Depends}

@@ -28,11 +28,6 @@ SAMPLE_SONG_C="/usr/share/lincity-ng/music/default/03 - Robert van Herk - Archit
 # Treat all Python warnings as fatal errors...
 export PYTHONWARNINGS="error,ignore::ResourceWarning"
 
-# Verify helios-trainer modules load...
-#  https://pygobject.readthedocs.io/en/latest/guide/testing.html
-echo "*** Checking all modules load in helios-trainer(1) with --version"
-helios-trainer --version
-
 # Verify we can find the server via avahi-browse(1)...
 echo "*** Verifying server status via avahi-browse(1)..."
 avahi-browse --all --terminate | grep Helios
@@ -121,10 +116,6 @@ yes YES 2>/dev/null | helios-learn --host localhost purge
 # Purge the song database...
 echo "*** Delete all songs..."
 yes YES 2>/dev/null | helios-delete-song --host localhost --delete-all
-
-# TODO: Test helios-trainer
-#  Use dogtail to test GUI in headless environment:
-#  <https://gitlab.com/dogtail/dogtail/-/tree/master/examples/>
 
 # Alert user all done...
 echo "*** OK"

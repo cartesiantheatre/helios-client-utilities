@@ -92,6 +92,7 @@ setup(
     install_requires=[
         'attrs >= 18.2.0',
         'PyGObject >= 3.22',
+        'pygst',
         'helios-client',
         'importlib_resources',
         'keyring',

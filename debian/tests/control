@@ -15,3 +15,8 @@ Tests: test-provision-magnatune.sh
 Depends: helios-autopkgtest, avahi-utils, diffutils, dbus
 Restrictions: isolation-container, allow-stderr, needs-internet
 
+# Test helios-trainer GUI using dogtail in headless environment...
+Tests: test-trainer.py
+Depends: helios-client-utilities, python3-dogtail, libglib2.0-bin, xvfb, xauth, at-spi2-core, dbus-daemon
+Restrictions: isolation-container, allow-stderr
+
