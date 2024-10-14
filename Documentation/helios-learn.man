@@ -34,11 +34,39 @@ Add a learning example to be used when training. This requires an --anchor,
 --positive, and --negative song references to specify the triplet.
 
 .TP
-\fBcreate-csv\fR \fB<session.hts>\fR \fB<master.csv>\fR
-Examine the given training session file, cross referencing songs examined in the
-\fBmaster.csv\fR CSV file, and dump to stdout a new CSV file containing only
-those songs referenced in \fBmaster.csv\fR. The \fBmaster.csv\fR file is
-expected to be in the same format as that described in \fBhelios-import(1)\fR.
+\fBcreate-catalogue\fR \fB<session.hts>\fR \fB<master.csv>\fR \fB<output.csv>\fR
+.br
+[\fB--output-music-dir=<copy_path>\fR]
+.br
+[\fB--output-prefix-dir=<prefix_path>\fR]
+.br
+[\fB--ignore-orphaned-references\fR]
+.br
+Use this action to generate a subset of a music catalogue limited only to those
+songs a user listened to in their training session \fBsession.hts\fR. Each
+song is cross referenced from a \fBmaster.csv\fR CSV file which should contain
+a superset of the songs the user listened to. The new subset catalogue will be
+output to \fBoutput.csv\fR.
+
+The user can optionally have the music the training session user listened to
+copied into a directory specified by \fBcopy_path\fR if the
+\fB--output-music-dir\fR was specified. If it is not, only the output CSV file
+will be generated without copying any songs anywhere.
+
+If the user optionally provides \fB--output-prefix-dir\fR then every song's
+\fB'path'\fR CSV column field in the \fBoutput.csv\fR will substitute
+\fBprefix_path\fR for its leading path preceeding its file name. This is
+sometimes useful if the music is being copied into a temporary staging area that
+will not be its final location when referenced later from the \fBoutput.csv\fR.
+
+If \fB--ignore-orphaned-references\fR is specified then references to songs that
+the user listened to in their training session but that could not be located in
+the \fBmaster.csv\fR CSV file will be treated as warnings rather than errors.
+Otherwise the shell exit code will signal failure if there are any orphaned song
+references found.
+
+The CSV files are expected to be in the same format as that described in
+\fBhelios-import(1)\fR.
 
 .TP
 \fBdelete\fR
@@ -109,6 +137,11 @@ $ helios-learn delete --anchor=<anchor> --positive=<positive> --negative=<negati
 Remove all learning examples:
 
 $ helios-learn purge
+
+.TP
+Generate a minimal CSV catalogue temp/subset.csv from a user's training session bob_training_session.hts by locating songs within a master CSV catalogue magnatune.csv and copying those songs into temp/music, substituting each song's leading path in the output CSV with a new one:
+
+$ helios-learn create-catalogue bob_training_session.hts magnatune.csv temp/subset.csv --output-music-dir temp/music --output-prefix-dir /usr/share/helios-minimal-catalogue/music
 
 .SH EXIT STATUS
 \fBhelios-learn\fR exits with a status of zero if there were no problems, one

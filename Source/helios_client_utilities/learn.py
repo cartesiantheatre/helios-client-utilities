@@ -8,7 +8,9 @@
 import argparse
 import csv # For csv.QUOTE_NONNUMERIC constant...
 from datetime import datetime
+import os
 from pprint import pprint
+import shutil
 import sys
 
 # Other imports...
@@ -58,22 +60,53 @@ def add_arguments(argument_parser):
         nargs='?',
         help=_('Negative song reference.'))
 
-    # Create subparser for 'create-csv' action...
-    examine_parser = subparsers.add_parser('create-csv')
+    # Create subparser for 'create-catalogue' action...
+    examine_parser = subparsers.add_parser('create-catalogue')
 
-    # Define behavior for create-csv training session argument...
+    # Define behavior for create-catalogue training session argument...
     examine_parser.add_argument(
         dest='hts_file',
         action='store',
         type=str,
-        help=_('.hts file to read list of examined songs from'))
+        help=_('An .hts training session to read list of user\'s songs they listened to.'))
 
-    # Define behavior for create-csv master CSV catalogue argument...
+    # Define behavior for create-catalogue master CSV catalogue argument...
     examine_parser.add_argument(
-        dest='csv_file',
+        dest='csv_master_file',
         action='store',
         type=str,
-        help=_('.csv file to find songs referenced in training session'))
+        help=_('Master .csv file that contains every song referenced in training session.'))
+
+    # Define behavior for create-catalogue subset CSV catalogue argument...
+    examine_parser.add_argument(
+        dest='csv_output_file',
+        action='store',
+        type=str,
+        help=_('Output .csv file that contains a subset of only those songs the user listened to in their training session.'))
+
+    # Define behaviour for --ignore-orphaned-references...
+    examine_parser.add_argument(
+        '--ignore-orphaned-references',
+        action='store_true',
+        default=False,
+        dest='ignore_orphaned_references',
+        help=_('Treat orphaned song references as warnings rather than errors.'))
+
+    # Define behaviour for add --output-music-dir...
+    examine_parser.add_argument(
+        '--output-music-dir',
+        dest='output_music_dir',
+        required=False,
+        nargs='?',
+        help=_('Optionally copy all music the user listened to into this directory.'))
+
+    # Define behaviour for add --copy-music...
+    examine_parser.add_argument(
+        '--output-prefix-dir',
+        dest='output_prefix_dir',
+        required=False,
+        nargs='?',
+        help=_('Optionally substitute the leading path in the \'path\' CSV field in the csv_output_file with this.'))
 
     # Create parser for 'delete' action...
     delete_parser = subparsers.add_parser('delete')
@@ -152,7 +185,7 @@ def add_learning_example(client, arguments):
 # Examine a .hts file on disk, cross referencing examined songs in,
 #  a CSV file, and generating a new CSV to stdout only containing
 #  the examined songs...
-def create_csv(arguments):
+def create_catalogue(arguments):
 
     # Construct a training session...
     training_session = TrainingSession()
@@ -178,9 +211,33 @@ def create_csv(arguments):
         'path'              : 'str'
     }
 
+    # Make sure output CSV path is an absolute path...
+    arguments.csv_output_file = os.path.abspath(arguments.csv_output_file)
+
+    # Get just the CSV output directory...
+    csv_output_directory = os.path.dirname(arguments.csv_output_file)
+
+    # Create it if it doesn't exist already...
+    os.makedirs(csv_output_directory, exist_ok=True)
+
+    # CSV output file stream...
+    csv_output_stream = None
+
+    # Array of file copying related errors to append to as they arise. They will
+    #  be printed to stderr after all batch processing is completed...
+    copy_errors = []
+
+    # Try to open the CSV output file...
+    try:
+        csv_output_stream = open(arguments.csv_output_file, 'w')
+
+    # Check for failure...
+    except FileNotFoundError:
+        raise Exception(_(F'Cannot open output CSV file for writing: {os.path.abspath(arguments.csv_output_file)}'))
+
     # Open CSV catalogue reader...
     reader = pandas.read_csv(
-        filepath_or_buffer=arguments.csv_file,
+        filepath_or_buffer=arguments.csv_master_file,
         comment='#',
         compression='infer',
         delimiter=',',
@@ -198,14 +255,26 @@ def create_csv(arguments):
         encoding='utf-8',
         low_memory=True)
 
-    # Whether we've printed headers to stdout already or not. Will be untoggled
-    #  after printing the first time...
+    # Whether we've output the headers already or not. Will be untoggled after
+    #  printing the first time...
     header=True
 
     # Shell exit status flag...
     success=True
 
-    # Examine every record in the CSV file...
+    # Track how many songs are in the new catalogue...
+    catalogue_size = 0
+
+    # Did the user request to copy the songs listened to somewhere?
+    if arguments.output_music_dir:
+
+        # Make sure song output directory is an absolute path...
+        arguments.output_music_dir = os.path.abspath(arguments.output_music_dir)
+
+        # Create it if it doesn't exist already...
+        os.makedirs(arguments.output_music_dir, exist_ok=True)
+
+    # Examine every record in the master CSV file...
     for data_frame in reader:
 
         # Get the Panda series or row for the current song...
@@ -214,39 +283,106 @@ def create_csv(arguments):
         # Get the song row's reference...
         reference = series.values[0]
 
-        # If this song is one the user listened to...
-        if reference in all_songs_listened_to:
+        # If this song is not a song the user listened to, skip it...
+        if reference not in all_songs_listened_to:
+            continue
 
-            # Format the CSV line...
-            line = data_frame.to_csv(
-                None,
-                index=False,
-                header=header,
-                quotechar='"',
-                quoting=csv.QUOTE_NONNUMERIC,
-                escapechar='\\',
-                encoding='utf-8')
+        # If the user specified a directory to copy songs into, then use it...
+        if arguments.output_music_dir:
 
-            # Print it to stdout...
-            print(line, end='')
+            # Get the song's path...
+            series = data_frame.get('path')
+            song_path = series.values[0]
 
-            # Don't show headers again...
-            header = False
+            # Make sure it is absolute...
+            song_path = os.path.abspath(song_path)
 
-            # Make note that this song the user listened to was found in the CSV
-            #  catalogue...
-            all_songs_listened_to.remove(reference)
+            # Try to copy the song into the requested output directory...
+            try:
+
+                # Perform copy...
+                shutil.copy(song_path, arguments.output_music_dir)
+
+                # Log it...
+                print(_(F'{os.path.basename(song_path)}'))
+
+            # Something bad happened. Remember for later...
+            except Exception as some_exception:
+                copy_errors.append(_(F'{reference}: {str(some_exception)}'))
+
+        # If the user specified a path substitution prefix, then use it...
+        if arguments.output_prefix_dir:
+
+            # Get the song's path...
+            series = data_frame.get('path')
+            song_path = series.values[0]
+
+            # Substitute the leading path, leaving the file name as is...
+            song_path = os.path.join(arguments.output_prefix_dir, os.path.basename(song_path))
+
+            # Get absolute path...
+            song_path = os.path.abspath(song_path)
+
+            # Replace the old song path with the new one in the data frame...
+            series.values[0] = song_path
+
+        # Format the CSV line...
+        line = data_frame.to_csv(
+            None,
+            index=False,
+            header=header,
+            quotechar='"',
+            quoting=csv.QUOTE_NONNUMERIC,
+            escapechar='\\',
+            encoding='utf-8')
+
+        # Copy to output CSV file...
+        print(line, end='', file=csv_output_stream)
+
+        # Don't show headers again...
+        header = False
+
+        # Make note that this song the user listened to was found in the CSV
+        #  catalogue...
+        all_songs_listened_to.remove(reference)
+
+        # Update statistics...
+        catalogue_size += 1
+
+    # Close output CSV file...
+    csv_output_stream.close()
+
+    # If any errors occurred while attempting to copy music files...
+    if len(copy_errors) > 0:
+
+        # Show header...
+        print(_(F'Warning: Errors occurred while coping the following songs referenced in {os.path.basename(arguments.csv_master_file)}:'), file=sys.stderr)
+
+        # Dump each error...
+        for error in copy_errors:
+            print(_(F'  {error}'), file=sys.stderr)
+
+        # Note to shell there were some errors...
+        success = False
 
     # Were any songs remaining that the user listened to that weren't found in
     #  the provided CSV catalogue?
-    for remaining_reference in all_songs_listened_to:
-
-        # Log warning...
-        print(F'Warning: Not found {remaining_reference}', file=sys.stderr)
-
-    # If there were any songs not found, the shell should note an error...
     if len(all_songs_listened_to) > 0:
-        success = False
+
+        # Show header...
+        print(_(F'Warning: Song references found in {os.path.basename(arguments.hts_file)} not found in {os.path.basename(arguments.csv_master_file)}:'), file=sys.stderr)
+
+        # Dump each warning...
+        for remaining_reference in all_songs_listened_to:
+            print(_(F'  {remaining_reference}'), file=sys.stderr)
+
+        # Unless the user opted to ignore references that could not be found in
+        #  the master CSV, inform shell there was a problem...
+        if arguments.ignore_orphaned_references is False:
+            success = False
+
+    # Show statistics...
+    print(_(F'Created new catalogue of {catalogue_size} songs...'))
 
     # Report success status...
     return success
@@ -411,7 +547,7 @@ def main():
 
         # For every action, other than these, probe the LAN if necessary for a
         #  server and construct a client...
-        if arguments.action not in ['create-csv', 'examine']:
+        if arguments.action not in ['create-catalogue', 'examine']:
 
             # If no host provided, use Zeroconf auto detection...
             if not arguments.host:
@@ -446,8 +582,8 @@ def main():
             # Examine a .hts file on disk, cross referencing examined songs in,
             #  a CSV file, and generating a new CSV to stdout only containing
             #  the examined songs...
-            case 'create-csv':
-                success = create_csv(arguments)
+            case 'create-catalogue':
+                success = create_catalogue(arguments)
 
             # Delete a learning example...
             case 'delete':
@@ -476,9 +612,6 @@ def main():
             # Train the system based on currently available learning examples...
             case 'train':
                 success = perform_training(client, arguments)
-
-        # Note the success...
-        success = True
 
     # User trying to abort...
     except KeyboardInterrupt:

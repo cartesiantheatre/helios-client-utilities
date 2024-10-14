@@ -59,6 +59,15 @@ helios-provision-magnatune                                                      
     --absolute-path                                                             \
     Output/Songs
 
+# Verify there are six lines in the generated CSV file, one for the column
+#  headers and the rest for each of the five expected songs...
+echo "*** Checking Output/Songs/magnatune.csv has expected number of rows..."
+MAGNATUNE_CSV_LINES=$(cat Output/Songs/magnatune.csv | wc -l)
+if [ $MAGNATUNE_CSV_LINES -ne '6' ]; then
+    echo "Expected 6 lines, but found $MAGNATUNE_CSV_LINES"
+    exit 1
+fi
+
 # Batch import the generated CSV catalogue...
 echo "*** Batch import songs from Magnatune CSV..."
 helios-import-songs --host localhost Output/Songs/magnatune.csv
