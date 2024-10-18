@@ -6,7 +6,7 @@
 # Functional test to verify utilities work. The tqdm module outputs its progress
 #  bar to stderr, so we need to add that restriction...
 Tests: test-utilities-usage.sh
-Depends: @, helios-autopkgtest, avahi-utils, diffutils, lincity-ng-data
+Depends: @, helios-autopkgtest, helios-magnatune-minimal, avahi-utils, diffutils, lincity-ng-data
 Restrictions: isolation-container, allow-stderr
 
 # Functional test to verify helios-provision-magnatune(1) works. This needs

@@ -25,6 +25,9 @@ SAMPLE_SONG_A="/usr/share/lincity-ng/music/default/01 - pronobozo - lincity.ogg"
 SAMPLE_SONG_B="/usr/share/lincity-ng/music/default/02 - Robert van Herk - City Blues.ogg"
 SAMPLE_SONG_C="/usr/share/lincity-ng/music/default/03 - Robert van Herk - Architectural Contemplations.ogg"
 
+# Path to Magnatune minimal CSV catalogue...
+MAGNATUNE_MINIMAL_CSV=/usr/share/helios-magnatune-minimal/magnatune-minimal.csv
+
 # Treat all Python warnings as fatal errors...
 export PYTHONWARNINGS="error,ignore::ResourceWarning"
 
@@ -89,7 +92,7 @@ echo "*** Delete all songs..."
 yes YES 2>/dev/null | helios-delete-song --host localhost --delete-all
 
 # Batch import a list of songs from a CSV file again...
-echo "*** Batch import songs from CSV..."
+echo "*** Batch import songs from small CSV..."
 helios-import-songs --host localhost $(dirname $0)/sample_import_lincity.csv
 
 # Try adding two learning examples...
@@ -112,6 +115,14 @@ helios-learn --host localhost summary
 # Purge all learning examples...
 echo "*** Purging all learning examples..."
 yes YES 2>/dev/null | helios-learn --host localhost purge
+
+# Purge the song database...
+echo "*** Delete all songs..."
+yes YES 2>/dev/null | helios-delete-song --host localhost --delete-all
+
+# Try importing a larger catalogue...
+echo "*** Batch import songs from larger CSV, $MAGNATUNE_MINIMAL_CSV"
+helios-import-songs --host localhost $MAGNATUNE_MINIMAL_CSV
 
 # Purge the song database...
 echo "*** Delete all songs..."

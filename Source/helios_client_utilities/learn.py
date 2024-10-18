@@ -12,6 +12,7 @@ import os
 from pprint import pprint
 import shutil
 import sys
+import tempfile
 
 # Other imports...
 import attr
@@ -220,20 +221,32 @@ def create_catalogue(arguments):
     # Create it if it doesn't exist already...
     os.makedirs(csv_output_directory, exist_ok=True)
 
-    # CSV output file stream...
-    csv_output_stream = None
+    # CSV output file stream file descriptor, stream, and temporary name...
+    csv_output_stream_fd        = None
+    csv_output_stream           = None
+    csv_output_tempfile_name    = None
 
     # Array of file copying related errors to append to as they arise. They will
     #  be printed to stderr after all batch processing is completed...
     copy_errors = []
 
-    # Try to open the CSV output file...
+    # Try to remove a previous output CSV file, if any...
     try:
-        csv_output_stream = open(arguments.csv_output_file, 'w')
+        os.remove(arguments.csv_output_file)
 
-    # Check for failure...
+    # If the file already does not exist, that's fine...
     except FileNotFoundError:
-        raise Exception(_(F'Cannot open output CSV file for writing: {os.path.abspath(arguments.csv_output_file)}'))
+        pass
+
+    # Create the CSV output file in a temporary location which will be moved in
+    #  place to arguments.csv_output_file upon successful generation to avoid
+    #  the user accidentally using a truncated output from an unsuccessful
+    #  generation...
+    [csv_output_stream_fd, csv_output_tempfile_name] = tempfile.mkstemp(
+        prefix='helios_learn_output_csv', text=True)
+
+    # Open the file descriptor as a normal stream...
+    csv_output_stream = os.fdopen(csv_output_stream_fd, 'w')
 
     # Open CSV catalogue reader...
     reader = pandas.read_csv(
@@ -336,8 +349,8 @@ def create_catalogue(arguments):
             escapechar='\\',
             encoding='utf-8')
 
-        # Copy to output CSV file...
-        print(line, end='', file=csv_output_stream)
+        # Write line to output CSV file...
+        csv_output_stream.write(line)
 
         # Don't show headers again...
         header = False
@@ -349,8 +362,11 @@ def create_catalogue(arguments):
         # Update statistics...
         catalogue_size += 1
 
-    # Close output CSV file...
-    csv_output_stream.close()
+    # Close temporary output CSV file...
+    os.close(csv_output_stream_fd)
+
+    # Move the temporary output CSV file into location expected by user...
+    shutil.move(csv_output_tempfile_name, arguments.csv_output_file)
 
     # If any errors occurred while attempting to copy music files...
     if len(copy_errors) > 0:
