@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+  <mime-type type="application/x-helios-learning-model">
+    <sub-class-of type="application/json"/>
+    <comment>Helios Learning Model</comment>
+    <glob pattern="*.hml"/>
+    <magic priority="50">
+      <match type="string" offset="0:100" value="helios-learning-model"/>
+    </magic>
+    <icon name="com.cartesiantheatre.helios_learning_model"/>
+  </mime-type>
+</mime-info>
+

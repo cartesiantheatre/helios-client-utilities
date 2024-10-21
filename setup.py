@@ -53,6 +53,7 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: ML',
         'Topic :: Database :: Database Engines/Servers',
         'Topic :: Internet',
         'Topic :: Internet :: WWW/HTTP',
@@ -136,8 +137,10 @@ setup(
         ('share/icons/hicolor/256x256/apps', ['Data/share/icons/hicolor/256x256/apps/com.cartesiantheatre.helios_trainer.png']),
         ('share/icons/hicolor/scalable/apps', ['Data/share/icons/hicolor/scalable/apps/com.cartesiantheatre.helios_trainer.svg']),
         ('share/icons/hicolor/scalable/mimetypes', ['Data/share/icons/hicolor/scalable/mimetypes/com.cartesiantheatre.helios_training_session.svg']),
+        ('share/icons/hicolor/scalable/mimetypes', ['Data/share/icons/hicolor/scalable/mimetypes/com.cartesiantheatre.helios_learning_model.svg']),
         ('share/icons/hicolor/symbolic/apps', ['Data/share/icons/hicolor/symbolic/apps/com.cartesiantheatre.helios_trainer.svg']),
-        ('share/mime/packages', ['Data/share/mime/packages/helios-trainer-mime.xml'])
+        ('share/mime/packages', ['Data/share/mime/packages/helios-trainer-mime.xml']),
+        ('share/mime/packages', ['Data/share/mime/packages/helios-learning-model-mime.xml'])
     ],
     entry_points={
         'console_scripts': [

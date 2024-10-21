@@ -95,18 +95,32 @@ yes YES 2>/dev/null | helios-delete-song --host localhost --delete-all
 echo "*** Batch import songs from small CSV..."
 helios-import-songs --host localhost $(dirname $0)/sample_import_lincity.csv
 
+# Save the current learning model and print it...
+echo "*** Saving the current learning model:"
+helios-learn --host localhost save-model learning_model.hml
+cat learning_model.hml
+
+# Delete the current learning model...
+echo "*** Deleting the current learning model..."
+helios-learn --host localhost delete-model
+
+# Load the previous learning model...
+echo "*** Restoring learning model:"
+helios-learn --host localhost load-model learning_model.hml
+rm learning_model.hml
+
 # Try adding two learning examples...
 echo "*** Adding two learning examples..."
-helios-learn --host localhost add --anchor $SONG_REFERENCE_A --positive $SONG_REFERENCE_B --negative $SONG_REFERENCE_C
-helios-learn --host localhost add --anchor $SONG_REFERENCE_C --positive $SONG_REFERENCE_B --negative $SONG_REFERENCE_A
+helios-learn --host localhost add-example --anchor $SONG_REFERENCE_A --positive $SONG_REFERENCE_B --negative $SONG_REFERENCE_C
+helios-learn --host localhost add-example --anchor $SONG_REFERENCE_C --positive $SONG_REFERENCE_B --negative $SONG_REFERENCE_A
 
 # Delete one of the learning examples...
 echo "*** Deleting a learning example..."
-helios-learn --host localhost delete --anchor $SONG_REFERENCE_C --positive $SONG_REFERENCE_B --negative $SONG_REFERENCE_A
+helios-learn --host localhost delete-example --anchor $SONG_REFERENCE_C --positive $SONG_REFERENCE_B --negative $SONG_REFERENCE_A
 
 # Get the learning example...
 echo "*** List all learning examples..."
-helios-learn --host localhost list
+helios-learn --host localhost list-examples
 
 # Show a learning examples summary...
 echo "*** Summarizing learning examples..."
@@ -114,7 +128,7 @@ helios-learn --host localhost summary
 
 # Purge all learning examples...
 echo "*** Purging all learning examples..."
-yes YES 2>/dev/null | helios-learn --host localhost purge
+yes YES 2>/dev/null | helios-learn --host localhost purge-examples
 
 # Purge the song database...
 echo "*** Delete all songs..."

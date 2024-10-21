@@ -8,6 +8,7 @@
 import argparse
 import csv # For csv.QUOTE_NONNUMERIC constant...
 from datetime import datetime
+import json
 import os
 from pprint import pprint
 import shutil
@@ -35,10 +36,10 @@ def add_arguments(argument_parser):
         required=True)
 
     # Create parser for 'add' action...
-    add_parser = subparsers.add_parser('add')
+    add_example_parser = subparsers.add_parser('add-example')
 
     # Define behaviour for add --anchor...
-    add_parser.add_argument(
+    add_example_parser.add_argument(
         '--anchor',
         dest='anchor_song_reference',
         required=True,
@@ -46,7 +47,7 @@ def add_arguments(argument_parser):
         help=_('Anchor song reference.'))
 
     # Define behaviour for add --positive...
-    add_parser.add_argument(
+    add_example_parser.add_argument(
         '--positive',
         dest='positive_song_reference',
         required=True,
@@ -54,7 +55,7 @@ def add_arguments(argument_parser):
         help=_('Positive song reference.'))
 
     # Define behaviour for add --negative...
-    add_parser.add_argument(
+    add_example_parser.add_argument(
         '--negative',
         dest='negative_song_reference',
         required=True,
@@ -62,31 +63,31 @@ def add_arguments(argument_parser):
         help=_('Negative song reference.'))
 
     # Create subparser for 'create-catalogue' action...
-    examine_parser = subparsers.add_parser('create-catalogue')
+    create_catalogue_parser = subparsers.add_parser('create-catalogue')
 
     # Define behavior for create-catalogue training session argument...
-    examine_parser.add_argument(
-        dest='hts_file',
+    create_catalogue_parser.add_argument(
+        dest='training_session_file',
         action='store',
         type=str,
         help=_('An .hts training session to read list of user\'s songs they listened to.'))
 
     # Define behavior for create-catalogue master CSV catalogue argument...
-    examine_parser.add_argument(
+    create_catalogue_parser.add_argument(
         dest='csv_master_file',
         action='store',
         type=str,
         help=_('Master .csv file that contains every song referenced in training session.'))
 
     # Define behavior for create-catalogue subset CSV catalogue argument...
-    examine_parser.add_argument(
+    create_catalogue_parser.add_argument(
         dest='csv_output_file',
         action='store',
         type=str,
         help=_('Output .csv file that contains a subset of only those songs the user listened to in their training session.'))
 
     # Define behaviour for --ignore-orphaned-references...
-    examine_parser.add_argument(
+    create_catalogue_parser.add_argument(
         '--ignore-orphaned-references',
         action='store_true',
         default=False,
@@ -94,7 +95,7 @@ def add_arguments(argument_parser):
         help=_('Treat orphaned song references as warnings rather than errors.'))
 
     # Define behaviour for add --output-music-dir...
-    examine_parser.add_argument(
+    create_catalogue_parser.add_argument(
         '--output-music-dir',
         dest='output_music_dir',
         required=False,
@@ -102,18 +103,18 @@ def add_arguments(argument_parser):
         help=_('Optionally copy all music the user listened to into this directory.'))
 
     # Define behaviour for add --copy-music...
-    examine_parser.add_argument(
+    create_catalogue_parser.add_argument(
         '--output-prefix-dir',
         dest='output_prefix_dir',
         required=False,
         nargs='?',
         help=_('Optionally substitute the leading path in the \'path\' CSV field in the csv_output_file with this.'))
 
-    # Create parser for 'delete' action...
-    delete_parser = subparsers.add_parser('delete')
+    # Create parser for 'delete-example' action...
+    delete_example_parser = subparsers.add_parser('delete-example')
 
     # Define behaviour for add --anchor...
-    delete_parser.add_argument(
+    delete_example_parser.add_argument(
         '--anchor',
         dest='anchor_song_reference',
         required=True,
@@ -121,7 +122,7 @@ def add_arguments(argument_parser):
         help=_('Anchor song reference.'))
 
     # Define behaviour for add --positive...
-    delete_parser.add_argument(
+    delete_example_parser.add_argument(
         '--positive',
         dest='positive_song_reference',
         required=True,
@@ -129,38 +130,61 @@ def add_arguments(argument_parser):
         help=_('Positive song reference.'))
 
     # Define behaviour for add --negative...
-    delete_parser.add_argument(
+    delete_example_parser.add_argument(
         '--negative',
         dest='negative_song_reference',
         required=True,
         nargs='?',
         help=_('Negative song reference.'))
 
-    # Create subparser for 'examine' action...
-    examine_parser = subparsers.add_parser('examine')
+    # Create parser for 'delete-model' action...
+    delete_model_parser = subparsers.add_parser('delete-model')
 
-    # Define behavior for examine file action...
-    examine_parser.add_argument(
-        dest='hts_file',
+    # Create subparser for 'examine-session' action...
+    examine_session_parser = subparsers.add_parser('examine-session')
+
+    # Define behavior for examine-session file action...
+    examine_session_parser.add_argument(
+        dest='training_session_file',
         action='store',
         type=str,
         help=_('.hts file to examine'))
 
-    # Create subparser for 'import' action...
-    import_parser = subparsers.add_parser('import')
+    # Create subparser for 'import-examples' action...
+    import_examples_parser = subparsers.add_parser('import-examples')
 
-    # Define behavior for import action file...
-    import_parser.add_argument(
-        dest='hts_file',
+    # Define behavior for import-examples action file...
+    import_examples_parser.add_argument(
+        dest='training_session_file',
         action='store',
         type=str,
         help=_('.hts file to import'))
 
-    # Create subparser for 'list' action...
-    list_parser = subparsers.add_parser('list')
+    # Create subparser for 'list-examples' action...
+    list_examples_parser = subparsers.add_parser('list-examples')
 
-    # Create parser for 'purge' action...
-    purge_parser = subparsers.add_parser('purge')
+    # Create subparser for 'load-model' action...
+    load_model_parser = subparsers.add_parser('load-model')
+
+    # Define behavior for import-examples action file...
+    load_model_parser.add_argument(
+        dest='model_file',
+        action='store',
+        type=str,
+        help=_('.hml file to import'))
+
+    # Create parser for 'purge-examples' action...
+    purge_examples_parser = subparsers.add_parser('purge-examples')
+
+    # Create subparser for 'save-model' action...
+    save_model_parser = subparsers.add_parser('save-model')
+
+    # Define behavior for save-model action file...
+    save_model_parser.add_argument(
+        dest='model_file',
+        action='store',
+        type=str,
+        help=_('.hml file to save to'))
 
     # Create parser for 'summary' action...
     summary_parser = subparsers.add_parser('summary')
@@ -183,16 +207,15 @@ def add_learning_example(client, arguments):
     # Report success...
     return True
 
-# Examine a .hts file on disk, cross referencing examined songs in,
-#  a CSV file, and generating a new CSV to stdout only containing
-#  the examined songs...
+# Examine a .hts file on disk, cross referencing examined songs in, a CSV file,
+#  and generating a new CSV to stdout only containing the examined songs...
 def create_catalogue(arguments):
 
     # Construct a training session...
     training_session = TrainingSession()
 
     # Load from disk...
-    training_session.load(arguments.hts_file)
+    training_session.load(arguments.training_session_file)
 
     # Get the set references for every song the user listened to...
     all_songs_listened_to = training_session.get_all_song_references()
@@ -386,7 +409,7 @@ def create_catalogue(arguments):
     if len(all_songs_listened_to) > 0:
 
         # Show header...
-        print(_(F'Warning: Song references found in {os.path.basename(arguments.hts_file)} not found in {os.path.basename(arguments.csv_master_file)}:'), file=sys.stderr)
+        print(_(F'Warning: Song references found in {os.path.basename(arguments.training_session_file)} not found in {os.path.basename(arguments.csv_master_file)}:'), file=sys.stderr)
 
         # Dump each warning...
         for remaining_reference in all_songs_listened_to:
@@ -438,6 +461,15 @@ def delete_learning_example(client, arguments):
     # Report success...
     return True
 
+# Delete the currently loaded learning model, reverting back to default...
+def delete_learning_model(client, arguments):
+
+    # Delete it...
+    client.delete_learning_model()
+
+    # Report success...
+    return True
+
 # Examine a Helios training session (.hts) stored on disk and passed as a
 #  parameter to the 'examine' action...
 def examine_training_session(arguments):
@@ -446,7 +478,7 @@ def examine_training_session(arguments):
     training_session = TrainingSession()
 
     # Load from disk...
-    training_session.load(arguments.hts_file)
+    training_session.load(arguments.training_session_file)
 
     # Show information about training session...
     print(_(F"Session:"))
@@ -474,7 +506,7 @@ def import_training_session(client, arguments):
     training_session = TrainingSession()
 
     # Load from disk...
-    training_session.load(arguments.hts_file)
+    training_session.load(arguments.training_session_file)
 
     # Get examples from user's training session...
     learning_example_triplets = training_session.get_examples()
@@ -504,6 +536,18 @@ def list_learning_examples(client, arguments):
     # Report success...
     return True
 
+# Load learning model...
+def load_learning_model(client, arguments):
+
+    # Upload and load the learning model...
+    client.load_learning_model(arguments.model_file)
+
+    # Notify user...
+    print(_("Successfully loaded new learning model..."))
+
+    # Report success...
+    return True
+
 # Perform training on learning examples...
 def perform_training(client, arguments):
 
@@ -514,6 +558,39 @@ def perform_training(client, arguments):
     print(_("Training complete..."))
     print(_(F"\tGPU Accelerated: {training_report.gpu_accelerated}"))
     print(_(F"\tTotal Time: {str(datetime.timedelta(seconds=training_report.total_time))}"))
+
+    # Report success...
+    return True
+
+# Save learning model...
+def save_learning_model(client, arguments):
+
+    # Retrieve the learning model...
+    learning_model = client.get_learning_model()
+
+    # Construct learning model schema to transform learning model into JSON to
+    #  save to disk...
+    learning_example_schema = helios.requests.LearningModelSchema()
+
+    # Convert to JSON...
+    json_data = learning_example_schema.dumps(learning_model)
+
+    # Convert to a dict and insert a dummy field to assist shell in identifying
+    #  file type...
+    json_dict = json.loads(json_data)
+    json_dict["helios_learning_model"] = "file_magic"
+
+    # Check to ensure output file name has expected file extension, and if not,
+    #  add it...
+    filename, extension = os.path.splitext(arguments.model_file)
+    arguments.model_file = F'{filename}.hml'
+
+    # Save it to disk...
+    with open(arguments.model_file, "w") as file:
+        json.dump(json_dict, file, sort_keys=True)
+
+    # Notify user...
+    print(_(F"Learning model saved successfully to {arguments.model_file}"))
 
     # Report success...
     return True
@@ -555,7 +632,7 @@ def main():
     try:
 
         # Check command line was sane...
-        if arguments.action in ['add', 'delete'] and (None in [arguments.anchor_song_reference, arguments.positive_song_reference, arguments.negative_song_reference]):
+        if arguments.action in ['add-example', 'delete-example'] and (None in [arguments.anchor_song_reference, arguments.positive_song_reference, arguments.negative_song_reference]):
             raise Exception(_(F"The \"{arguments.action}\" action requires an anchor, positive, and negative song references."))
 
         # Client to be constructed, if necessary...
@@ -563,7 +640,7 @@ def main():
 
         # For every action, other than these, probe the LAN if necessary for a
         #  server and construct a client...
-        if arguments.action not in ['create-catalogue', 'examine']:
+        if arguments.action not in ['create-catalogue', 'examine-session']:
 
             # If no host provided, use Zeroconf auto detection...
             if not arguments.host:
@@ -592,7 +669,7 @@ def main():
         match arguments.action:
 
             # Add a learning example...
-            case 'add':
+            case 'add-example':
                 success = add_learning_example(client, arguments)
 
             # Examine a .hts file on disk, cross referencing examined songs in,
@@ -602,24 +679,36 @@ def main():
                 success = create_catalogue(arguments)
 
             # Delete a learning example...
-            case 'delete':
+            case 'delete-example':
                 success = delete_learning_example(client, arguments)
 
+            # Delete a learning model...
+            case 'delete-model':
+                success = delete_learning_model(client, arguments)
+
             # Examine a .hts file on disk...
-            case 'examine':
+            case 'examine-session':
                 success = examine_training_session(arguments)
 
             # Import learning examples from a .hts file on disk...
-            case 'import':
+            case 'import-examples':
                 success = import_training_session(client, arguments)
 
+            # Load a learning model from a .hml file on disk...
+            case 'load-model':
+                success =  load_learning_model(client, arguments)
+
             # List all learning examples...
-            case 'list':
+            case 'list-examples':
                 success = list_learning_examples(client, arguments)
 
             # Delete all learning examples...
-            case 'purge':
+            case 'purge-examples':
                 success = delete_all_learning_examples(client, arguments)
+
+            # Save a learning model to a .hml file on disk...
+            case 'save-model':
+                success =  save_learning_model(client, arguments)
 
             # Show a summary of learning examples...
             case 'summary':

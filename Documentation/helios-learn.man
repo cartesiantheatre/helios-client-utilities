@@ -29,7 +29,7 @@ need only provide a relative order of similarity.
 .SH ACTION
 
 .TP
-\fBadd\fR
+\fBadd-example\fR
 Add a learning example to be used when training. This requires an --anchor,
 --positive, and --negative song references to specify the triplet.
 
@@ -69,29 +69,38 @@ The CSV files are expected to be in the same format as that described in
 \fBhelios-import(1)\fR.
 
 .TP
-\fBdelete\fR
+\fBdelete-example\fR
 Delete a learning example triplet stored on the server that was awaiting
 training. This requires an --anchor, --positive, and --negative song references
 to specify the triplet.
 
 .TP
-\fBexamine\fR \fB<session.hts>\fR
+\fBexamine-session\fR \fB<session.hts>\fR
 Examine a user's Helios training session (.hts) and display information about
 the file.
 
 .TP
-\fBimport\fR \fB<session.hts>\fR
+\fBimport-session\fR \fB<session.hts>\fR
 Import learning example triplets from a Helios training session (.hts) stored on
 disk. You can generate one of these files through the interactive GUI provided
 by \fBhelios-trainer(1)\fR.
 
 .TP
-\fBlist\fR
+\fBlist-examples\fR
 List all learning example triplets stored on the server awaiting training.
 
 .TP
-\fBpurge\fR
+\fBload-model\fR \fB<model.hml>\fR
+Upload and set \fBmodel.hml\fR as the server's learning model, replacing the
+current one.
+
+.TP
+\fBpurge-examples\fR
 Delete all learning examples stored on the server.
+
+.TP
+\fBsave-model\fR \fB<model.hml>\fR
+Save the server's currently loaded learning model to \fBmodel.hml\fR.
 
 .TP
 \fBsummary\fR
@@ -124,22 +133,26 @@ negative.
 .SH EXAMPLES
 .TP
 
-Add a learning example to the server where <anchor>, <positive>, and <negative> refer to song references for the anchor, positive, and negative examples:
+Add a learning example to the server where <anchor>, <positive>, and <negative>
+refer to song references for the anchor, positive, and negative examples:
 
-$ helios-learn add --anchor=<anchor> --positive=<positive> --negative=<negative>
+$ helios-learn add-example --anchor=<anchor> --positive=<positive> --negative=<negative>
 
 .TP
 Remove a learning example:
 
-$ helios-learn delete --anchor=<anchor> --positive=<positive> --negative=<negative>
+$ helios-learn delete-example --anchor=<anchor> --positive=<positive> --negative=<negative>
 
 .TP
 Remove all learning examples:
 
-$ helios-learn purge
+$ helios-learn purge-examples
 
 .TP
-Generate a minimal CSV catalogue temp/subset.csv from a user's training session bob_training_session.hts by locating songs within a master CSV catalogue magnatune.csv and copying those songs into temp/music, substituting each song's leading path in the output CSV with a new one:
+Generate a minimal CSV catalogue temp/subset.csv from a user's training session
+bob_training_session.hts by locating songs within a master CSV catalogue
+magnatune.csv and copying those songs into temp/music, substituting each song's
+leading path in the output CSV with a new one:
 
 $ helios-learn create-catalogue bob_training_session.hts magnatune.csv temp/subset.csv --output-music-dir temp/music --output-prefix-dir /usr/share/helios-minimal-catalogue/music
 

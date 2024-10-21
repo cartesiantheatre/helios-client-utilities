@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: helios-client-utilities
-Version: 1.3.20241017.post1
+Version: 1.3.20241020.post1
 Summary: Utilities for interacting with a Helios server.
 Home-page: https://www.heliosmusic.io
 Author: Cartesian Theatre
@@ -19,6 +19,7 @@ Classifier: License :: OSI Approved :: GNU General Public License v3 or later (G
 Classifier: Operating System :: OS Independent
 Classifier: Programming Language :: Python
 Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: ML
 Classifier: Topic :: Database :: Database Engines/Servers
 Classifier: Topic :: Internet
 Classifier: Topic :: Internet :: WWW/HTTP
