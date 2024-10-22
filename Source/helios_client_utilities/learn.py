@@ -500,7 +500,7 @@ def examine_training_session(arguments):
 
 # Import learning example triplets from a Helios training session (.hts) stored
 #  on disk and passed as a parameter to the 'import' action...
-def import_training_session(client, arguments):
+def import_learning_examples(client, arguments):
 
     # Construct a training session...
     training_session = TrainingSession()
@@ -692,7 +692,7 @@ def main():
 
             # Import learning examples from a .hts file on disk...
             case 'import-examples':
-                success = import_training_session(client, arguments)
+                success = import_learning_examples(client, arguments)
 
             # Load a learning model from a .hml file on disk...
             case 'load-model':

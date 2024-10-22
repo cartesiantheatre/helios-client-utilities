@@ -1,4 +1,4 @@
-.TH helios-learn 1 "April 2024"
+.TH helios-learn 1 "October 2024"
 .SH NAME
 helios-learn - Perform Helios supervised machine learning related tasks.
 
@@ -80,7 +80,7 @@ Examine a user's Helios training session (.hts) and display information about
 the file.
 
 .TP
-\fBimport-session\fR \fB<session.hts>\fR
+\fBimport-examples\fR \fB<session.hts>\fR
 Import learning example triplets from a Helios training session (.hts) stored on
 disk. You can generate one of these files through the interactive GUI provided
 by \fBhelios-trainer(1)\fR.
