@@ -7,7 +7,7 @@
 # System imports...
 import argparse
 import csv # For csv.QUOTE_NONNUMERIC constant...
-from datetime import datetime
+import datetime
 import json
 import os
 from pprint import pprint
@@ -555,9 +555,10 @@ def perform_training(client, arguments):
     training_report = client.perform_training(tui_progress=True)
 
     # Show report...
-    print(_("Training complete..."))
-    print(_(F"\tGPU Accelerated: {training_report.gpu_accelerated}"))
-    print(_(F"\tTotal Time: {str(datetime.timedelta(seconds=training_report.total_time))}"))
+    print(_("Training complete:"))
+    print(_(F"  Accuracy: {training_report.accuracy * 100:.2f} %"))
+    print(_(F"  GPU Accelerated: {training_report.gpu_accelerated}"))
+    print(_(F"  Total Time: {str(datetime.timedelta(seconds=training_report.total_time))}"))
 
     # Report success...
     return True
