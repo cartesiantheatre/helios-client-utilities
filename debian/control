@@ -54,7 +54,7 @@ Depends:
     ${misc:Depends},
     ${python3:Depends}
 Description: utilities for interacting with a Helios server
- Helios is an intelligent music discovery platform.
+ Helios® is an intelligent music discovery platform.
  .
  This is a collection of command line utilities for managing a Helios server and
  related.

@@ -6,7 +6,7 @@ This is a set of command line utilities for interacting with a [Helios](https://
 
 ## What is Helios?
 
-Helios is a powerful B2B technology to allow searching of large commercial music libraries by using music itself as the search key. There are many uses, but here are a few examples:
+Helios® is a powerful B2B technology to allow searching of large commercial music libraries by using music itself as the search key. There are many uses, but here are a few examples:
 
 - You have a commercial music library of any size. Perhaps you are a major record label, perhaps independent, or maybe you've amalgamated music from multiple labels, independent artists, or publishers. You need to assist your clients with obtaining synchronization licenses quickly for appropriate pieces of music for their film, TV, documentary, commercial, video game, or some other context.
 
