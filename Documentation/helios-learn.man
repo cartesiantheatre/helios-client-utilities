@@ -75,6 +75,11 @@ training. This requires an --anchor, --positive, and --negative song references
 to specify the triplet.
 
 .TP
+\fBdelete-model\fR
+Delete the server's currently loaded learning model, replacing it with the
+default.
+
+.TP
 \fBexamine-session\fR \fB<session.hts>\fR
 Examine a user's Helios training session (.hts) and display information about
 the file.
